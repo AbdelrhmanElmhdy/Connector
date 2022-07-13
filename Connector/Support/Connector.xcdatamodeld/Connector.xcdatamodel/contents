@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19206" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="ChatRoom" representedClassName="ChatRoom" syncable="YES" codeGenerationType="category">
+        <attribute name="groupChatImageUrl" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="participantsIDs" optional="YES" attributeType="Transformable" customClassName="[UUID]"/>
+        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="room" inverseEntity="Message"/>
+    </entity>
+    <entity name="Contact" representedClassName="Contact" syncable="YES" codeGenerationType="category">
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="contact" inverseEntity="Message"/>
+    </entity>
+    <entity name="Location" representedClassName="Location" syncable="YES" codeGenerationType="category">
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="location" inverseEntity="Message"/>
+    </entity>
+    <entity name="Message" representedClassName="Message" syncable="YES" codeGenerationType="category">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="interactionType" optional="YES" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="mediaOrFileURL" optional="YES" attributeType="String"/>
+        <attribute name="receiptDateUnixTimeStamp" optional="YES" attributeType="Double" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="repliedAtMessageId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="roomId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="senderId" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="sentDateUnixTimeStamp" optional="YES" attributeType="Double" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="contact" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Contact" inverseName="message" inverseEntity="Contact"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="message" inverseEntity="Location"/>
+        <relationship name="room" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChatRoom" inverseName="messages" inverseEntity="ChatRoom"/>
+    </entity>
+    <elements>
+        <element name="Message" positionX="-103.6895141601562" positionY="31.84768676757812" width="153.3314208984375" height="238"/>
+        <element name="Contact" positionX="-291.5556640625" positionY="29.12451171875" width="128" height="103"/>
+        <element name="Location" positionX="-287.4215087890625" positionY="184.7117614746094" width="128" height="88"/>
+        <element name="ChatRoom" positionX="125.8098754882812" positionY="33.62164306640625" width="128" height="103"/>
+    </elements>
+</model>
