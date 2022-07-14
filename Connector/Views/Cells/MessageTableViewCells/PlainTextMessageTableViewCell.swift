@@ -19,13 +19,13 @@ class PlainTextMessageTableViewCell: MessageTableViewCell {
         return label
     }()
     
-    override internal func handleViewModelUpdate(_ viewModel: Message) {
+    override  func handleViewModelUpdate(_ viewModel: Message) {
         super.handleViewModelUpdate(viewModel)
         textMessageLabel.text = viewModel.text
         setChatBubbleWidthConstraint()
     }
     
-    override internal func setupSubviews() {
+    override  func setupSubviews() {
         super.setupSubviews()
         setupTextMessageLabel()
     }

@@ -33,17 +33,25 @@ class RootTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if !UserDefaultsManager.isLoggedIn {
-            let user = User(id: UUID(), name: "Abdelrhman Elmahdy", username: "AbdrhmanElmhdy", email: "AbdelrhmanElmahdy@gmail.com", imageUrl: "https://abdlrhmanElmhdy.me/image")
-            
-            UserDefaultsManager.user = user
-        }
+        let user = User(id: UUID(), firstName: "Abdelrhman", lastName: "Elmahdy", username: "AbdrhmanElmhdy", email: "AbdelrhmanElmahdy@gmail.com", chatRoomIds: [])
+
+        UserDefaultsManager.user = user
         
         configureTabBar()
     }
-    
+        
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        let loggedIn = UserDefaultsManager.isLoggedIn
+        
+        if !loggedIn {
+            let authNavigationController = UINavigationController(rootViewController: LoginViewController())
+            authNavigationController.modalPresentationStyle = .fullScreen
+            present(authNavigationController, animated: false)
+            
+        }
+        
         navigationController?.navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
         definesPresentationContext = true

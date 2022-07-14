@@ -10,19 +10,24 @@ import UIKit
 
 struct User: Codable {
     var id: UUID
-    var name: String
+    var firstName: String
+    var lastName: String
     var username: String
     var email: String
-    // TODO: declare a thumbnail image url
-    var imageUrl: String
+    var chatRoomIds: [UUID]
+    var imageUrl: URL?
+    var thumbnailImageUrl: URL?
 }
 
 extension User {
     init(id: UUID) {
         self.id = id
-        name = "test2"
-        username = "test2"
-        email = "test"
-        imageUrl = "test"
+        firstName = ""
+        lastName = ""
+        username = ""
+        email = ""
+        chatRoomIds = []
+        imageUrl = nil
+        thumbnailImageUrl = nil
     }
 }

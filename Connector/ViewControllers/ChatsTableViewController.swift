@@ -88,6 +88,20 @@ extension ChatsTableViewController: UISearchResultsUpdating, UISearchControllerD
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text else { return }
         
+        if searchText.hasPrefix("@") {
+            let username = searchText.replacingOccurrences(of: "@", with: "")
+                        
+            NetworkManager.searchUsersByUserName(username: username) { users, error in
+                if let error = error {
+                    ErrorManager.reportError(error)
+                    return
+                }
+                
+                print(users)
+            }
+        }
+
+        
         filteredChatListItemModels = chatListItemModels.filter { $0.chatName.lowercased().contains(searchText.lowercased())
         }
         

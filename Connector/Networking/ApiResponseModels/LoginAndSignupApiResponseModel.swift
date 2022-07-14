@@ -6,6 +6,6 @@
 //
 
 struct LoginAndSignupApiResponseModel : Decodable {
-    var token: String
+    var accessToken: String
     var user: User
 }

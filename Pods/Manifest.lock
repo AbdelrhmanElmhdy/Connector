@@ -1,20 +1,28 @@
 PODS:
+  - ShimmerSwift (2.1.1)
   - Socket.IO-Client-Swift (16.0.1):
     - Starscream (~> 4.0)
   - Starscream (4.0.4)
+  - SwiftKeychainWrapper (4.0.1)
 
 DEPENDENCIES:
+  - ShimmerSwift
   - Socket.IO-Client-Swift (~> 16.0.1)
+  - SwiftKeychainWrapper (~> 4.0)
 
 SPEC REPOS:
   trunk:
+    - ShimmerSwift
     - Socket.IO-Client-Swift
     - Starscream
+    - SwiftKeychainWrapper
 
 SPEC CHECKSUMS:
+  ShimmerSwift: f7ed2daf9c246de8299dfd9e12c6ab465cba9842
   Socket.IO-Client-Swift: c116d6dc9fd6be9c259bacfe143f8725bce7d79e
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
+  SwiftKeychainWrapper: 807ba1d63c33a7d0613288512399cd1eda1e470c
 
-PODFILE CHECKSUM: da99e9bed650790abfbc4a91f205b5221bf18935
+PODFILE CHECKSUM: a951aca2d88fcebaaa76fc6150ee1bc13bfba1ea
 
 COCOAPODS: 1.10.0

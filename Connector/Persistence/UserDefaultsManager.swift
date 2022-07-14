@@ -46,8 +46,7 @@ struct UserDefaultsManager {
             }
             
             do {
-                let encoder = JSONEncoder()
-                let userData = try encoder.encode(newValue)
+                let userData = try JSONEncoder().encode(newValue)
                 UserDefaults.standard.set(userData, forKey: Keys.user)
                 UserDefaults.standard.synchronize()
             } catch {

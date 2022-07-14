@@ -81,7 +81,7 @@ public class ChatRoom: NSManagedObject, Codable {
         let partnerID = partnersIDs[0]
         let partnerImageUrlString = User(id: partnerID).imageUrl
         
-        return URL(string: partnerImageUrlString)
+        return partnerImageUrlString
     }
     
     var lastMessageDate: Date? {

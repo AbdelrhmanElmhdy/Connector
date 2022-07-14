@@ -12,6 +12,7 @@ struct Router<EndPoint: Endpoint> {
     func request(_ endpoint: EndPoint, completion: @escaping (_ data: Data?, _ urlResponse: URLResponse?, _ error: Error?) -> Void) {
         do {
             let request = try self.buildRequest(from: endpoint)
+            print(request.url)
             
             URLSession.shared.dataTask(with: request, completionHandler: completion).resume()                                
         } catch {
@@ -28,12 +29,7 @@ struct Router<EndPoint: Endpoint> {
         
         // Set the body parameters
         if let bodyParameters = endpoint.bodyParameters {
-            guard var urlComponents = URLComponents(url: endpoint.url, resolvingAgainstBaseURL: false) else {
-                throw NetworkError.invalidUrl(url: endpoint.url.absoluteString)
-            }
-            urlComponents.queryItems = generateURLQueryItems(parameters: bodyParameters)
-            guard let query = urlComponents.url?.query else { throw NetworkError.parametersError }
-            request.httpBody = Data(query.utf8)
+            request.httpBody = try JSONSerialization.data(withJSONObject: bodyParameters, options: .prettyPrinted)
         }
         
         // Set the headers
@@ -42,14 +38,6 @@ struct Router<EndPoint: Endpoint> {
         }
         
         return request
-    }
-    
-    fileprivate func generateURLQueryItems(parameters: Parameters) -> [URLQueryItem] {
-        let queryItems: [URLQueryItem] = parameters.map { name, value in
-            URLQueryItem(name: name, value: String(describing: value))
-        }
-        
-        return queryItems
     }
     
     fileprivate func setRequestHeaders(_ headers: HTTPHeaders, for request: inout URLRequest) {
