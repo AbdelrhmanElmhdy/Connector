@@ -8,6 +8,8 @@
 import Foundation
 
 public enum NetworkError : Error {
+    case failedToSignup
+    case failedToLogin
     case invalidUrl(url: String = "")
     case parametersNil
     case decodingFailed
@@ -15,9 +17,12 @@ public enum NetworkError : Error {
     case missingURL
     case parametersError
     case httpResponseError(statusCode: Int)
+    case socketIoInitializationError(description: String)
     
     var description: String {
         switch self {
+        case .failedToSignup: return "Sign up failed"
+        case .failedToLogin: return "Login failed"
         case .parametersNil: return "Parameters were nil"
         case .decodingFailed: return "data decoding failed"
         case .encodingFailed: return "data encoding failed"
@@ -25,6 +30,7 @@ public enum NetworkError : Error {
         case let .invalidUrl(url): return "The url is invalid: \(url)"
         case .parametersError: return "invalid parameters"
         case let .httpResponseError(statusCode): return getStatusCodeErrorDescription(statusCode).description
+        case let .socketIoInitializationError(description): return description
         }
     }
     

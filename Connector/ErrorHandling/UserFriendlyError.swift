@@ -13,15 +13,14 @@ protocol UserFriendlyError: Error {
     var userFriendlyDescription: String { get }
     var userFriendlyAdvice: String { get }
     
-    var associatedValues: (description: String, userFriendlyDescription: String, userFriendlyAdvice: String, context: String?) { get }
+    var associatedValues: (description: String, userFriendlyDescription: String, userFriendlyAdvice: String) { get }
 }
 
 extension UserFriendlyError {
     
     var description: String {
-        let (description, _, _, context) = associatedValues
-        guard let context = context else { return description }
-        return "Error while" + context + "\n" + description
+        let (description, _, _) = associatedValues
+        return "Error: " + description + Thread.callStackSymbols.joined(separator: "\n")
     }
     
     var userFriendlyDescription: String {

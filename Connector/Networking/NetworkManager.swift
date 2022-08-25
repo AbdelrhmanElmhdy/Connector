@@ -6,145 +6,188 @@
 //
 
 import Foundation
-import SocketIO
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
 
 struct NetworkManager {
-    static let router = Router<API>()
-    
-    static let manager = SocketManager(socketURL: URL(string: "http://localhost:3000")!, config: [.log(false), .compress])
-    static let socket = manager.defaultSocket
-            
-    static func initializeSocketConnection() {
-        socket.connect()
-    }
-    
-    static func deinitializeSocketConnection() {
-        socket.disconnect()
-    }
-    
     static func listenForIncomingMessages(completionHandler: @escaping (_ message: [Message]) -> Void) {
-        socket.on(SocketEvent.newMessage.rawValue) { data, ack in
-            guard let messagesString = data as? String else { return }
-            guard let messageData = messagesString.data(using: .utf8, allowLossyConversion: false) else { return }
-            
-            let jsonDecoder = JSONDecoder()
-            jsonDecoder.userInfo[CodingUserInfoKey.managedObjectContext] = CoreDataManager.context
-            
-            guard let messages = try? jsonDecoder.decode([Message].self, from: messageData) else { return }
-            
-            completionHandler(messages)
-        }
-    }
-    
-    static func sendMessage(message: Message, completionHandler: @escaping () -> Void) {
-        guard let stringJsonMessage = SerializationTools.encodeToJsonString(message) else {
-            ErrorManager.reportError(NetworkError.encodingFailed)
-            return
-        }
-        socket.emit(SocketEvent.newMessage.rawValue, stringJsonMessage, completion: completionHandler)
-    }
-    
-    // MARK: Fetcher Methods
+        guard let myUid = UserDefaultsManager.user?.id else { return }
         
-    static func login(username: String, password: String, completion: @escaping(_ token: String?, _ user: User?, _ error: Error?) -> Void) {
-        router.request(.login(username: username, password: password)) { data, response, error in
-            if let error = error {
-                ErrorManager.reportError(error)
-                completion(nil, nil, error)
-                return
+        Firestore.firestore()
+            .collection("messages")
+            .whereField("pendingFor", arrayContains: myUid)
+            .addSnapshotListener { querySnapshot, error in
+                // Ignore update if it's initiated from the local client.
+                let updateIsLocallyInitiated = querySnapshot?.metadata.hasPendingWrites ?? false
+                guard !updateIsLocallyInitiated else { return }
+                
+                
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching documents: \(error!)")
+                    return
+                }
+                
+                removeCurrentUidFromListOfMessageReceivers(documents: documents)
+                
+                let messages = documents.map { Message(context: CoreDataManager.context, document: $0) }
+                
+                completionHandler(messages)
             }
-            
-            if let response = response as? HTTPURLResponse, !(200...299).contains(response.statusCode) {
-                completion(nil, nil, NetworkError.httpResponseError(statusCode: response.statusCode))
-                return
-            }
-            
-            // Decode data as LoginAndSignupResponseModel
-            guard let data = data else {
-                completion(nil, nil, NetworkError.decodingFailed)
-                return
-            }
-
-            print(String(data: data, encoding: .utf8)!)
-            
-            do {
-                let result = try JSONDecoder().decode(LoginAndSignupApiResponseModel.self, from: data)
-                completion(result.accessToken, result.user, nil)
-            } catch {
-                completion(nil, nil, error)
-            }
-            
+    }
+    
+    static func removeCurrentUidFromListOfMessageReceivers(documents: [DocumentSnapshot]) {
+        for document in documents {
+            guard let data = document.data() else { continue }
+            let messageIsPendingFor = (data["pendingFor"] as? [String])?.filter { $0 != UserDefaultsManager.user?.id }
+            document.reference.updateData(["pendingFor": messageIsPendingFor ?? []])
         }
         
     }
+    
+    static func initializeChatRoom(_ room: ChatRoom, withMessage message: Message) {
+        Firestore.firestore().collection("chatRooms").document(room.id!).setData([
+            "participantsIDs": room.participantsIDs!,
+        ])
+        
+        sendMessage(message: message)
+    }
+    
+    static func sendMessage(message: Message) {
+        let messageDictionary = message.encodeToDictionary() as [String : Any]
+        
+        Firestore.firestore()
+            .collection("messages")
+            .document(message.id!)
+            .setData(messageDictionary)
+    }
+    
+    
     
     static func signup(firstName: String,
                        lastName: String,
                        username: String,
                        email: String,
                        password: String,
-                       completion: @escaping(_ token: String?, _ user: User?, _ error: Error?) -> Void) {
-        router.request(.signup(firstName: firstName, lastName: lastName, email: email, username: username, password: password)) { data, response, error in
+                       completion: @escaping(_ user: User?, _ error: Error?) -> Void) {
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            // Handle errors.
             if let error = error {
                 ErrorManager.reportError(error)
-                completion(nil, nil, error)
+                completion(nil, error)
                 return
             }
             
-            if let response = response as? HTTPURLResponse, !(200...299).contains(response.statusCode) {
-                completion(nil, nil, NetworkError.httpResponseError(statusCode: response.statusCode))
+            guard let authResult = authResult else {
+                let error = NetworkError.failedToSignup
+                ErrorManager.reportError(error)
+                
+                completion(nil, error)
                 return
             }
             
-            // Decode data as LoginAndSignupResponseModel
-            guard let data = data else {
-                completion(nil, nil, NetworkError.decodingFailed)
-                return
-            }
-
-            print(String(data: data, encoding: .utf8)!)
+            // Create user.
+            let user = User(context: CoreDataManager.context)
+            user.id = authResult.user.uid
+            user.firstName = firstName
+            user.lastName = lastName
+            user.username = username
+            user.email = email
             
-            do {
-                let result = try JSONDecoder().decode(LoginAndSignupApiResponseModel.self, from: data)
-                completion(result.accessToken, result.user, nil)
-            } catch {
-                completion(nil, nil, error)
-            }
+            // Upload user data on firestore
+            uploadUserData(user: user)
             
+            completion(user, nil)
         }
         
     }
-    
-    static func searchUsersByUserName(username: String, completion: @escaping (_ users: [User]?, _ error: Error?) -> Void) {
-        router.request(.searchUsers(username: username)) { data, response, error in
+        
+    static func login(email: String,
+                      password: String,
+                      completion: @escaping(_ user: User?, _ error: Error?) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            // Handle error.
             if let error = error {
-                print("is error here?")
                 ErrorManager.reportError(error)
                 completion(nil, error)
                 return
             }
             
-            if let response = response as? HTTPURLResponse, !(200...299).contains(response.statusCode) {
-                completion(nil, NetworkError.httpResponseError(statusCode: response.statusCode))
-                return
-            }
-            
-            // Decode data as LoginAndSignupResponseModel
-            guard let data = data else {
-                completion(nil, NetworkError.decodingFailed)
-                return
-            }
-
-            print(String(data: data, encoding: .utf8)!)
-            
-            do {
-                let users = try JSONDecoder().decode([User].self, from: data)
-                completion(users, nil)
-            } catch {
+            guard let authResult = authResult else {
+                let error = NetworkError.failedToLogin
+                ErrorManager.reportError(error)
+                
                 completion(nil, error)
+                return
+            }
+            
+            // Fetch user data from firestore.
+            fetchUser(withId: authResult.user.uid) { user, error in
+                if let error = error {
+                    completion(nil, error)
+                    return
+                }
+                
+                completion(user, nil)
             }
             
         }
+    }
+    
+    static func fetchUser(withId uid: String, completion: @escaping (_ user: User?, _ error: Error?) -> Void) {
+        Firestore.firestore().collection("users").document(uid).getDocument { document, error in
+            guard let document = document else {
+                completion(nil, error)
+                return
+            }
+            
+            let user = User(context: CoreDataManager.context, document: document)
+            
+            completion(user, nil)
+        }
+    }
+    
+    static func searchUsersByUserName(username: String, completion: @escaping (_ users: [User]?, _ error: Error?) -> Void) {
+        Firestore.firestore()
+            .collection("users")
+            .whereField("username", isEqualTo: username)
+            .addSnapshotListener { querySnapshot, error in
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching documents: \(error!)")
+                    completion(nil, error)
+                    return
+                }
+                
+                let users: [User] = documents.map { document in
+                    let userData = document.data()
+                    
+                    let user = User(context: CoreDataManager.context)
+                    user.id = document.documentID
+                    user.firstName = userData["firstName"] as? String
+                    user.lastName = userData["lastName"] as? String
+                    user.username = userData["username"] as? String
+                    user.email = userData["email"] as? String
+                    
+                    return user
+                }
+                
+                completion(users, nil)
+            }
+    }
+    
+    static func uploadUserData(user: User) {
+        guard let uid = user.id,
+              let firstName = user.firstName,
+              let lastName = user.lastName,
+              let username = user.username,
+              let email = user.email else { return }
+        
+        Firestore.firestore().collection("users").document(uid).setData([
+            "firstName": firstName,
+            "lastName": lastName,
+            "username": username,
+            "email": email,
+        ])
     }
     
 }

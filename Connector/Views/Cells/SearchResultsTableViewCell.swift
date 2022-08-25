@@ -11,27 +11,14 @@ class SearchResultsTableViewCell: UITableViewCell {
 
     var viewModel: User? {
         didSet {
-//            guard let viewModel = viewModel else { return }
-//            chatImageView.image = viewModel.chatImage
-//            chatNameLabel.text = viewModel.chatName
-//            let relativeDateFormatter = DateFormatter()
-//            if Calendar.current.isDateInToday(viewModel.chatDate) {
-//                relativeDateFormatter.timeStyle = .short
-//                relativeDateFormatter.dateStyle = .none
-//            } else {
-//                relativeDateFormatter.timeStyle = .none
-//                relativeDateFormatter.dateStyle = .medium
-//            }
-//            relativeDateFormatter.locale = .current
-//            relativeDateFormatter.doesRelativeDateFormatting = true
-//            timeAndDateLabel.text = relativeDateFormatter.string(from: viewModel.chatDate)
-//
-//            lastMessageLabel.text = viewModel.lastMessage
+            guard let viewModel = viewModel else { return }
+            personImageView.source = viewModel.thumbnailImageUrl
+            nameLabel.text = viewModel.name
         }
     }
     
-    let chatImageView: RoundImageView = {
-        let imageView = RoundImageView()
+    let personImageView: RemoteImageView = {
+        let imageView = RemoteImageView(isRound: true)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -67,12 +54,12 @@ class SearchResultsTableViewCell: UITableViewCell {
     }
     
     private func setupChatImageView() {
-        contentView.addSubview(chatImageView)
+        contentView.addSubview(personImageView)
         NSLayoutConstraint.activate([
-            chatImageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            chatImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-            chatImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            chatImageView.widthAnchor.constraint(equalTo: chatImageView.heightAnchor),
+            personImageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            personImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+            personImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            personImageView.widthAnchor.constraint(equalTo: personImageView.heightAnchor),
         ])
     }
     
@@ -81,7 +68,7 @@ class SearchResultsTableViewCell: UITableViewCell {
         
         NSLayoutConstraint.activate([
             nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            nameLabel.leadingAnchor.constraint(equalTo: chatImageView.trailingAnchor, constant: 10),
+            nameLabel.leadingAnchor.constraint(equalTo: personImageView.trailingAnchor, constant: 10),
             nameLabel.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.75),
         ])
     }

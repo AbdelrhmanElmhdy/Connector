@@ -80,7 +80,7 @@ class ChatInputFieldContainer: UIView {
         let size: CGFloat = ChatInputFieldContainer.minHeight - verticalPadding
         
         NSLayoutConstraint.activate([
-            sendBtn.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -verticalPadding / 2),
+            sendBtn.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -(verticalPadding / 2) - 1),
             sendBtn.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -4),
             sendBtn.widthAnchor.constraint(equalToConstant: size),
             sendBtn.heightAnchor.constraint(equalToConstant: size),

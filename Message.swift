@@ -8,12 +8,12 @@
 
 import Foundation
 import CoreData
+import FirebaseFirestore
 
 @objc(Message)
-public class Message: NSManagedObject, Codable {
-    
+public class Message: NSManagedObject, FirebaseCodable, Codable {
     enum MessageType: Int16 {
-        case text = 0
+        case text
         case voiceNote
         case image
         case video
@@ -24,7 +24,7 @@ public class Message: NSManagedObject, Codable {
     }
     
     enum InteractionType: Int16 {
-        case love = 0
+        case love
         case like
         case haha
         case clap
@@ -34,11 +34,47 @@ public class Message: NSManagedObject, Codable {
     enum CodingKeys: CodingKey {
          case id, senderId, roomId, sentDateUnixTimeStamp, receiptDateUnixTimeStamp, repliedAtMessageId, type, text, mediaOrFileURL, location, contact, interactionType
      }
+    
+    required convenience init(context: NSManagedObjectContext, document: DocumentSnapshot) {
+        self.init(context: context)
+        
+        guard let data = document.data() else { return }
+        
+        self.id = document.documentID
+        self.senderId = data["senderId"] as? String
+        self.roomId = data["roomId"] as? String
+        self.sentDateUnixTimeStamp = data["sentDateUnixTimeStamp"] as? Double ?? -1
+        self.receiptDateUnixTimeStamp = data["receiptDateUnixTimeStamp"] as? Double ?? -1
+        self.repliedAtMessageId = data["repliedAtMessageId"] as? String
+        self.type = data["type"] as? Int16 ?? 0
+        self.text = data["text"] as? String
+        self.mediaOrFileURL = data["mediaOrFileURL"] as? String
+        self.interactionType = data["interactionType"] as? Int16 ?? 0
+    }
+    
+    func encodeToDictionary() -> [String: Any?] {
+        let dictionary: [String: Any?] = [
+            "id": self.id,
+            "senderId": self.senderId,
+            "roomId": self.roomId,
+            "sentDateUnixTimeStamp": self.sentDateUnixTimeStamp,
+            "receiptDateUnixTimeStamp": self.receiptDateUnixTimeStamp,
+            "repliedAtMessageId": self.repliedAtMessageId,
+            "type": self.type,
+            "text": self.text,
+            "mediaOrFileURL": self.mediaOrFileURL,
+            "interactionType": self.interactionType,
+            "pendingFor": self.room?.participantsIDs?.filter {$0 != self.senderId}
+        ]
+        
+        return dictionary
+    }
+    
 
     convenience init(
-        senderId: UUID,
-        roomId: UUID,
-        repliedAtMessageId: UUID? = nil,
+        senderId: String,
+        roomId: String,
+        repliedAtMessageId: String? = nil,
         type: MessageType,
         text: String? = nil,
         mediaOrFileURL: URL? = nil,
@@ -48,7 +84,7 @@ public class Message: NSManagedObject, Codable {
     ) {
         self.init(context: CoreDataManager.context)
         
-        self.id = UUID()
+        self.id = UUID().uuidString
         self.senderId = senderId
         self.roomId = roomId
         self.repliedAtMessageId = repliedAtMessageId
@@ -58,30 +94,24 @@ public class Message: NSManagedObject, Codable {
         self.location = location
         self.contact = contact
         self.interactionType = interactionType?.rawValue ?? -1
-        
-        do {
-            self.room = try CoreDataManager.retrieveChatRoom(roomId: roomId)
-        } catch {
-            ErrorManager.reportError(error)
-        }
-        
+        self.sentDate = Date.now
     }
     
     required convenience public init(from decoder: Decoder) throws {
         guard let context = decoder.userInfo[CodingUserInfoKey.managedObjectContext] as? NSManagedObjectContext else {
-            throw CoreDataError.decoderMissingManagedObjectContext(context: "trying to decode a json response into a Message object")
+            throw CoreDataError.decoderMissingManagedObjectContext()
         }
 
         self.init(context: context)
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.id = try container.decode(UUID.self, forKey: .id)
-        self.senderId = try container.decode(UUID.self, forKey: .senderId)
-        self.roomId = try container.decode(UUID.self, forKey: .roomId)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.senderId = try container.decode(String.self, forKey: .senderId)
+        self.roomId = try container.decode(String.self, forKey: .roomId)
         self.sentDateUnixTimeStamp = try container.decode(Double.self, forKey: .sentDateUnixTimeStamp)
         self.receiptDateUnixTimeStamp = try container.decode(Double.self, forKey: .receiptDateUnixTimeStamp)
-        self.repliedAtMessageId = try container.decode(UUID.self, forKey: .repliedAtMessageId)
+        self.repliedAtMessageId = try container.decode(String.self, forKey: .repliedAtMessageId)
         self.type = try container.decode(Int16.self, forKey: .type)
         self.text = try container.decode(String.self, forKey: .text)
         self.mediaOrFileURL = try container.decode(String.self, forKey: .mediaOrFileURL)
@@ -127,18 +157,18 @@ public class Message: NSManagedObject, Codable {
         
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(id, forKey: .id)
-        try container.encode(senderId, forKey: .senderId)
-        try container.encode(roomId, forKey: .roomId)
-        try container.encode(sentDateUnixTimeStamp, forKey: .sentDateUnixTimeStamp)
-        try container.encode(receiptDateUnixTimeStamp, forKey: .receiptDateUnixTimeStamp)
-        try container.encode(repliedAtMessageId, forKey: .repliedAtMessageId)
-        try container.encode(type, forKey: .type)
-        try container.encode(text, forKey: .text)
-        try container.encode(mediaOrFileURL, forKey: .mediaOrFileURL)
-        try container.encode(location, forKey: .location)
-        try container.encode(contact, forKey: .contact)
-        try container.encode(interactionType, forKey: .interactionType)
+
+        try container.encodeIfPresent(id, forKey: .id)
+        try container.encodeIfPresent(senderId, forKey: .senderId)
+        try container.encodeIfPresent(roomId, forKey: .roomId)
+        try container.encodeIfPresent(sentDateUnixTimeStamp, forKey: .sentDateUnixTimeStamp)
+        try container.encodeIfPresent(receiptDateUnixTimeStamp, forKey: .receiptDateUnixTimeStamp)
+        try container.encodeIfPresent(repliedAtMessageId, forKey: .repliedAtMessageId)
+        try container.encodeIfPresent(type, forKey: .type)
+        try container.encodeIfPresent(text, forKey: .text)
+        try container.encodeIfPresent(mediaOrFileURL, forKey: .mediaOrFileURL)
+        try container.encodeIfPresent(location, forKey: .location)
+        try container.encodeIfPresent(contact, forKey: .contact)
+        try container.encodeIfPresent(interactionType, forKey: .interactionType)
       }
 }

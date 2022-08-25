@@ -14,7 +14,7 @@ class RemoteImageView: UIImageView {
 
     let shimmeringView: ShimmeringView = {
         let view = ShimmeringView()
-        view.layer.cornerRadius = 2
+        view.layer.cornerRadius = 8
         view.shimmerSpeed = 0.1
         view.shimmerPauseDuration = 0.8
         view.isShimmering = true
@@ -25,20 +25,25 @@ class RemoteImageView: UIImageView {
         return view
     }()
     
-    var source: String? {
+    var source: URL? {
         didSet {
-            shimmeringView.isShimmering = true
-            shimmeringView.isHidden = false
-            
-            if let source = source, !source.isEmpty {
+            if let source = source {
+                shimmeringView.isShimmering = true
+                shimmeringView.isHidden = false
                 setImage(from: source)
+            } else {
+                backgroundColor = .systemGray5
+                image = UIImage(systemName: "person.fill")?.withTintColor(.systemGray2).withRenderingMode(.alwaysOriginal)
             }
         }
     }
     
-    override var frame: CGRect {
+    let isRound: Bool
+    
+    override var bounds: CGRect {
         didSet {
-            layer.cornerRadius = frame.height / 2
+            guard isRound else { return }
+            layer.cornerRadius = bounds.height / 2
             clipsToBounds = true
         }
     }
@@ -51,10 +56,12 @@ class RemoteImageView: UIImageView {
             }
         }
     }
-    
-    init(source: String? = nil) {
-        super.init(frame: .zero)
+        
+    init(source: URL? = nil, isRound: Bool = false, frame: CGRect = .zero) {
         self.source = source
+        self.isRound = isRound
+        super.init(frame: frame)
+        
         addSubview(shimmeringView)
         shimmeringView.fillSuperView()
     }
@@ -63,26 +70,19 @@ class RemoteImageView: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setImage(from source: String) {
-        if !source.isURL {
-            if source.isEmpty { return }
-            self.image = UIImage.getImageFrom(source)
-            return
-        }
+    func setImage(from source: URL) {
         
-        guard let url = URL(string: source) else { return }
-        
-        if let imageFromCache = imageCache.object(forKey: url as AnyObject) as? UIImage {
+        if let imageFromCache = imageCache.object(forKey: source.absoluteURL as AnyObject) as? UIImage {
             self.image = imageFromCache
             return
         }
         
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+        let task = URLSession.shared.dataTask(with: source) { data, response, error in
             guard let data = data, error == nil else { return }
             
             DispatchQueue.main.async() {
                 if let image = UIImage(data: data) {
-                    imageCache.setObject(image, forKey: url as AnyObject)
+                    imageCache.setObject(image, forKey: source.absoluteURL as AnyObject)
                     self.image = image
                 }
             }

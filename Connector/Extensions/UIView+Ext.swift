@@ -177,7 +177,7 @@ extension UIView {
         
         blurEffectView.isUserInteractionEnabled = false
         blurEffectView.tag = UIView.blurEffectTag
-        
+                
         addSubview(blurEffectView)
         blurEffectView.fillSuperView()
     }

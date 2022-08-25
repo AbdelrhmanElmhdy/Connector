@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "bubble_sent.png",
+      "filename" : "chat_bubble_outgoing.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "bubble_sent@2x.png",
+      "filename" : "chat_bubble_outgoing@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "bubble_sent@3x.png",
+      "filename" : "chat_bubble_outgoing@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

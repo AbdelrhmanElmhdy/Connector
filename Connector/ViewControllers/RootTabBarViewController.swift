@@ -9,8 +9,13 @@ import UIKit
 
 class RootTabBarViewController: UITabBarController {
 
+    let chatsTableViewController = ChatsTableViewController()
+    let callsViewController = CallsViewController()
+    let settingsViewController = SettingsViewController()
+    var isListeningForMessages = false
+    
     lazy var searchController: UISearchController = {
-        let searchController = UISearchController(searchResultsController: nil)
+        let searchController = UISearchController(searchResultsController: SearchResultsTableViewController())
         return searchController
     }()
     
@@ -32,11 +37,6 @@ class RootTabBarViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let user = User(id: UUID(), firstName: "Abdelrhman", lastName: "Elmahdy", username: "AbdrhmanElmhdy", email: "AbdelrhmanElmahdy@gmail.com", chatRoomIds: [])
-
-        UserDefaultsManager.user = user
-        
         configureTabBar()
     }
         
@@ -44,30 +44,18 @@ class RootTabBarViewController: UITabBarController {
         super.viewWillAppear(animated)
         
         let loggedIn = UserDefaultsManager.isLoggedIn
+        if loggedIn { listenForMessages() } else { presentAuthenticationStack() }
         
-        if !loggedIn {
-            let authNavigationController = UINavigationController(rootViewController: LoginViewController())
-            authNavigationController.modalPresentationStyle = .fullScreen
-            present(authNavigationController, animated: false)
-            
-        }
-        
-        navigationController?.navigationItem.largeTitleDisplayMode = .always
-        navigationController?.navigationBar.prefersLargeTitles = true
-        definesPresentationContext = true
-        navigationItem.searchController = searchController
+        configureNavigationBar()
     }
     
     func configureTabBar() {
-        let chatsTableViewController = ChatsTableViewController()
         chatsTableViewController.tabBarItem.image = UIImage(systemName: "message.fill")
         chatsTableViewController.title = "Chats".localized
         
-        let callsViewController = CallsViewController()
         callsViewController.tabBarItem.image = UIImage(systemName: "phone.fill")
         callsViewController.title = "Calls".localized
         
-        let settingsViewController = SettingsViewController()
         settingsViewController.tabBarItem.image = UIImage(systemName: "gear")
         settingsViewController.title = "Settings".localized
         
@@ -85,6 +73,7 @@ class RootTabBarViewController: UITabBarController {
     // Handle new selection
     func tabChangedTo(selectedIndex: Int) {
         title = screenTitles?[selectedIndex]
+        
         guard let selectedViewController = selectedViewController as? UISearchControllerDelegate else {
             navigationItem.searchController = nil
             return
@@ -101,5 +90,24 @@ class RootTabBarViewController: UITabBarController {
         searchController.searchResultsUpdater = selectedViewController
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search \(title ?? "")".localized
+    }
+    
+    func presentAuthenticationStack() {
+        let authNavigationController = UINavigationController(rootViewController: LoginViewController())
+        authNavigationController.modalPresentationStyle = .fullScreen
+        present(authNavigationController, animated: false)
+    }
+    
+    func listenForMessages() {
+        guard !isListeningForMessages else { return }
+        NetworkManager.listenForIncomingMessages(completionHandler: ChatMessagesManager.shared.incomingMessagesHandler)
+        isListeningForMessages = true
+    }
+    
+    func configureNavigationBar() {
+        navigationController?.navigationItem.largeTitleDisplayMode = .always
+        navigationController?.navigationBar.prefersLargeTitles = true
+        definesPresentationContext = true
+        navigationItem.searchController = searchController
     }
 }

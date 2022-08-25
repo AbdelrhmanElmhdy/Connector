@@ -9,29 +9,19 @@ import UIKit
 
 class ChatTableViewCell: UITableViewCell {
         
-    var viewModel: ChatListItemModel? {
+    var viewModel: ChatRoom? {
         didSet {
             guard let viewModel = viewModel else { return }
-            chatImageView.image = viewModel.chatImage
-            chatNameLabel.text = viewModel.chatName
-            let relativeDateFormatter = DateFormatter()
-            if Calendar.current.isDateInToday(viewModel.chatDate) {
-                relativeDateFormatter.timeStyle = .short
-                relativeDateFormatter.dateStyle = .none
-            } else {
-                relativeDateFormatter.timeStyle = .none
-                relativeDateFormatter.dateStyle = .medium
-            }
-            relativeDateFormatter.locale = .current
-            relativeDateFormatter.doesRelativeDateFormatting = true
-            timeAndDateLabel.text = relativeDateFormatter.string(from: viewModel.chatDate)
             
-            lastMessageLabel.text = viewModel.lastMessage
+            chatImageView.source = viewModel.chatThumbnailImageURL
+            chatNameLabel.text = viewModel.chatName
+            timeAndDateLabel.text = viewModel.lastMessageDate?.getLocalizedRelativeShortFormat()
+            lastMessageLabel.text = viewModel.lastMessageLabel
         }
     }
     
-    let chatImageView: RoundImageView = {
-        let imageView = RoundImageView()
+    let chatImageView: RemoteImageView = {
+        let imageView = RemoteImageView(isRound: true)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()

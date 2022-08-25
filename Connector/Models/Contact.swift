@@ -17,7 +17,7 @@ public class Contact: NSManagedObject, Codable {
 
     required convenience public init(from decoder: Decoder) throws {
         guard let context = decoder.userInfo[CodingUserInfoKey.managedObjectContext] as? NSManagedObjectContext else {
-            throw CoreDataError.decoderMissingManagedObjectContext(context: "trying to decode a json response into a Message object")
+            throw CoreDataError.decoderMissingManagedObjectContext()
         }
 
         self.init(context: context)

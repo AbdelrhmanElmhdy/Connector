@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 struct ChatListItemModel {
-    let chatId: UUID
+    let roomId: String
     let chatName: String
     let lastMessage: String
     let chatImage: UIImage

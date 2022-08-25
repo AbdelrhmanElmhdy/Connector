@@ -7,18 +7,24 @@
 
 import UIKit
 
-class AuthViewController: UIViewController {
-        
+class AuthViewController: KeyboardAvoidingViewController {
+    
+    // MARK: Properties
+    
+    
     let scrollView = UIScrollView()
     
     let appIcon = UIImageView(image: UIImage(named: "AuthScreenAppIcon"))
         
-    lazy var firstNameTextFieldView = makeAuthTextField(name: "First Name".localized, icon: UIImage(systemName: "person.circle.fill"))
+    lazy var firstNameTextFieldView = makeAuthTextField(name: "First Name".localized,
+                                                        icon: UIImage(systemName: "person.circle.fill"))
     
-    lazy var lastNameTextFieldView = makeAuthTextField(name: "Last Name".localized, icon: UIImage(systemName: "person.circle.fill"))
+    lazy var lastNameTextFieldView = makeAuthTextField(name: "Last Name".localized,
+                                                       icon: UIImage(systemName: "person.circle.fill"))
     
     lazy var emailTextFieldView: TextFieldView = {
-       let textFieldView = makeAuthTextField(name: "Email".localized, icon: UIImage(systemName: "envelope.circle.fill"))
+       let textFieldView = makeAuthTextField(name: "Email".localized,
+                                             icon: UIImage(systemName: "envelope.circle.fill"))
         
         textFieldView.textField.keyboardType = .emailAddress
         textFieldView.textField.textContentType = .emailAddress
@@ -26,12 +32,15 @@ class AuthViewController: UIViewController {
         return textFieldView
     }()
     
-    lazy var usernameTextFieldView = makeAuthTextField(name: "Username".localized, icon: UIImage(systemName: "person.circle.fill"))
+    lazy var usernameTextFieldView = makeAuthTextField(name: "Username".localized,
+                                                       icon: UIImage(systemName: "person.circle.fill"))
     
-    lazy var passwordTextFieldView = makePasswordTextField(name: "Password".localized, icon: UIImage(systemName: "lock.circle.fill"))
+    lazy var passwordTextFieldView = makePasswordTextField(name: "Password".localized,
+                                                           icon: UIImage(systemName: "lock.circle.fill"))
     
     
-    lazy var confirmPasswordTextFieldView = makePasswordTextField(name: "Confirm Password".localized, icon: UIImage(systemName: "lock.circle.fill"))
+    lazy var confirmPasswordTextFieldView = makePasswordTextField(name: "Confirm Password".localized,
+                                                                  icon: UIImage(systemName: "lock.circle.fill"))
     
     var logoHeight: CGFloat = LayoutConstants.screenHeight * 0.3
     
@@ -61,7 +70,7 @@ class AuthViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.setTitleColor(.accent, for: .normal)
-        button.addTarget(self, action: #selector(handleOtherAuthMethodBtnTap), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didPressOtherAuthMethodButton), for: .touchUpInside)
         
         return button
     }()
@@ -73,10 +82,10 @@ class AuthViewController: UIViewController {
         stackView.spacing = 5
         return stackView
     }()
-
     
     
     // MARK: Life Cycle
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,8 +96,8 @@ class AuthViewController: UIViewController {
     }
     
     
-    
     // MARK: View Setups
+    
     
     func setupSubviews() {
         setupScrollView()
@@ -104,7 +113,7 @@ class AuthViewController: UIViewController {
                 
         NSLayoutConstraint.activate([
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: keyboardPlaceHolderView.topAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
         ])
@@ -122,7 +131,7 @@ class AuthViewController: UIViewController {
             appIcon.heightAnchor.constraint(equalToConstant: logoHeight),
         ])
     }
-        
+    
     func setupTextFieldsStackView() {
         scrollView.addSubview(textFieldsStackView)
         
@@ -141,7 +150,7 @@ class AuthViewController: UIViewController {
         scrollView.addSubview(authenticationBtn)
         authenticationBtn.translatesAutoresizingMaskIntoConstraints = false
         
-        authenticationBtn.addTarget(self, action: #selector(handleAuthenticationBtnTap), for: .touchUpInside)
+        authenticationBtn.addTarget(self, action: #selector(didPressAuthenticationButton), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
             authenticationBtn.topAnchor.constraint(equalTo: textFieldsStackView.bottomAnchor, constant: 30),
@@ -162,15 +171,20 @@ class AuthViewController: UIViewController {
             otherAuthMethodLabelAndBtnHorizontalStack.heightAnchor.constraint(greaterThanOrEqualToConstant: 18),
         ])
     }
+    
+    
+    // MARK: Actions
+    
+    
     /// Abstract
-    @objc func handleAuthenticationBtnTap() {}
+    @objc func didPressAuthenticationButton() {}
     
     /// Abstract
-    @objc func handleOtherAuthMethodBtnTap() {}
+    @objc func didPressOtherAuthMethodButton() {}
     
     
+    // MARK: Convenience
     
-    // MARK: Tools
     
     func makeAuthTextField(name: String, icon: UIImage?) -> TextFieldView {
         let textFieldView = TextFieldView(name: name, icon: icon?.withTintColor(.accentForLightGrayForDark).withRenderingMode(.alwaysOriginal))

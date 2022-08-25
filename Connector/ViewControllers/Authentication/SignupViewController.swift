@@ -26,7 +26,7 @@ class SignupViewController: AuthViewController {
     
     // MARK: Event Handlers
     
-    override func handleAuthenticationBtnTap() {
+    override func didPressAuthenticationButton() {
         
         let firstName = firstNameTextFieldView.text
         let lastName = lastNameTextFieldView.text
@@ -37,6 +37,7 @@ class SignupViewController: AuthViewController {
         
         // Validate all fields have been provided.
         var allFieldsProvided = true
+        
         if (firstName ?? "").isEmpty {
             firstNameTextFieldView.showIsEmptyErrorMessage()
             allFieldsProvided = false
@@ -45,8 +46,8 @@ class SignupViewController: AuthViewController {
             lastNameTextFieldView.showIsEmptyErrorMessage()
             allFieldsProvided = false
         }
-        if (email ?? "").isEmpty {
-            emailTextFieldView.showIsEmptyErrorMessage()
+        if !(email ?? "").isEmail {
+            emailTextFieldView.showErrorMessage(errorMessage: "Invalid email address".localized)
             allFieldsProvided = false
         }
         if (username ?? "").isEmpty {
@@ -72,42 +73,42 @@ class SignupViewController: AuthViewController {
         view.isUserInteractionEnabled = false
         authenticationBtn.isLoading = true
                 
-        NetworkManager.signup(firstName: firstName!, lastName: lastName!, username: username!, email: email!, password: password!) { token, user, error in
-            DispatchQueue.main.async {
-                self.view.isUserInteractionEnabled = true
-                self.authenticationBtn.isLoading = false
-                
-                if let error = error {
-                    print(error)
-                    let alertPopup = AlertPopup()
-                    alertPopup.presentAsError(withMessage: "Incorrect username or password".localized)
-                    return
-                }
-                
-                guard let user = user, let token = token else { return }
-                
-                KeychainManager.accessToken = token
-                UserDefaultsManager.user = user
-                UserDefaultsManager.isLoggedIn = true
-                
-                
-                self.navigateToMainTabBarController()
-            }
-        }
+        NetworkManager.signup(firstName: firstName!, lastName: lastName!, username: username!, email: email!, password: password!, completion: handleUserSignupCompletion)
         
     }
         
-    override func handleOtherAuthMethodBtnTap() {
+    override func didPressOtherAuthMethodButton() {
         navigateToSignupScreen()
     }
         
-    // MARK: Tools
+    // MARK: Convenience
+    
+    func handleUserSignupCompletion(user: User?, error: Error?) {
+        DispatchQueue.main.async {
+            self.view.isUserInteractionEnabled = true
+            self.authenticationBtn.isLoading = false
+            
+            if let error = error {
+                print(error)
+                let alertPopup = AlertPopup()
+                alertPopup.presentAsError(withMessage: "Incorrect username or password".localized)
+                return
+            }
+            
+            guard let user = user else { return }
+            
+            UserDefaultsManager.user = user
+            UserDefaultsManager.isLoggedIn = true
+            
+            self.navigateToMainTabBarController()
+        }
+    }
     
     override func getTextFieldsStackArrangedSubviews() -> [UIView] {
         let arrangedSubviews = [firstNameTextFieldView, lastNameTextFieldView, emailTextFieldView, usernameTextFieldView, passwordTextFieldView, confirmPasswordTextFieldView]
         return arrangedSubviews
     }
-        
+    
     func navigateToSignupScreen() {
         if previousViewController is LoginViewController {
             navigationController?.popViewController(animated: true)

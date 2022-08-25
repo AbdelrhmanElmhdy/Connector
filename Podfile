@@ -9,6 +9,9 @@ target 'Connector' do
   pod 'Socket.IO-Client-Swift', '~> 16.0.1'
   pod 'SwiftKeychainWrapper', '~> 4.0'
   pod 'ShimmerSwift'
+  pod 'FirebaseCore', :git => 'https://github.com/firebase/firebase-ios-sdk.git', :branch => 'master'
+  pod 'FirebaseFirestore'
+  pod 'FirebaseAuth'
   
   target 'ConnectorTests' do
     inherit! :search_paths
