@@ -17,7 +17,6 @@ fileprivate let defaultUserFriendlyAdvice = "Try again later".localized
 
 enum CoreDataError: Error, UserFriendlyError {
 
-    /// - parameter context: A sentence describing the attempted action written in the format "trying to + attempted action"
     case failedToSave(description: String = defaultFailedToSaveErrorDescription,
                       userFriendlyDescription: String = defaultUserFriendlyDescription,
                       userFriendlyAdvice: String = defaultUserFriendlyAdvice)

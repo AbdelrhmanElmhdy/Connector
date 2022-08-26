@@ -9,6 +9,7 @@ import UIKit
 import CoreData
 
 let plainTextMessageCellReuseIdentifier = "plainTextMessageCellReuseIdentifier"
+
 class ChatViewController: UIViewController {
     // MARK: Properties
     
@@ -24,9 +25,9 @@ class ChatViewController: UIViewController {
         request.sortDescriptors = [dateSort]
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
-                                                              managedObjectContext: CoreDataManager.context,
-                                                              sectionNameKeyPath: nil,
-                                                              cacheName: nil)
+                                                                  managedObjectContext: CoreDataManager.context,
+                                                                  sectionNameKeyPath: nil,
+                                                                  cacheName: nil)
         fetchedResultsController.delegate = self
         
         return fetchedResultsController
@@ -118,7 +119,7 @@ class ChatViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // Make nav bar always translucent even when no content is beneath it to fix the
+        // Make nav bar always translucent even when no content is beneath it, to fix the
         // side effect of reversing the table view.
         forceNavBarToAlwaysBeTranslucent()
     }

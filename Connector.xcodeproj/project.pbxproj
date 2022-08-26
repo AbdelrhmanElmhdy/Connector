@@ -65,10 +65,9 @@
 		BCA43508284FBB21001F39D8 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA434FB284FBB21001F39D8 /* User.swift */; };
 		BCA43514284FCBC7001F39D8 /* ChatsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA43513284FCBC7001F39D8 /* ChatsTableViewController.swift */; };
 		BCA4351828506BD8001F39D8 /* ChatTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA4351728506BD8001F39D8 /* ChatTableViewCell.swift */; };
-		BCA4351A2850825D001F39D8 /* ChatListItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA435192850825D001F39D8 /* ChatListItemModel.swift */; };
 		BCA435252850A962001F39D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCA435242850A962001F39D8 /* Assets.xcassets */; };
 		BCC098A22898006200C943C3 /* CoreDataManager+Seeders.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC098A12898006200C943C3 /* CoreDataManager+Seeders.swift */; };
-		BCC098A528996F2700C943C3 /* KeyboardAvoidingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC098A428996F2700C943C3 /* KeyboardAvoidingVC.swift */; };
+		BCC098A528996F2700C943C3 /* KeyboardAvoidingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC098A428996F2700C943C3 /* KeyboardAvoidingViewController.swift */; };
 		BCC098A72899721300C943C3 /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC098A62899721300C943C3 /* UIViewController+Ext.swift */; };
 		BCC098AB289984D800C943C3 /* MessageComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC098AA289984D800C943C3 /* MessageComposerView.swift */; };
 		BCEF49B2287C423100EED9DB /* CoreDataError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCEF49B1287C423100EED9DB /* CoreDataError.swift */; };
@@ -163,10 +162,9 @@
 		BCA434FB284FBB21001F39D8 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		BCA43513284FCBC7001F39D8 /* ChatsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsTableViewController.swift; sourceTree = "<group>"; };
 		BCA4351728506BD8001F39D8 /* ChatTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableViewCell.swift; sourceTree = "<group>"; };
-		BCA435192850825D001F39D8 /* ChatListItemModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListItemModel.swift; sourceTree = "<group>"; };
 		BCA435242850A962001F39D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BCC098A12898006200C943C3 /* CoreDataManager+Seeders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreDataManager+Seeders.swift"; sourceTree = "<group>"; };
-		BCC098A428996F2700C943C3 /* KeyboardAvoidingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAvoidingVC.swift; sourceTree = "<group>"; };
+		BCC098A428996F2700C943C3 /* KeyboardAvoidingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAvoidingViewController.swift; sourceTree = "<group>"; };
 		BCC098A62899721300C943C3 /* UIViewController+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIViewController+Ext.swift"; path = "../../../Enjaz/Enjaz/Extensions/UIViewController+Ext.swift"; sourceTree = "<group>"; };
 		BCC098AA289984D800C943C3 /* MessageComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerView.swift; sourceTree = "<group>"; };
 		BCEF49B1287C423100EED9DB /* CoreDataError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataError.swift; sourceTree = "<group>"; };
@@ -267,7 +265,7 @@
 		BC125DBC28B7ECFB008D8C89 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				BCC098A428996F2700C943C3 /* KeyboardAvoidingVC.swift */,
+				BCC098A428996F2700C943C3 /* KeyboardAvoidingViewController.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -434,7 +432,6 @@
 				BCEF49B9287C89E900EED9DB /* ChatRoom.swift */,
 				BCF69A7628B7F998002C650D /* ChatRoom+CoreDataProperties.swift */,
 				BCA434FB284FBB21001F39D8 /* User.swift */,
-				BCA435192850825D001F39D8 /* ChatListItemModel.swift */,
 				BC6F89B8287C1F130023E2A6 /* Message.swift */,
 				BCEF49B5287C6CE900EED9DB /* Contact.swift */,
 				BCEF49B7287C6D4F00EED9DB /* Location.swift */,
@@ -791,7 +788,7 @@
 				BC7600B6287EBE8F003F6079 /* AuthViewController.swift in Sources */,
 				BC960E8B2850EF2C00C9ED68 /* LayoutTools.swift in Sources */,
 				BC6F89C0287C23FC0023E2A6 /* UserFriendlyError.swift in Sources */,
-				BCC098A528996F2700C943C3 /* KeyboardAvoidingVC.swift in Sources */,
+				BCC098A528996F2700C943C3 /* KeyboardAvoidingViewController.swift in Sources */,
 				BCEF49BC287CA20A00EED9DB /* UIColor+Ext.swift in Sources */,
 				BC99C6AD287EF2C1008DFE97 /* UIStackView+Ext.swift in Sources */,
 				BC125DB328B7E7BC008D8C89 /* ChatViewController+FetchedResultsControllerDelegate.swift in Sources */,
@@ -814,7 +811,6 @@
 				BC960E7C2850B11A00C9ED68 /* CallsViewController.swift in Sources */,
 				BC125DBA28B7EBD4008D8C89 /* ChatsTableViewController+FetchedResultsControllerDelegate.swift in Sources */,
 				BC125DB528B7E808008D8C89 /* ChatViewController+TableViewDelegate.swift in Sources */,
-				BCA4351A2850825D001F39D8 /* ChatListItemModel.swift in Sources */,
 				BCF69A7728B7F998002C650D /* ChatRoom+CoreDataProperties.swift in Sources */,
 				BC6F89A9287C13AB0023E2A6 /* UserDefaultsManager.swift in Sources */,
 				BC99C6D8287F1448008DFE97 /* AlertPopup.swift in Sources */,
