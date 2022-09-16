@@ -12,6 +12,8 @@ class ChatInputFieldContainer: UIView {
     static let minHeight: CGFloat = 40
     static let maxHeight: CGFloat = 200
     
+    var inputFieldHeightIsInvalid: Bool = false
+    
     let sendBtn: UIButton = {
         let button = UIButton(type: .system)
         
@@ -42,18 +44,7 @@ class ChatInputFieldContainer: UIView {
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
-    
-    override var bounds: CGRect {
-        didSet {
-            if bounds.height >= ChatInputFieldContainer.maxHeight {
-                inputField.isScrollEnabled = true
-            } else {
-                inputField.isScrollEnabled = false
-                inputField.sizeToFit()
-            }
-        }
-    }
-        
+            
     override init(frame: CGRect) {
         super.init(frame: frame)
         

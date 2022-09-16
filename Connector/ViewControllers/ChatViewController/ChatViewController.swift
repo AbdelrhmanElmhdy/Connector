@@ -179,20 +179,19 @@ class ChatViewController: UIViewController {
     // MARK: Actions
     
     
-    @objc func didPressSendButton() {
+    @objc func didPressSendButton() {        
         let messageText = messageComposerView.text
         
         // Generate the message object and attach it to current chat room.
         let message = Message(senderId: user.id!, roomId: chatRoom.id!, type: .text, text: messageText)
         message.room = chatRoom
-        
-        chatRoom.lastMessageTimeStamp = message.sentDateUnixTimeStamp
-        chatRoom.setLastMessageLabel(message: message)
-        
+                
         resetInputField()
         
         do {
             try ChatMessagesManager.shared.sendMessage(message, chatRoomIsInitialized: chatRoom.isInitialized)
+            chatRoom.lastMessageTimeStamp = message.sentDateUnixTimeStamp
+            chatRoom.setLastMessageLabel(message: message)
         } catch {
             // TODO: display error to the user
             ErrorManager.reportError(error)

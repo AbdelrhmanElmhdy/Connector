@@ -19,16 +19,26 @@ class SearchResultsTableViewCell: UITableViewCell {
     
     let personImageView: RemoteImageView = {
         let imageView = RemoteImageView(isRound: true)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .heavy)
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 18, weight: .semibold)
         return label
+    }()
+    
+    lazy var rootHStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [personImageView, nameLabel])
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.spacing = 10
+        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stackView
     }()
     
     override func awakeFromNib() {
@@ -49,28 +59,28 @@ class SearchResultsTableViewCell: UITableViewCell {
     
     
     private func setupSubviews() {
-        setupChatImageView()
+        setupRootHStack()
+        setupPersonImageView()
         setupNameLabel()
     }
-    
-    private func setupChatImageView() {
-        contentView.addSubview(personImageView)
+        
+    private func setupRootHStack() {
+        contentView.addSubview(rootHStack)
+        
         NSLayoutConstraint.activate([
-            personImageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            personImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-            personImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            personImageView.widthAnchor.constraint(equalTo: personImageView.heightAnchor),
+            rootHStack.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            rootHStack.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),
+            rootHStack.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
+            rootHStack.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
         ])
+    }
+    
+    private func setupPersonImageView() {
+        personImageView.widthAnchor.constraint(equalTo: personImageView.heightAnchor).isActive = true
     }
     
     private func setupNameLabel() {
-        contentView.addSubview(nameLabel)
-        
-        NSLayoutConstraint.activate([
-            nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            nameLabel.leadingAnchor.constraint(equalTo: personImageView.trailingAnchor, constant: 10),
-            nameLabel.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.75),
-        ])
+        nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
 
 }

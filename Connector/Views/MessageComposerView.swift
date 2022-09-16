@@ -7,11 +7,11 @@
 
 import UIKit
 
-class MessageComposerView: UIView {
+class MessageComposerView: UIView, UITextViewDelegate {
     static let topPadding: CGFloat = 15
     static let bottomPadding: CGFloat = 50
     static let verticalPadding: CGFloat = topPadding + bottomPadding
-    
+        
     var text: String {
         get {
             inputFieldContainer.inputField.text
@@ -22,11 +22,12 @@ class MessageComposerView: UIView {
         }
     }
     
-    let inputFieldContainer: ChatInputFieldContainer = {
+    lazy var inputFieldContainer: ChatInputFieldContainer = {
         let inputField = ChatInputFieldContainer(frame: .zero)
         
         inputField.layer.borderColor = UIColor.systemGray2.cgColor
         inputField.layer.borderWidth = 1
+        inputField.inputField.customDelegate = self
         
         inputField.translatesAutoresizingMaskIntoConstraints = false
         return inputField
@@ -60,5 +61,18 @@ class MessageComposerView: UIView {
         ])
         
         inputFieldContainer.layer.cornerRadius = ChatInputFieldContainer.minHeight / 2
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        // Enable or disable scrolling based on the number of lines
+        
+        if inputFieldContainer.inputField.numberOfLines >= 10 {
+            inputFieldContainer.inputField.isScrollEnabled = true
+        } else if inputFieldContainer.inputField.isScrollEnabled {
+            // Invalidate the intrinsic content size to get it recalculated after scrolling is disabled
+            
+            inputFieldContainer.inputField.isScrollEnabled = false
+            inputFieldContainer.inputField.invalidateIntrinsicContentSize()
+        }
     }
 }

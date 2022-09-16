@@ -99,16 +99,14 @@ class Popup: UIView {
 	// MARK: Tools
 			
 	func present(animated: Bool) {
+        prepareForPresentation()
+        
 		let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
 		keyWindow?.addSubview(self)
-				
-		prepareForPresentation(animated)
-				
-		if animated {
-			animateContentViewIn()
-		} else {
-			contentView.alpha = 1
-		}
+        
+        let animationDuration: TimeInterval = animated ? 0.2 : 0
+        
+        animateContentViewIn(withDuration: animationDuration)
 	}
 	
 	func dismiss(animated: Bool) {
@@ -126,25 +124,25 @@ class Popup: UIView {
 		}
 	}
 	
-	 func prepareForPresentation(_ animated: Bool) {
+	 func prepareForPresentation() {
 		if !(blurOverlay.gestureRecognizers?.contains(overlayTapGestureRecognizer) ?? false) {
 			blurOverlay.addGestureRecognizer(overlayTapGestureRecognizer)
 		}
 		
-		contentView.scale(to: animated ? contentViewInitialScale : 1)
+		contentView.scale(to: contentViewInitialScale)
 		blurOverlay.alpha = 1
 		dismissBtn.alpha = 1
 		
 		fillScreen()
 	}
-	
-	 func animateContentViewIn() {
-        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut) {
-			self.contentView.alpha = 1
-			self.contentView.scale(to: 1)
-		}
-	}
-	
+    
+    func animateContentViewIn(withDuration animationDuration: TimeInterval) {
+        UIView.animate(withDuration: animationDuration, delay: 0, options: .curveEaseOut) {
+            self.contentView.alpha = 1
+            self.contentView.scale(to: 1)
+        }
+    }
+		
 	func animateContentViewOut(completionHandler: @escaping (Bool) -> Void) {
 		UIView.animate(
 			withDuration: 0.1,

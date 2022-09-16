@@ -1,7 +1,7 @@
 # Connector
 Messaging and calling app.
 
-This is app is aimed to be a public code sample.
+This app is aimed to be a public code sample.
 
 # Features
 The under-development app currently supports basic text messaging and in the future it'll support:

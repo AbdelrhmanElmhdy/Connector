@@ -6,15 +6,16 @@
 //
 
 import UIKit
+import Combine
 
 class LoginViewController: AuthViewController {
     
     // MARK: Life Cycle
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Configure labels and button titles
         authenticationBtn.setTitle("Login".localized, for: .normal)
         otherAuthMethodLabel.text = "Not an existing user?".localized
         otherAuthMethodBtn.setTitle("Create an account".localized, for: .normal)

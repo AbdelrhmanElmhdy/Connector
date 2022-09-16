@@ -9,12 +9,6 @@ import UIKit
 
 class TextFieldView: UIView {
     
-    let textFieldContainer = UIView()
-    
-    let textField = UITextField()
-    
-    let iconImageView = UIImageView()
-    
     let errorLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -22,30 +16,68 @@ class TextFieldView: UIView {
         label.font = UIFont.systemFont(ofSize: 11)
         label.textAlignment = .center
         label.textColor = .red
+        label.text = " "
+        label.textAlignment = .natural
         
         return label
     }()
     
+    let iconImageView = UIImageView()
+    
+    let textField = UITextField()
+    
+    lazy var textFieldContainerHStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [iconImageView, textField])
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.alignment = .center
+        
+        let horizontalMargin: CGFloat = 15
+        let verticalMargin: CGFloat = 8
+        
+        stackView.layoutMargins = UIEdgeInsets(top: verticalMargin,
+                                               left: horizontalMargin,
+                                               bottom: verticalMargin,
+                                               right: horizontalMargin)
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.spacing = horizontalMargin
+        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    lazy var rootStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [errorLabel, textFieldContainerHStack])
+        stackView.axis = .vertical
+        stackView.distribution = .fill
+        stackView.alignment = .fill
+                
+        stackView.spacing = 3
+        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+        
     let name: String
     
     override var backgroundColor: UIColor? {
         get {
-            return textFieldContainer.backgroundColor
+            return textFieldContainerHStack.backgroundColor
         }
         set {
             // Apply the change only on the textFieldContainer view and keep TextFieldView's background color clear.
             guard newValue != .clear else { return }
-            textFieldContainer.backgroundColor = newValue
+            textFieldContainerHStack.backgroundColor = newValue
             self.backgroundColor = .clear
         }
     }
     
     var cornerRadius: CGFloat {
         get {
-            return textFieldContainer.layer.cornerRadius
+            return textFieldContainerHStack.layer.cornerRadius
         }
         set {
-            textFieldContainer.layer.cornerRadius = newValue
+            textFieldContainerHStack.layer.cornerRadius = newValue
         }
     }
     
@@ -57,9 +89,6 @@ class TextFieldView: UIView {
             textField.text = newValue
         }
     }
-    
-    private let errorLabelHeight: CGFloat = 12
-    private let iconHorizontalMargin: CGFloat = 15
     
     init(name: String, icon: UIImage?) {
         self.name = name
@@ -74,62 +103,35 @@ class TextFieldView: UIView {
     }
     
     func setupSubviews() {
-        setupErrorLabel()
-        setupTextFieldContainer()
+        setupRootStackView()
         setupIconImageView()
         setupTextField()
     }
     
-    func setupErrorLabel() {
-        addSubview(errorLabel)
+    func setupRootStackView() {
+        addSubview(rootStackView)
         
         NSLayoutConstraint.activate([
-            errorLabel.topAnchor.constraint(equalTo: topAnchor, constant: 1),
-            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            errorLabel.heightAnchor.constraint(equalToConstant: errorLabelHeight),
-        ])
-    }
-    
-    func setupTextFieldContainer() {
-        addSubview(textFieldContainer)
-        textFieldContainer.translatesAutoresizingMaskIntoConstraints = false
-                
-        NSLayoutConstraint.activate([
-            textFieldContainer.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 3),
-            textFieldContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            textFieldContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
-            textFieldContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
+            rootStackView.topAnchor.constraint(equalTo: topAnchor),
+            rootStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            rootStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            rootStackView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
     
     func setupIconImageView() {
-        addSubview(iconImageView)
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        
         iconImageView.contentMode = .scaleAspectFit
         
         NSLayoutConstraint.activate([
-            iconImageView.centerYAnchor.constraint(equalTo: textFieldContainer.centerYAnchor),
-            iconImageView.leadingAnchor.constraint(equalTo: textFieldContainer.leadingAnchor, constant: iconHorizontalMargin),
-            iconImageView.heightAnchor.constraint(equalTo: textFieldContainer.heightAnchor, multiplier: 0.7),
+            iconImageView.heightAnchor.constraint(equalTo: textFieldContainerHStack.heightAnchor, multiplier: 0.7),
             iconImageView.widthAnchor.constraint(equalToConstant: 30),
         ])
     }
     
     func setupTextField() {
-        addSubview(textField)
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        
         textField.placeholder = name
         setTextFieldDirection()
-        
-        NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: textFieldContainer.topAnchor),
-            textField.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: iconHorizontalMargin),
-            textField.bottomAnchor.constraint(equalTo: textFieldContainer.bottomAnchor),
-            textField.trailingAnchor.constraint(equalTo: textFieldContainer.trailingAnchor, constant: -5),
-        ])
-        
+        textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         textField.addTarget(self, action: #selector(hideErrorMessage), for: .allEditingEvents)
     }
         
@@ -149,6 +151,6 @@ class TextFieldView: UIView {
     }
     
     @objc func hideErrorMessage() {
-        errorLabel.text = ""
+        errorLabel.text = " "
     }
 }

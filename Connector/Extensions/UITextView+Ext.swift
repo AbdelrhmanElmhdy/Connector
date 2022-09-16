@@ -9,4 +9,8 @@ extension UITextView {
 			self.makeTextWritingDirectionRightToLeft(self)
 		}
     }
+    
+    var numberOfLines: Int {
+        return Int(contentSize.height / (font?.lineHeight ?? 16))
+    }
 }

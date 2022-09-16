@@ -150,7 +150,7 @@ struct NetworkManager {
     static func searchUsersByUserName(username: String, completion: @escaping (_ users: [User]?, _ error: Error?) -> Void) {
         Firestore.firestore()
             .collection("users")
-            .whereField("username", isEqualTo: username)
+            .whereField("username", isEqualTo: username.lowercased())
             .addSnapshotListener { querySnapshot, error in
                 guard let documents = querySnapshot?.documents else {
                     print("Error fetching documents: \(error!)")

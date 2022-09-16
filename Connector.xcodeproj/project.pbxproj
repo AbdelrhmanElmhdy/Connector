@@ -40,7 +40,6 @@
 		BC960E8B2850EF2C00C9ED68 /* LayoutTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC960E8A2850EF2C00C9ED68 /* LayoutTools.swift */; };
 		BC960E8F28511F0D00C9ED68 /* MessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC960E8E28511F0C00C9ED68 /* MessageTableViewCell.swift */; };
 		BC960E9228523B4300C9ED68 /* PlainTextMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC960E9128523B4300C9ED68 /* PlainTextMessageTableViewCell.swift */; };
-		BC99C6A8287EE2F8008DFE97 /* Yellowtail-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC99C6A7287EE2F8008DFE97 /* Yellowtail-Regular.ttf */; };
 		BC99C6AB287EEE42008DFE97 /* PrimaryBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC99C6AA287EEE42008DFE97 /* PrimaryBtn.swift */; };
 		BC99C6AD287EF2C1008DFE97 /* UIStackView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC99C6AC287EF2C1008DFE97 /* UIStackView+Ext.swift */; };
 		BC99C6B1287EFDEA008DFE97 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC99C6B0287EFDEA008DFE97 /* LoginViewController.swift */; };
@@ -133,7 +132,6 @@
 		BC960E8A2850EF2C00C9ED68 /* LayoutTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayoutTools.swift; sourceTree = "<group>"; };
 		BC960E8E28511F0C00C9ED68 /* MessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTableViewCell.swift; sourceTree = "<group>"; };
 		BC960E9128523B4300C9ED68 /* PlainTextMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlainTextMessageTableViewCell.swift; sourceTree = "<group>"; };
-		BC99C6A7287EE2F8008DFE97 /* Yellowtail-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yellowtail-Regular.ttf"; sourceTree = "<group>"; };
 		BC99C6AA287EEE42008DFE97 /* PrimaryBtn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrimaryBtn.swift; sourceTree = "<group>"; };
 		BC99C6AC287EF2C1008DFE97 /* UIStackView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStackView+Ext.swift"; sourceTree = "<group>"; };
 		BC99C6B0287EFDEA008DFE97 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -296,14 +294,6 @@
 			path = MessageTableViewCells;
 			sourceTree = "<group>";
 		};
-		BC99C6A6287EE2E2008DFE97 /* Fonts */ = {
-			isa = PBXGroup;
-			children = (
-				BC99C6A7287EE2F8008DFE97 /* Yellowtail-Regular.ttf */,
-			);
-			path = Fonts;
-			sourceTree = "<group>";
-		};
 		BC99C6A9287EEE34008DFE97 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
@@ -360,16 +350,15 @@
 				BCA4350B284FC333001F39D8 /* Support */,
 				BC960E892850EF2000C9ED68 /* Utilities */,
 				BCA4351B2850A42A001F39D8 /* Protocols */,
+				BCA434FA284FBB21001F39D8 /* Models */,
 				BCA4350D284FC382001F39D8 /* ViewControllers */,
 				BCA4351528506B47001F39D8 /* Views */,
-				BCA434FA284FBB21001F39D8 /* Models */,
 				BCA434EE284FBB21001F39D8 /* Networking */,
 				BCEF49B0287C41B700EED9DB /* Persistence */,
 				BC6F89A6287C136F0023E2A6 /* Middleware */,
 				BCA434EC284FBB21001F39D8 /* ErrorHandling */,
 				BCA434E9284FBB20001F39D8 /* Extensions */,
 				BC99C6B4287F0565008DFE97 /* Constants */,
-				BC99C6A6287EE2E2008DFE97 /* Fonts */,
 			);
 			path = Connector;
 			sourceTree = "<group>";
@@ -630,7 +619,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCA435252850A962001F39D8 /* Assets.xcassets in Resources */,
-				BC99C6A8287EE2F8008DFE97 /* Yellowtail-Regular.ttf in Resources */,
 				BC9358A828B52854006AF888 /* GoogleService-Info.plist in Resources */,
 				BCA434C6284FB9C9001F39D8 /* LaunchScreen.storyboard in Resources */,
 			);

@@ -19,34 +19,19 @@ class ChatTableViewCell: UITableViewCell {
             lastMessageLabel.text = viewModel.lastMessageLabel
         }
     }
-    
+        
     let chatImageView: RemoteImageView = {
         let imageView = RemoteImageView(isRound: true)
+        imageView.contentMode = .scaleAspectFit
+        
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    lazy var vStack: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [headerHStack, lastMessageLabel])
-        stackView.axis = .vertical
-        
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return stackView
-    }()
-    
-    lazy var headerHStack: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [chatNameLabel, timeAndDateLabel])
-        
-        stackView.axis = .horizontal
-        stackView.distribution = .equalSpacing
-        
-        return stackView
-    }()
-    
     let chatNameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .heavy)
+        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.minimumScaleFactor = 0.8
         return label
     }()
     
@@ -59,12 +44,39 @@ class ChatTableViewCell: UITableViewCell {
     let lastMessageLabel: UILabel = {
         let label = UILabel()
         label.textColor = .secondaryLabel
+        label.minimumScaleFactor = 0.8
         return label
     }()
+        
+    lazy var headerHStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [chatNameLabel, timeAndDateLabel])
+        
+        stackView.axis = .horizontal
+        stackView.distribution = .equalSpacing
+        chatNameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        
+        return stackView
+    }()
     
+    lazy var vStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [headerHStack, lastMessageLabel])
+        stackView.axis = .vertical
+        return stackView
+    }()
+    
+    lazy var rootHStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [chatImageView, vStack])
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.spacing = 10
+        
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stackView
+    }()
+        
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -80,28 +92,22 @@ class ChatTableViewCell: UITableViewCell {
     
     
     private func setupSubviews() {
-        setupChatImageView()
-        setupVStack()
+        setupRootHStack()
+        setChatImageViewSquareAspectRatio()
     }
-    
-    private func setupChatImageView() {
-        contentView.addSubview(chatImageView)
+        
+    private func setupRootHStack() {
+        contentView.addSubview(rootHStack)
         NSLayoutConstraint.activate([
-            chatImageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            chatImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-            chatImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            chatImageView.widthAnchor.constraint(equalTo: chatImageView.heightAnchor),
+            rootHStack.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            rootHStack.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+            rootHStack.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),
+            rootHStack.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
         ])
     }
     
-    private func setupVStack() {
-        contentView.addSubview(vStack)
-        NSLayoutConstraint.activate([
-            vStack.topAnchor.constraint(equalTo: chatImageView.topAnchor),
-            vStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -50),
-            vStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -5),
-            vStack.leadingAnchor.constraint(equalTo: chatImageView.trailingAnchor, constant: 15),
-        ])
+    private func setChatImageViewSquareAspectRatio() {
+        chatImageView.widthAnchor.constraint(equalTo: chatImageView.heightAnchor).isActive = true
     }
 
 }

@@ -16,7 +16,7 @@ extension Date {
             relativeDateFormatter.dateStyle = .none
         } else {
             relativeDateFormatter.timeStyle = timeStyleWhenDayHasPassed
-            relativeDateFormatter.dateStyle = .medium
+            relativeDateFormatter.dateStyle = .short
         }
         
         relativeDateFormatter.locale = .current

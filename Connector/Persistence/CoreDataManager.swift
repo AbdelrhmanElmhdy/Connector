@@ -44,8 +44,7 @@ struct CoreDataManager {
     
     static func fetchChatRoom(withParticipantsIDs participantsIDs: [String]) throws -> ChatRoom {
         let request = ChatRoom.fetchRequest()
-        let exactParticipantsIDs = participantsIDs + [UserDefaultsManager.user!.id!]
-        let predicate = NSPredicate(format: "%K == '\(exactParticipantsIDs)'", #keyPath(ChatRoom.participantsIDs))
+        let predicate = NSPredicate(format: "%K == '\(participantsIDs)'", #keyPath(ChatRoom.participantsIDs))
         request.predicate = predicate
         
         do {

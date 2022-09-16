@@ -14,7 +14,11 @@ class AuthViewController: KeyboardAvoidingViewController {
     
     let scrollView = UIScrollView()
     
-    let appIcon = UIImageView(image: UIImage(named: "AuthScreenAppIcon"))
+    let logoImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "AuthScreenAppIcon"))
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
         
     lazy var firstNameTextFieldView = makeAuthTextField(name: "First Name".localized,
                                                         icon: UIImage(systemName: "person.circle.fill"))
@@ -42,26 +46,29 @@ class AuthViewController: KeyboardAvoidingViewController {
     lazy var confirmPasswordTextFieldView = makePasswordTextField(name: "Confirm Password".localized,
                                                                   icon: UIImage(systemName: "lock.circle.fill"))
     
-    var logoHeight: CGFloat = LayoutConstants.screenHeight * 0.3
-    
     lazy var textFieldsStackView: UIStackView = {
         let arrangedSubviews = getTextFieldsStackArrangedSubviews()
         let stackView = UIStackView(arrangedSubviews: arrangedSubviews)
 
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
-        stackView.spacing = 2
+        stackView.spacing = 5
 
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
-    let authenticationBtn = PrimaryBtn(theme: .accent)
+    lazy var authenticationBtn: PrimaryBtn = {
+        let button = PrimaryBtn(theme: .accent)
+        button.addTarget(self, action: #selector(didPressAuthenticationButton), for: .touchUpInside)
+        return button
+    }()
     
     let otherAuthMethodLabel: UILabel = {
         var label = UILabel(frame: .zero)
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .gray
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -75,11 +82,23 @@ class AuthViewController: KeyboardAvoidingViewController {
         return button
     }()
     
-    lazy var otherAuthMethodLabelAndBtnHorizontalStack : UIStackView = {
+    lazy var otherAuthMethodLabelAndBtnHorizontalStack: UIStackView = {
         var stackView = UIStackView(arrangedSubviews: [otherAuthMethodLabel, otherAuthMethodBtn])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .fillProportionally
-        stackView.spacing = 5
+        stackView.spacing = 3
+        return stackView
+    }()
+    
+    lazy var rootStackView: UIStackView = {
+        var stackView = UIStackView(arrangedSubviews: [logoImageView, textFieldsStackView, authenticationBtn, otherAuthMethodLabelAndBtnHorizontalStack])
+        stackView.axis = .vertical
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.distribution = .fill
+        stackView.alignment = .center
+        stackView.setCustomSpacing(15, after: logoImageView)
+        stackView.setCustomSpacing(30, after: textFieldsStackView)
+        stackView.setCustomSpacing(10, after: authenticationBtn)
         return stackView
     }()
     
@@ -101,74 +120,60 @@ class AuthViewController: KeyboardAvoidingViewController {
     
     func setupSubviews() {
         setupScrollView()
-        setupAppIcon()
+        setupRootStackView()
+        setupImageView()
         setupTextFieldsStackView()
         setupAuthenticationBtn()
-        setupOtherAuthMethodLabelAndBtnHorizontalStack()
     }
-    
+                
     func setupScrollView() {
         view.addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-                
+        scrollView.contentInset.bottom = 20
+        
         NSLayoutConstraint.activate([
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: keyboardPlaceHolderView.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: keyboardLayoutGuide.topAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
         ])
     }
-    
-    func setupAppIcon() {
-        scrollView.addSubview(appIcon)
-        appIcon.translatesAutoresizingMaskIntoConstraints = false
         
-        appIcon.contentMode = .scaleAspectFit
+    func setupRootStackView() {
+        scrollView.addSubview(rootStackView)
+        
+        // Try to Make the height of the stack view not exceed 85% of the height of the scroll view
+        let optionalHeightConstraint = rootStackView.heightAnchor.constraint(lessThanOrEqualTo: scrollView.heightAnchor, multiplier: 0.85)
+        optionalHeightConstraint.priority = .defaultLow
+        
         NSLayoutConstraint.activate([
-            appIcon.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 8),
-            appIcon.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            appIcon.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor),
-            appIcon.heightAnchor.constraint(equalToConstant: logoHeight),
+            rootStackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 10),
+            rootStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            rootStackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            rootStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            rootStackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            optionalHeightConstraint,
         ])
+        
     }
     
+    private func setupImageView() {
+        // Make the image view's height compress to as low as 200 to try to satisfy the root
+        // stack view's optional height constraint
+        logoImageView.setContentCompressionResistancePriority(.defaultLow - 1, for: .vertical)
+        logoImageView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200).isActive = true
+    }
+        
     func setupTextFieldsStackView() {
-        scrollView.addSubview(textFieldsStackView)
-        
-        let textFieldHeight: CGFloat = 67
-        let stackViewHeight = textFieldsStackView.calculateHeightBasedOn(arrangedSubviewHeight: textFieldHeight)
-        
         NSLayoutConstraint.activate([
-            textFieldsStackView.topAnchor.constraint(equalTo: appIcon.bottomAnchor, constant: 15),
-            textFieldsStackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            textFieldsStackView.heightAnchor.constraint(equalToConstant: stackViewHeight),
             textFieldsStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.9),
         ])
     }
     
     func setupAuthenticationBtn() {
-        scrollView.addSubview(authenticationBtn)
-        authenticationBtn.translatesAutoresizingMaskIntoConstraints = false
-        
-        authenticationBtn.addTarget(self, action: #selector(didPressAuthenticationButton), for: .touchUpInside)
-        
         NSLayoutConstraint.activate([
-            authenticationBtn.topAnchor.constraint(equalTo: textFieldsStackView.bottomAnchor, constant: 30),
-            authenticationBtn.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             authenticationBtn.heightAnchor.constraint(equalToConstant: 50),
             authenticationBtn.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.75),
-        ])
-    }
-    
-    func setupOtherAuthMethodLabelAndBtnHorizontalStack() {
-        scrollView.addSubview(otherAuthMethodLabelAndBtnHorizontalStack)
-        
-        NSLayoutConstraint.activate([
-            otherAuthMethodLabelAndBtnHorizontalStack.topAnchor.constraint(equalTo: authenticationBtn.bottomAnchor, constant: 10),
-            otherAuthMethodLabelAndBtnHorizontalStack.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            otherAuthMethodLabelAndBtnHorizontalStack.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            otherAuthMethodLabelAndBtnHorizontalStack.widthAnchor.constraint(lessThanOrEqualTo: scrollView.widthAnchor),
-            otherAuthMethodLabelAndBtnHorizontalStack.heightAnchor.constraint(greaterThanOrEqualToConstant: 18),
         ])
     }
     

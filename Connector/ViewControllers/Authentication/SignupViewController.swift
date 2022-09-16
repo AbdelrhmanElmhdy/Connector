@@ -10,10 +10,9 @@ import UIKit
 class SignupViewController: AuthViewController {
 
     override func viewDidLoad() {
-        logoHeight = max(LayoutConstants.screenHeight * 0.2, 200)
-        
         super.viewDidLoad()
         
+        // Configure labels and button titles
         authenticationBtn.setTitle("Create Account".localized, for: .normal)
         otherAuthMethodLabel.text = "Already have an account?".localized
         otherAuthMethodBtn.setTitle("Login".localized, for: .normal)
@@ -73,7 +72,7 @@ class SignupViewController: AuthViewController {
         view.isUserInteractionEnabled = false
         authenticationBtn.isLoading = true
                 
-        NetworkManager.signup(firstName: firstName!, lastName: lastName!, username: username!, email: email!, password: password!, completion: handleUserSignupCompletion)
+        NetworkManager.signup(firstName: firstName!, lastName: lastName!, username: username!.lowercased(), email: email!, password: password!, completion: handleUserSignupCompletion)
         
     }
         

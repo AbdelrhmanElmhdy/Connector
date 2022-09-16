@@ -9,7 +9,7 @@ import UIKit
 
 class KeyboardAvoidingViewController: UIViewController {
     
-    let keyboardPlaceHolderView = UIView()
+    let keyboardLayoutGuide = UILayoutGuide()
     
     private var keyboardHeightConstraint: NSLayoutConstraint!
     private var firstResponderGlobalFrame: CGRect?
@@ -28,15 +28,14 @@ class KeyboardAvoidingViewController: UIViewController {
     }
     
     private func setupKeyboardPlaceHolderView() {
-        view.addSubview(keyboardPlaceHolderView)
-        keyboardPlaceHolderView.translatesAutoresizingMaskIntoConstraints = false
+        view.addLayoutGuide(keyboardLayoutGuide)
         
-        keyboardHeightConstraint = keyboardPlaceHolderView.heightAnchor.constraint(equalToConstant: 0)
+        keyboardHeightConstraint = keyboardLayoutGuide.heightAnchor.constraint(equalToConstant: 0)
         
         NSLayoutConstraint.activate([
-            keyboardPlaceHolderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            keyboardPlaceHolderView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            keyboardPlaceHolderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            keyboardLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            keyboardLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            keyboardLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             keyboardHeightConstraint,
         ])
     }

@@ -55,6 +55,10 @@ class EditableTextView: UITextView, UITextViewDelegate {
 		
 	// MARK: Delegate
 	
+    func textViewDidChange(_ textView: UITextView) {
+        customDelegate?.textViewDidChange?(textView)
+    }
+    
 	func textViewDidBeginEditing(_ textView: UITextView) {
 		if textView.textColor == .placeholderText {
 			textView.text = nil
