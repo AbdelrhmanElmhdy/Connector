@@ -18,7 +18,7 @@ class SearchResultsTableViewController: UITableViewController {
             tableView.reloadData()
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -41,7 +41,7 @@ class SearchResultsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellsReuseIdentifier, for: indexPath) as! SearchResultsTableViewCell
 
-        cell.viewModel = people[indexPath.row]
+        cell.model = people[indexPath.row]
 
         return cell
     }

@@ -9,10 +9,10 @@ import UIKit
 
 class MessageTableViewCell: UITableViewCell {
 
-    var viewModel: Message? {
+    var model: Message? {
         didSet {
-            guard let viewModel = viewModel else { return }
-            handleViewModelUpdate(viewModel)
+            guard let viewModel = model else { return }
+            handleModelUpdate(viewModel)
         }
     }
     
@@ -66,11 +66,11 @@ class MessageTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func handleViewModelUpdate(_ viewModel: Message) {
-        setChatBubbleImage(isMessageIncoming: viewModel.isIncoming)
-        setChatBubbleHorizontalEdgesConstraints(isMessageReceived: viewModel.isIncoming)
-        setRootVStackHorizontalConstraintConstants(isMessageReceived: viewModel.isIncoming)
-        dateTimeLabel.text = viewModel.sentDate?.getLocalizedRelativeShortFormat(timeStyleWhenDayHasPassed: .short)
+    func handleModelUpdate(_ model: Message) {
+        setChatBubbleImage(isMessageIncoming: model.isIncoming)
+        setChatBubbleHorizontalEdgesConstraints(isMessageReceived: model.isIncoming)
+        setRootVStackHorizontalConstraintConstants(isMessageReceived: model.isIncoming)
+        dateTimeLabel.text = model.sentDate?.getLocalizedRelativeShortFormat(timeStyleWhenDayHasPassed: .short)
     }
     
     func setupSubviews() {

@@ -7,20 +7,24 @@
 
 import Foundation
 
+/// An error that can be used to present a user friendly error message to the user and some advice.
 protocol UserFriendlyError: Error {
     
     var description: String { get }
     var userFriendlyDescription: String { get }
     var userFriendlyAdvice: String { get }
+    var isFatal: Bool { get }
     
-    var associatedValues: (description: String, userFriendlyDescription: String, userFriendlyAdvice: String) { get }
+    var defaultUserFriendlyDescription: String { get }
+    var defaultUserFriendlyAdvice: String { get }
+    
+    var associatedValues: (description: String, userFriendlyDescription: String, userFriendlyAdvice: String, isFatal: Bool) { get }
 }
 
 extension UserFriendlyError {
     
     var description: String {
-        let (description, _, _) = associatedValues
-        return "Error: " + description + Thread.callStackSymbols.joined(separator: "\n")
+        return "Error: " + associatedValues.description + Thread.callStackSymbols.joined(separator: "\n")
     }
     
     var userFriendlyDescription: String {
@@ -31,4 +35,16 @@ extension UserFriendlyError {
         return associatedValues.userFriendlyAdvice
     }
     
+    var isFatal: Bool {
+        return associatedValues.isFatal
+    }
+    
+    var defaultUserFriendlyDescription: String {
+        return "Something went wrong!".localized
+    }
+    
+    var defaultUserFriendlyAdvice: String {
+        return "Try again later".localized
+    }
+        
 }

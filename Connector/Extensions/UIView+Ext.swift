@@ -123,53 +123,14 @@ extension UIView {
             translatesAutoresizingMaskIntoConstraints = false
         }
     }
-    
-    func addTopBorder(withColor color: UIColor, andWidth width: CGFloat) {
-        let border = UIView()
-		border.tag = 1001
-        border.backgroundColor = color
-        border.frame = CGRect(x: 0, y: 0, width: frame.size.width, height: width)
-		self.addSubview(border)
-    }
-    
-    func addRightBorder(withColor color: UIColor, andWidth width: CGFloat) {
-        let border = UIView()
-		border.tag = 1002
-        border.backgroundColor = color
-        border.frame = CGRect(x: frame.size.width - width, y: 0, width: width, height: frame.size.height)
-		self.addSubview(border)
-    }
-    
-    func addBottomBorder(withColor color: UIColor, andWidth width: CGFloat) {
-        let border = UIView()
-		border.tag = 1003
-        border.backgroundColor = color
-        border.frame = CGRect(x: 0, y: frame.size.height - width, width: frame.size.width, height: width)
-        self.addSubview(border)
-    }
-    
-    func addLeftBorder(withColor color: UIColor, andWidth width: CGFloat) {
-		let border = UIView()
-		border.tag = 1004
-        border.backgroundColor = color
-        border.frame = CGRect(x: 0, y: 0, width: width, height: frame.size.height)
-		self.addSubview(border)
-    }
-	
-	func removeAllBorders() {
-		for view in self.subviews {
-			if view.tag >= 1001 && view.tag <= 1004 {
-				view.removeFromSuperview()
-			}
-		}
-	}
 }
 
 // MARK: Effects
 extension UIView {
 	static let blurEffectTag = -1
+    static let cascadingViewTag = -2
     
-    func addBlurEffect(style: UIBlurEffect.Style) {
+    func addBlurEffect(style: UIBlurEffect.Style, withCascadingColor cascadingColor: UIColor? = nil) {
         let blurEffect = UIBlurEffect(style: style)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         
@@ -177,131 +138,28 @@ extension UIView {
         
         blurEffectView.isUserInteractionEnabled = false
         blurEffectView.tag = UIView.blurEffectTag
-                
+        
         addSubview(blurEffectView)
         blurEffectView.fillSuperView()
+        
+        if let cascadingColor = cascadingColor {
+            let cascadingView = UIView(frame: .zero)
+            
+            cascadingView.tag = UIView.cascadingViewTag
+            cascadingView.backgroundColor = cascadingColor
+            
+            addSubview(cascadingView)
+            cascadingView.fillSuperView()
+        }
     }
     
     func removeBlurEffect() {
         viewWithTag(UIView.blurEffectTag)?.removeFromSuperview()
     }
-    
-    func applyShadow() {
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 1)
-        layer.shadowOpacity = 0.6
-        layer.shadowRadius = 7
-        layer.masksToBounds = false
-    }
-    
-    func applyLightShadow() {
-        layer.shadowColor = UIColor.lightShadow.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 0)
-        layer.shadowOpacity = 0.25
-        layer.shadowRadius = 9
-        layer.masksToBounds = false
-    }
-        
-    func toggleGradientLayer(show: Bool? = nil) {
-        for sublayer in layer.sublayers ?? [] {
-            if let gradientLayer = sublayer as? CAGradientLayer {
-                gradientLayer.isHidden = !(show ?? gradientLayer.isHidden)
-            }
-        }
-    }
-        	
+            	
 	func scale(to scale: CGFloat) {
 		self.transform = CGAffineTransform(scaleX: scale, y: scale)
 	}
-}
-
-// MARK: Animations and Transformations
-extension UIView {
-    func translateViewVertically(by translation: CGFloat) {
-        self.frame.origin.y -= translation
-    }
-    
-    func translateViewHorizontally(by translation: CGFloat) {
-        self.frame.origin.x -= translation
-    }
-    
-    func resetViewVerticalTranslation() {
-        self.frame.origin.y = 0
-    }
-    
-    func resetViewHorizontalTranslation() {
-        self.frame.origin.x = 0
-    }
-    
-    func mapUIHorizontalDirectionToDirectionalInt(_ direction: UIHorizontalDirection) -> Int {
-        switch direction {
-        case .leadingToTrailing:
-            return LayoutTools.getCurrentLayoutDirection(for: self) == .leftToRight ? -1 : 1
-        case .trailingToLeading:
-            return LayoutTools.getCurrentLayoutDirection(for: self) == .leftToRight ? 1 : -1
-        }
-    }
-    
-    /// Animates two consecutive animations while executing the `midAnimationCompletionHandler` between the two animations.
-    func animateTwoConsecutiveAnimations(withDuration duration: TimeInterval,
-                                         firstAnimation: @escaping () -> Void,
-                                         secondAnimation: @escaping () -> Void,
-                                         midAnimationCompletionHandler: ( (_ : Bool) -> Void)? = nil,
-                                         completionHandler: ( (_ : Bool) -> Void)? = nil) {
-        
-        func didCompleteFirstAnimation(completed : Bool) {
-            midAnimationCompletionHandler?(completed)
-            UIView.animate(withDuration: duration / 2, animations: secondAnimation, completion: completionHandler)
-        }
-        
-        UIView.animate(withDuration: duration / 2, animations: firstAnimation, completion: didCompleteFirstAnimation)
-    }
-    
-    /// Translates the view horizontally out of the bounds of its superview then translates it in from the other side to give the effect of page switching.
-    func translateHorizontallyOutAndInSuperView(withDuration duration: TimeInterval,
-                                                atDirection direction: UIHorizontalDirection,
-                                                fadeOutAndIn: Bool = false,
-                                                midAnimationCompletionHandler: ((_ : Bool) -> Void)? = nil,
-                                                completionHandler: ((_ : Bool) -> Void)? = nil) {
-        
-        let translationDirection = CGFloat(mapUIHorizontalDirectionToDirectionalInt(direction))
-        
-        func translateAndToggleAlpha() {
-            translateViewHorizontally(by: translationDirection * LayoutConstants.screenWidth)
-            if fadeOutAndIn {
-                alpha = alpha == 0.5 ? 1 : 0.5
-            }
-        }
-        
-        func didCompleteFirstAnimation(completed : Bool) {
-            midAnimationCompletionHandler?(completed)
-            translateViewHorizontally(by: translationDirection * LayoutConstants.screenWidth * -2)
-        }
-        
-        animateTwoConsecutiveAnimations(
-            withDuration: duration,
-            firstAnimation: translateAndToggleAlpha,
-            secondAnimation: translateAndToggleAlpha,
-            midAnimationCompletionHandler: didCompleteFirstAnimation,
-            completionHandler: completionHandler)
-    }
-    
-    /// fades the view out then fades it back in.
-    func fadeOutAndIn(withDuration duration: TimeInterval, midAnimationCompletionHandler: ( (_ : Bool) -> Void)? = nil, completionHandler: ((_ : Bool) -> Void)? = nil) {
-        alpha = 1
-        
-        func toggleAlpha() {
-            alpha = alpha == 1 ? 0 : 1
-        }
-        
-        animateTwoConsecutiveAnimations(
-            withDuration: duration,
-            firstAnimation: toggleAlpha,
-            secondAnimation: toggleAlpha,
-            midAnimationCompletionHandler: midAnimationCompletionHandler,
-            completionHandler: completionHandler)
-    }
-    
 }
 
 // MARK: Tools

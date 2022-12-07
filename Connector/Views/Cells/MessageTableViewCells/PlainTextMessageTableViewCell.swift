@@ -20,8 +20,8 @@ class PlainTextMessageTableViewCell: MessageTableViewCell {
         return label
     }()
     
-    override func handleViewModelUpdate(_ viewModel: Message) {
-        super.handleViewModelUpdate(viewModel)
+    override func handleModelUpdate(_ viewModel: Message) {
+        super.handleModelUpdate(viewModel)
         textMessageLabel.text = viewModel.text
     }
     

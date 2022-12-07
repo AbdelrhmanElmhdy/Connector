@@ -4,9 +4,7 @@ class EditableTextView: UITextView, UITextViewDelegate {
 	    
 	var placeholder = "" {
 		didSet {
-            if textColor == .placeholderText {
-				text = placeholder
-			}
+            setPlaceholder(self)
 		}
 	}
     
@@ -15,14 +13,12 @@ class EditableTextView: UITextView, UITextViewDelegate {
             return text == placeholder ? "" : text
         }
         set {
-            if (newValue ?? "").isEmpty {
-                setPlaceholder(self)
+            if textColor == .placeholderText {
                 return
             }
             
-            textViewDidBeginEditing(self)
             text = newValue
-            textViewDidEndEditing(self)
+            textViewDidChange(self)
         }
     }
     
@@ -54,11 +50,11 @@ class EditableTextView: UITextView, UITextViewDelegate {
     }
 		
 	// MARK: Delegate
-	
+
     func textViewDidChange(_ textView: UITextView) {
         customDelegate?.textViewDidChange?(textView)
     }
-    
+
 	func textViewDidBeginEditing(_ textView: UITextView) {
 		if textView.textColor == .placeholderText {
 			textView.text = nil
@@ -66,12 +62,12 @@ class EditableTextView: UITextView, UITextViewDelegate {
 		}
         customDelegate?.textViewDidBeginEditing?(textView)
 	}
-	
+
 	func textViewDidEndEditing(_ textView: UITextView) {
-		if textView.text.isEmpty {			
+		if textView.text.isEmpty {
             setPlaceholder(textView)
 		}
-		
+
         customDelegate?.textViewDidEndEditing?(textView)
 	}
 	

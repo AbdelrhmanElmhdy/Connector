@@ -9,14 +9,14 @@ import UIKit
 
 class ChatTableViewCell: UITableViewCell {
         
-    var viewModel: ChatRoom? {
+    var model: ChatRoom? {
         didSet {
-            guard let viewModel = viewModel else { return }
+            guard let model = model else { return }
             
-            chatImageView.source = viewModel.chatThumbnailImageURL
-            chatNameLabel.text = viewModel.chatName
-            timeAndDateLabel.text = viewModel.lastMessageDate?.getLocalizedRelativeShortFormat()
-            lastMessageLabel.text = viewModel.lastMessageLabel
+            chatImageView.source = model.chatThumbnailImageURL
+            chatNameLabel.text = model.chatName
+            timeAndDateLabel.text = model.lastMessageDate?.getLocalizedRelativeShortFormat()
+            lastMessageLabel.text = model.lastMessageLabel
         }
     }
         

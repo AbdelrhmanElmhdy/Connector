@@ -99,13 +99,12 @@ class Popup: UIView {
 	// MARK: Tools
 			
 	func present(animated: Bool) {
-        prepareForPresentation()
-        
 		let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
 		keyWindow?.addSubview(self)
         
-        let animationDuration: TimeInterval = animated ? 0.2 : 0
+        prepareForPresentation()
         
+        let animationDuration: TimeInterval = animated ? 0.2 : 0
         animateContentViewIn(withDuration: animationDuration)
 	}
 	

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TextFieldView: UIView {
+class TextFieldView: UIView, Validatable {
     
     let errorLabel: UILabel = {
         let label = UILabel()
@@ -60,6 +60,11 @@ class TextFieldView: UIView {
         
     let name: String
     
+    /// By default mirrors the name value, which is usually a noun, unless manually set to a different value.
+    var nameAsNoun: String
+    
+    var validators: [Validator]
+    
     override var backgroundColor: UIColor? {
         get {
             return textFieldContainerHStack.backgroundColor
@@ -81,23 +86,26 @@ class TextFieldView: UIView {
         }
     }
     
-    var text: String? {
+    var value: String {
         get {
-            return textField.text
+            return textField.text ?? ""
         }
         set {
             textField.text = newValue
         }
     }
-    
-    init(name: String, icon: UIImage?) {
+        
+    init(name: String, icon: UIImage?, validators: [Validatable.Validator] = []) {
         self.name = name
         self.iconImageView.image = icon
+        self.validators = validators
+        self.nameAsNoun = name
+        
         super.init(frame: .zero)
         
         setupSubviews()
     }
-    
+        
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -142,15 +150,12 @@ class TextFieldView: UIView {
         }
     }
     
-    func showIsEmptyErrorMessage() {
-        showErrorMessage(errorMessage: "Enter ".localized + name.localized)
-    }
-    
-    func showErrorMessage(errorMessage: String) {
+    func presentErrorMessage(_ errorMessage: String?) {
         errorLabel.text = errorMessage
     }
     
     @objc func hideErrorMessage() {
         errorLabel.text = " "
     }
+    
 }

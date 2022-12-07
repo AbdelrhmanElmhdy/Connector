@@ -29,6 +29,7 @@
     <entity name="Message" representedClassName="Message" syncable="YES" codeGenerationType="category">
         <attribute name="id" attributeType="String"/>
         <attribute name="interactionType" optional="YES" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="isIncoming" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="mediaOrFileURL" optional="YES" attributeType="String"/>
         <attribute name="receiptDateUnixTimeStamp" optional="YES" attributeType="Double" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="repliedAtMessageId" optional="YES" attributeType="String"/>
@@ -46,12 +47,13 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="category">
+    <entity name="User" representedClassName="User" syncable="YES">
         <attribute name="chatRoomIds" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <attribute name="email" optional="YES" attributeType="String" minValueString="5" maxValueString="400"/>
         <attribute name="firstName" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="imageUrl" optional="YES" attributeType="URI"/>
+        <attribute name="isCurrentUser" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lastName" optional="YES" attributeType="String"/>
         <attribute name="thumbnailImageUrl" optional="YES" attributeType="URI"/>
         <attribute name="username" optional="YES" attributeType="String"/>
@@ -62,7 +64,7 @@
         <element name="ChatRoom" positionX="125.8098754882812" positionY="33.62164306640625" width="128" height="149"/>
         <element name="Contact" positionX="-286.5863037109375" positionY="32.29388427734375" width="128" height="89"/>
         <element name="Location" positionX="-287.4215087890625" positionY="184.7117614746094" width="128" height="88"/>
-        <element name="Message" positionX="-103.6895141601562" positionY="31.84768676757812" width="153.3314208984375" height="238"/>
-        <element name="User" positionX="-91.9141845703125" positionY="-171.2455749511719" width="128" height="178"/>
+        <element name="Message" positionX="-103.6895141601562" positionY="31.84768676757812" width="153.3314208984375" height="239"/>
+        <element name="User" positionX="-91.9141845703125" positionY="-171.2455749511719" width="128" height="14"/>
     </elements>
 </model>

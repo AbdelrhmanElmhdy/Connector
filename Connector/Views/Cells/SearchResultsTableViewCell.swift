@@ -9,11 +9,11 @@ import UIKit
 
 class SearchResultsTableViewCell: UITableViewCell {
 
-    var viewModel: User? {
+    var model: User? {
         didSet {
-            guard let viewModel = viewModel else { return }
-            personImageView.source = viewModel.thumbnailImageUrl
-            nameLabel.text = viewModel.name
+            guard let model = model else { return }
+            personImageView.source = model.thumbnailImageUrl
+            nameLabel.text = model.name
         }
     }
     

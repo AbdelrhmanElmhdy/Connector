@@ -6,12 +6,25 @@
 //
 
 import UIKit
+import Combine
+
+protocol KeyboardAvoiding: UIViewController {
+    func test()
+}
+
+extension KeyboardAvoiding {
+    func test() {
+        
+    }
+}
 
 class AuthViewController: KeyboardAvoidingViewController {
     
     // MARK: Properties
+        
+    let viewModel: AuthViewModel
     
-    
+    var subscriptions = Set<AnyCancellable>()
     let scrollView = UIScrollView()
     
     let logoImageView: UIImageView = {
@@ -28,7 +41,10 @@ class AuthViewController: KeyboardAvoidingViewController {
     
     lazy var emailTextFieldView: TextFieldView = {
        let textFieldView = makeAuthTextField(name: "Email".localized,
-                                             icon: UIImage(systemName: "envelope.circle.fill"))
+                                             icon: UIImage(systemName: "envelope.circle.fill"),
+                                             validators: [
+                                                viewModel.emailValidator
+                                             ])
         
         textFieldView.textField.keyboardType = .emailAddress
         textFieldView.textField.textContentType = .emailAddress
@@ -40,11 +56,19 @@ class AuthViewController: KeyboardAvoidingViewController {
                                                        icon: UIImage(systemName: "person.circle.fill"))
     
     lazy var passwordTextFieldView = makePasswordTextField(name: "Password".localized,
-                                                           icon: UIImage(systemName: "lock.circle.fill"))
+                                                           icon: UIImage(systemName: "lock.circle.fill"),
+                                                           validators: [
+                                                            viewModel.passwordMinimumLengthValidator,
+                                                            viewModel.passwordComplexityValidator
+                                                           ])
     
     
-    lazy var confirmPasswordTextFieldView = makePasswordTextField(name: "Confirm Password".localized,
-                                                                  icon: UIImage(systemName: "lock.circle.fill"))
+    lazy var confirmPasswordTextFieldView: TextFieldView = {
+        let textField = makePasswordTextField(name: "Confirm Password".localized,
+                                              icon: UIImage(systemName: "lock.circle.fill"))
+        textField.nameAsNoun = "Password Confirmation".localized
+        return textField
+    }()
     
     lazy var textFieldsStackView: UIStackView = {
         let arrangedSubviews = getTextFieldsStackArrangedSubviews()
@@ -102,9 +126,18 @@ class AuthViewController: KeyboardAvoidingViewController {
         return stackView
     }()
     
+    // MARK: Initialization
+    
+    init(viewModel: AuthViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: Life Cycle
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,11 +145,11 @@ class AuthViewController: KeyboardAvoidingViewController {
         view.backgroundColor = .systemBackground
         
         setupSubviews()
+        configureTextFields(inStackView: textFieldsStackView)
+        setupBindings()
     }
     
-    
     // MARK: View Setups
-    
     
     func setupSubviews() {
         setupScrollView()
@@ -177,9 +210,7 @@ class AuthViewController: KeyboardAvoidingViewController {
         ])
     }
     
-    
     // MARK: Actions
-    
     
     /// Abstract
     @objc func didPressAuthenticationButton() {}
@@ -187,12 +218,16 @@ class AuthViewController: KeyboardAvoidingViewController {
     /// Abstract
     @objc func didPressOtherAuthMethodButton() {}
     
-    
     // MARK: Convenience
     
-    
-    func makeAuthTextField(name: String, icon: UIImage?) -> TextFieldView {
-        let textFieldView = TextFieldView(name: name, icon: icon?.withTintColor(.accentForLightGrayForDark).withRenderingMode(.alwaysOriginal))
+    func makeAuthTextField(name: String,
+                           icon: UIImage?,
+                           validators: [Validatable.Validator] = []) -> TextFieldView {
+        
+        let icon = icon?.withTintColor(.accentForLightGrayForDark).withRenderingMode(.alwaysOriginal)
+        let textFieldView = TextFieldView(name: name,
+                                          icon: icon,
+                                          validators: [viewModel.nonEmptyFieldValidator] + validators)
         
         textFieldView.backgroundColor = .tertiarySystemGroupedBackground
         textFieldView.cornerRadius = 8
@@ -201,23 +236,67 @@ class AuthViewController: KeyboardAvoidingViewController {
         return textFieldView
     }
     
-    func makePasswordTextField(name: String, icon: UIImage?) -> TextFieldView {
-        let passwordTextFieldView = makeAuthTextField(name: name, icon: icon)
+    func makePasswordTextField(name: String, icon: UIImage?, validators: [Validatable.Validator] = []) -> TextFieldView {
+        let passwordTextFieldView = makeAuthTextField(name: name, icon: icon, validators: validators)
         passwordTextFieldView.textField.textContentType = .password
         passwordTextFieldView.textField.isSecureTextEntry = true
         
         return passwordTextFieldView
     }
     
+    func configureTextFields(inStackView stackView: UIStackView) {
+        for (index, arrangedSubview) in stackView.arrangedSubviews.enumerated() {
+            guard let textFieldView = arrangedSubview as? TextFieldView else { return }
+            textFieldView.textField.delegate = self
+            textFieldView.textField.tag = index
+            
+            let isLastTextField = index == stackView.arrangedSubviews.count - 1
+            textFieldView.textField.returnKeyType = isLastTextField ? .continue :  .next
+        }
+    }
+    
     /// Abstract
     func getTextFieldsStackArrangedSubviews() -> [UIView] { [] }
     
-    func validateEmail(candidate: String) -> Bool {
-        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: candidate)
+    func setupBindings() {
+        firstNameTextFieldView.textField.createBidirectionalBinding(with: viewModel.$firstName,
+                                                                    keyPath: \AuthViewModel.firstName,
+                                                                    for: viewModel,
+                                                                    storeIn: &subscriptions)
+        
+        lastNameTextFieldView.textField.createBidirectionalBinding(with: viewModel.$lastName,
+                                                                   keyPath: \AuthViewModel.lastName,
+                                                                   for: viewModel,
+                                                                   storeIn: &subscriptions)
+        
+        usernameTextFieldView.textField.createBidirectionalBinding(with: viewModel.$username,
+                                                                   keyPath: \AuthViewModel.username,
+                                                                   for: viewModel,
+                                                                   storeIn: &subscriptions)
+                
+        emailTextFieldView.textField.createBidirectionalBinding(with: viewModel.$email,
+                                                                keyPath: \AuthViewModel.email,
+                                                                for: viewModel,
+                                                                storeIn: &subscriptions)
+        
+        passwordTextFieldView.textField.createBidirectionalBinding(with: viewModel.$password,
+                                                                   keyPath: \AuthViewModel.password,
+                                                                   for: viewModel,
+                                                                   storeIn: &subscriptions)
+        
+        confirmPasswordTextFieldView.textField.createBidirectionalBinding(with: viewModel.$passwordConfirmation,
+                                                                   keyPath: \AuthViewModel.passwordConfirmation,
+                                                                   for: viewModel,
+                                                                   storeIn: &subscriptions)
     }
     
-    func navigateToMainTabBarController() {
-        dismiss(animated: true)
+}
+
+extension AuthViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        focusOnNextTextFieldOnPressReturn(from: textField)
+        return false
     }
+    
 }

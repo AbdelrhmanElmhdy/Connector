@@ -6,8 +6,26 @@
 //
 
 import UIKit
+import CoreData
+import Combine
 
 class SignupViewController: AuthViewController {
+    // MARK: Properties
+    
+    unowned var coordinator: Authenticating & LoggingIn
+    
+    // MARK: Initialization
+    
+    init(coordinator: Authenticating & LoggingIn, viewModel: AuthViewModel) {
+        self.coordinator = coordinator
+        super.init(viewModel: viewModel)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,95 +44,86 @@ class SignupViewController: AuthViewController {
     // MARK: Event Handlers
     
     override func didPressAuthenticationButton() {
+        // Validate all fields.
+        let (invalidInputs, errorMessages) = viewModel.validateInputs(firstNameTextFieldView,
+                                                                      lastNameTextFieldView,
+                                                                      usernameTextFieldView,
+                                                                      emailTextFieldView,
+                                                                      passwordTextFieldView,
+                                                                      confirmPasswordTextFieldView)
         
-        let firstName = firstNameTextFieldView.text
-        let lastName = lastNameTextFieldView.text
-        let email = emailTextFieldView.text
-        let username = usernameTextFieldView.text
-        let password = passwordTextFieldView.text
-        let passwordConfirmation = confirmPasswordTextFieldView.text
-        
-        // Validate all fields have been provided.
-        var allFieldsProvided = true
-        
-        if (firstName ?? "").isEmpty {
-            firstNameTextFieldView.showIsEmptyErrorMessage()
-            allFieldsProvided = false
-        }
-        if (lastName ?? "").isEmpty {
-            lastNameTextFieldView.showIsEmptyErrorMessage()
-            allFieldsProvided = false
-        }
-        if !(email ?? "").isEmail {
-            emailTextFieldView.showErrorMessage(errorMessage: "Invalid email address".localized)
-            allFieldsProvided = false
-        }
-        if (username ?? "").isEmpty {
-            usernameTextFieldView.showIsEmptyErrorMessage()
-            allFieldsProvided = false
-        }
-        if (password ?? "").isEmpty {
-            passwordTextFieldView.showIsEmptyErrorMessage()
-            allFieldsProvided = false
-        }
-        if (passwordConfirmation ?? "").isEmpty {
-            confirmPasswordTextFieldView.showIsEmptyErrorMessage()
-            allFieldsProvided = false
+        // Check if all fields are valid and present error messages for the invalid ones.
+        let allInputsAreValid = invalidInputs.isEmpty
+        if (!allInputsAreValid) {
+            presentErrorMessagesForInvalidInputs(invalidInputs: invalidInputs, errorMessages: errorMessages)
         }
         
-        guard allFieldsProvided else { return }
-        
-        guard (passwordConfirmation == password) else {
-            confirmPasswordTextFieldView.showErrorMessage(errorMessage: "Passwords don't match".localized)
-            return
+        // Check that password confirmation matches password and present error message if it doesn't.
+        let passwordsMatch = viewModel.passwordConfirmation == viewModel.password
+        if !passwordsMatch {
+            presentPasswordsDoNotMatchErrorMessage()
         }
         
+        guard allInputsAreValid && passwordsMatch else { return }
+        
+        disableUserInteractionsAndShowSpinner()
+        
+        // Create user.
+        let user = viewModel.createUser(firstName: viewModel.firstName,
+                                        lastName: viewModel.lastName,
+                                        username: viewModel.username,
+                                        email: viewModel.email)
+        
+        // (3... 2... 1...) Commence signup procedure.
+        viewModel.signup(user: user, password: viewModel.password)
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: handleUserSignupCompletion, receiveValue: {})
+            .store(in: &subscriptions)
+    }
+    
+    override func didPressOtherAuthMethodButton() {
+        coordinator.loginWithExistingAccount()
+    }
+    
+    // MARK: Convenience
+        
+    func presentErrorMessagesForInvalidInputs(invalidInputs: [Validatable], errorMessages: [String]) {
+        for (index, input) in invalidInputs.enumerated() {
+            let errorMessage = errorMessages[index]
+            input.presentErrorMessage(errorMessage)
+        }
+    }
+        
+    func presentPasswordsDoNotMatchErrorMessage() {
+        confirmPasswordTextFieldView.presentErrorMessage("Passwords don't match".localized)
+    }
+    
+    func disableUserInteractionsAndShowSpinner() {
         view.isUserInteractionEnabled = false
         authenticationBtn.isLoading = true
-                
-        NetworkManager.signup(firstName: firstName!, lastName: lastName!, username: username!.lowercased(), email: email!, password: password!, completion: handleUserSignupCompletion)
-        
     }
         
-    override func didPressOtherAuthMethodButton() {
-        navigateToSignupScreen()
-    }
-        
-    // MARK: Convenience
-    
-    func handleUserSignupCompletion(user: User?, error: Error?) {
-        DispatchQueue.main.async {
+    func handleUserSignupCompletion(completion: Subscribers.Completion<Error>) {
             self.view.isUserInteractionEnabled = true
             self.authenticationBtn.isLoading = false
-            
-            if let error = error {
-                print(error)
-                let alertPopup = AlertPopup()
-                alertPopup.presentAsError(withMessage: "Incorrect username or password".localized)
-                return
+
+            switch completion {
+            case .failure(let error):
+                handleSignupFailure(error: error)
+            case .finished:
+                coordinator.didFinishAuthentication()
             }
-            
-            guard let user = user else { return }
-            
-            UserDefaultsManager.user = user
-            UserDefaultsManager.isLoggedIn = true
-            
-            self.navigateToMainTabBarController()
-        }
     }
     
+    func handleSignupFailure(error: Error) {
+        ErrorManager.shared.reportError(error)
+        let alertPopup = AlertPopup()
+        alertPopup.presentAsError(withMessage: error.localizedDescription)
+    }
+        
     override func getTextFieldsStackArrangedSubviews() -> [UIView] {
         let arrangedSubviews = [firstNameTextFieldView, lastNameTextFieldView, emailTextFieldView, usernameTextFieldView, passwordTextFieldView, confirmPasswordTextFieldView]
         return arrangedSubviews
     }
     
-    func navigateToSignupScreen() {
-        if previousViewController is LoginViewController {
-            navigationController?.popViewController(animated: true)
-            return
-        }
-        
-        navigationController?.pushViewController(LoginViewController(), animated: true)
-    }
-
 }

@@ -123,9 +123,19 @@ class AlertPopup: Popup {
         messageLabel.text = message
 		self.actions = actions
 		
-		adjustTitleLabelTopAnchorConstraint(image)
-		
         present(animated: true)
+        
+		adjustTitleLabelTopAnchorConstraint(image)
+    }
+    
+    func presentAsError(withMessage message: String, advice: String, actions: [AlertPopupAction]? = nil) {
+        let image = UIImage(named: "errorImage")
+        
+        let dismissAction = AlertPopupAction(title: "Ok".localized, style: .normal) { [weak self] in
+            self?.dismiss(animated: true)
+        }
+        
+        present(withImage: image, title: message, message: advice, actions: actions ?? [dismissAction])
     }
     
     func presentAsError(withMessage message: String, actions: [AlertPopupAction] = []) {
@@ -139,8 +149,8 @@ class AlertPopup: Popup {
     }
 	
     func presentAsConfirmationAlert(title: String, message: String, confirmationBtnTitle: String, confirmationBtnStyle: AlertPopupAction.Style, confirmationHandler: @escaping () -> Void) {
-		let cancelAction = AlertPopupAction(title: "Cancel".localized, style: .normal) {
-			self.dismiss(animated: true)
+		let cancelAction = AlertPopupAction(title: "Cancel".localized, style: .normal) {[weak self] in
+			self?.dismiss(animated: true)
 		}
 		
 		let signOutAction = AlertPopupAction(title: confirmationBtnTitle, style: confirmationBtnStyle, handler: confirmationHandler)

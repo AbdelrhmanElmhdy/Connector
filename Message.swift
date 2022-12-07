@@ -11,7 +11,7 @@ import CoreData
 import FirebaseFirestore
 
 @objc(Message)
-public class Message: NSManagedObject, FirebaseCodable, Codable {
+public class Message: NSManagedObject, FirebaseCodableMo, Codable {
     enum MessageType: Int16 {
         case text
         case voiceNote
@@ -35,24 +35,29 @@ public class Message: NSManagedObject, FirebaseCodable, Codable {
          case id, senderId, roomId, sentDateUnixTimeStamp, receiptDateUnixTimeStamp, repliedAtMessageId, type, text, mediaOrFileURL, location, contact, interactionType
      }
     
-    required convenience init(context: NSManagedObjectContext, document: DocumentSnapshot) {
+    required convenience init?(document: DocumentSnapshot?, context: NSManagedObjectContext) {
         self.init(context: context)
         
-        guard let data = document.data() else { return }
+        guard let document = document,
+              let data = document.data(),
+              let senderId = data["senderId"] as? String,
+              let roomId = data["roomId"] as? String,
+              let sentDateUnixTimeStamp = data["sentDateUnixTimeStamp"] as? Double,
+              let type = data["type"] as? Int16 else { return nil }
         
         self.id = document.documentID
-        self.senderId = data["senderId"] as? String
-        self.roomId = data["roomId"] as? String
-        self.sentDateUnixTimeStamp = data["sentDateUnixTimeStamp"] as? Double ?? -1
+        self.senderId = senderId
+        self.roomId = roomId
+        self.sentDateUnixTimeStamp = sentDateUnixTimeStamp
         self.receiptDateUnixTimeStamp = data["receiptDateUnixTimeStamp"] as? Double ?? -1
         self.repliedAtMessageId = data["repliedAtMessageId"] as? String
-        self.type = data["type"] as? Int16 ?? 0
+        self.type = type
         self.text = data["text"] as? String
         self.mediaOrFileURL = data["mediaOrFileURL"] as? String
         self.interactionType = data["interactionType"] as? Int16 ?? 0
     }
     
-    func encodeToDictionary() -> [String: Any?] {
+    func encodeToFirebaseData() -> [String: Any] {
         let dictionary: [String: Any?] = [
             "id": self.id,
             "senderId": self.senderId,
@@ -67,7 +72,7 @@ public class Message: NSManagedObject, FirebaseCodable, Codable {
             "pendingFor": self.room?.participantsIDs?.filter {$0 != self.senderId}
         ]
         
-        return dictionary
+        return dictionary.compactMapValues { $0 }
     }
     
 
@@ -80,9 +85,11 @@ public class Message: NSManagedObject, FirebaseCodable, Codable {
         mediaOrFileURL: URL? = nil,
         location: Location? = nil,
         contact: Contact? = nil,
-        interactionType: InteractionType? = nil
+        interactionType: InteractionType? = nil,
+        isIncoming: Bool,
+        context: NSManagedObjectContext
     ) {
-        self.init(context: CoreDataManager.context)
+        self.init(context: context)
         
         self.id = UUID().uuidString
         self.senderId = senderId
@@ -118,12 +125,6 @@ public class Message: NSManagedObject, FirebaseCodable, Codable {
         self.location = try container.decode(Location.self, forKey: .location)
         self.contact = try container.decode(Contact.self, forKey: .contact)
         self.interactionType = try container.decode(Int16.self, forKey: .interactionType)
-    }
-    
-    
-    var isIncoming: Bool {
-        guard let user = UserDefaultsManager.user else { return false }
-        return self.senderId != user.id
     }
     
     /// Describes whether or not the message has been successfully sent to server

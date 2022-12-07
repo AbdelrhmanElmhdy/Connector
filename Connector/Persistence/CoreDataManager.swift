@@ -9,82 +9,175 @@ import Foundation
 import UIKit
 import CoreData
 
-struct CoreDataManager {
-    static let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+class CoreDataManager {
+    enum contextType {
+        case main, background
+    }
         
-    static func fetchUsers(withIDs userIds: [String]) throws -> [User] {
-        var users: [User] = []
+    typealias ObjectIDsOfEntities = Dictionary<String, [NSManagedObjectID]>
+    
+    // MARK: Properties
+    
+    let persistentContainer: NSPersistentContainer
+    let mainThreadContext: NSManagedObjectContext
+    let backgroundContext: NSManagedObjectContext
+    
+    /// Returns the mainThread context or the backgroundContext depending on which thread you're accessing it from.
+    /// - Note: Must be used with its perform or performAndWait methods to access the internal private queue of the background context.
+    var context: NSManagedObjectContext {
+        Thread.isMainThread ? mainThreadContext : backgroundContext
+    }
+    
+    private var readyToMoveObjectIDsCache = ObjectIDsOfEntities()
+    
+    init(persistentContainerName: String) {
+        let container = NSPersistentContainer(name: "Connector")
         
-        for userId in userIds {
-            if let user = try fetchUser(withId: userId) {
-                users.append(user)
+        container.loadPersistentStores(completionHandler: { (_, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
             }
-        }
+        })
         
-        return users
-    }
-    
-    static func fetchUser(withId userId: String) throws -> User? {
-        let request: NSFetchRequest<User> = {
-            let predicate = NSPredicate(format: "id == %@", userId)
-            let request = User.fetchRequest()
-            request.fetchLimit = 1
-            request.predicate = predicate
-            return request
-        }()
+        self.persistentContainer = container
+        self.mainThreadContext = container.viewContext
+        self.backgroundContext = container.newBackgroundContext()
+        
+        self.mainThreadContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        self.mainThreadContext.undoManager = nil
+        self.backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        self.backgroundContext.undoManager = nil
         
         
-        do {
-            let user = try context.fetch(request).first
-            return user
-        } catch {
-            throw CoreDataError.failedToRetrieve(description: error.localizedDescription)
-        }
+        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave,
+                                               object: self.backgroundContext,
+                                               queue: .main,
+                                               using: backgroundContextDidSave)
     }
     
-    static func fetchChatRoom(withParticipantsIDs participantsIDs: [String]) throws -> ChatRoom {
-        let request = ChatRoom.fetchRequest()
-        let predicate = NSPredicate(format: "%K == '\(participantsIDs)'", #keyPath(ChatRoom.participantsIDs))
-        request.predicate = predicate
+    func backgroundContextDidSave(notification: Notification) {
+        mainThreadContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        mainThreadContext.mergeChanges(fromContextDidSave: notification)
+    }
+    
+    static func printSqliteFilePath() {
+        print("Documents Directory: ", FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last ?? "Not Found!")
+    }
+    
+    // MARK: CRUD Operations
+            
+    func createManagedObject<ManagedObject: NSManagedObject>(ofType type: ManagedObject.Type, withID id: String) -> ManagedObject? {
+        guard ManagedObject.entity().attributesByName["id"] != nil else { return nil }
         
-        do {
-            let rooms = try context.fetch(request)
-            guard let room = rooms.first else { throw CoreDataError.failedToRetrieve(description: "No room with participantsIDs \(participantsIDs)")}
-            return room
-        } catch {
-            throw CoreDataError.failedToRetrieve(description: error.localizedDescription)
-        }
-    }
-    
-    static func commitChangesOnMainThread() throws {
-        try context.performAndWait {
-            try context.save()
-        }
-    }
-    
-    static func getObject<ManagedObject: NSManagedObject>(ofType: ManagedObject.Type, withId id: String) -> (object: ManagedObject, objectIsNew: Bool) {
-        func createNewObject() -> (object: ManagedObject, objectIsNew: Bool) {
-            let newObject = ManagedObject(context: context)
+        var newObject: ManagedObject!
+        
+        context.performAndWait {
+            newObject = ManagedObject(context: context)
             newObject.setValue(id, forKey: "id")
-            return (object: newObject, objectIsNew: true)
         }
         
-        guard ManagedObject.entity().attributesByName["id"] != nil else { return createNewObject() }
+        return newObject
+    }
+    
+    func fetchManagedObjects<ManagedObject: NSManagedObject>(fetchRequest: NSFetchRequest<NSFetchRequestResult>) -> [ManagedObject]? {
+        var fetchedObjects: [ManagedObject]?
         
-        let fetchRequest = ofType.fetchRequest()
-        let predicate = NSPredicate(format: "id == '\(id)'")
+        context.performAndWait {
+            fetchedObjects = try? context.fetch(fetchRequest) as? [ManagedObject]
+        }
+        
+        return fetchedObjects
+    }
+    
+    func fetchManagedObjects<ManagedObject: NSManagedObject>(ofType type: ManagedObject.Type, predicate: NSPredicate, fetchLimit: Int = 0) -> [ManagedObject]? {
+        let fetchRequest = type.fetchRequest()
         
         fetchRequest.predicate = predicate
-        fetchRequest.fetchLimit = 1
+        fetchRequest.fetchLimit = fetchLimit
         
-        do {
-            let fetchedObjectResult = try context.fetch(fetchRequest)
-            guard let fetchedObject = fetchedObjectResult.first as? ManagedObject else { return createNewObject() }
-            return (object: fetchedObject, objectIsNew: false)
-        } catch {
-            return createNewObject()
+        return fetchManagedObjects(fetchRequest: fetchRequest)
+    }
+    
+    func fetchManagedObject<ManagedObject: NSManagedObject>(withObjectID objectID: NSManagedObjectID) throws -> ManagedObject? {
+        try context.existingObject(with: objectID) as? ManagedObject
+    }
+    
+    func fetchManagedObjects<ManagedObject: NSManagedObject>(ofType type: ManagedObject.Type, withObjectIDs objectIDs: [NSManagedObjectID]) -> [ManagedObject]? {
+        let predicate = NSPredicate(format: "self in %@", objectIDs)
+        return fetchManagedObjects(ofType: type, predicate: predicate)
+    }
+    
+    func fetchManagedObject<ManagedObject: NSManagedObject>(ofType type: ManagedObject.Type, withID id: String) -> ManagedObject? {
+        guard ManagedObject.entity().attributesByName["id"] != nil else { return nil }
+        
+        let predicate = NSPredicate(format: "id == '\(id)'")
+        
+        return fetchManagedObjects(ofType: type, predicate: predicate, fetchLimit: 1)?.first
+    }
+    
+    func deleteManagedObject(_ object: NSManagedObject) {
+        context.performAndWait {
+            context.delete(object)
+        }
+    }
+        
+    // MARK: Utilities
+    
+    func commitChanges(onContext contextType: contextType? = nil) throws {
+        let moc: NSManagedObjectContext
+        
+        switch contextType {
+        case .main: moc = mainThreadContext
+        case .background: moc = backgroundContext
+        case .none: moc = context
         }
         
+        guard moc.hasChanges else { return }
         
+        try moc.performAndWait {
+            try moc.save()
+        }
     }
+    
+    
+    func createFetchController<ManagedObject: NSManagedObject>(
+        fetchRequest: NSFetchRequest<ManagedObject>,
+        sectionNameKeyPath: String? = nil,
+        cacheName: String? = nil
+    ) -> NSFetchedResultsController<ManagedObject> {
+        
+        let fetchController = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                         managedObjectContext: context,
+                                                         sectionNameKeyPath: sectionNameKeyPath,
+                                                         cacheName: cacheName)
+        return fetchController
+    }
+    
+    func createFetchController<ManagedObject: NSManagedObject>(fetchRequest: NSFetchRequest<ManagedObject>) -> NSFetchedResultsController<ManagedObject> {
+        createFetchController(fetchRequest: fetchRequest, sectionNameKeyPath: nil, cacheName: nil)
+    }
+    
+    /// Prepare the objects to be moved from one thread to another through committing it's changes by the current context and returning its object IDs that can be used to instantiate them back from any other thread using a different context.
+    /// - Parameter objects: The objects to be moved to a different thread.
+    /// - Returns: An array containing the managed object IDs that can be used to instantiate the objects from any other thread.
+    func prepareToMoveToDifferentThread(_ objects: [NSManagedObject]) throws -> [NSManagedObjectID] {
+        // Commit changes to assign permanent object IDs to all the objects.
+        try commitChanges()
+        
+        let objectIDs = objects.map { $0.objectID }
+        
+        return objectIDs
+    }
+    
+    func dropEntity(entityName: String) {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+        do {
+            try persistentContainer.persistentStoreCoordinator.execute(deleteRequest, with: persistentContainer.viewContext)
+        } catch {
+            ErrorManager.shared.reportError(error)
+        }
+    }
+    
 }

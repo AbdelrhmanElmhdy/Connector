@@ -9,7 +9,7 @@ import UIKit
 
 class ChatInputFieldContainer: UIView {
 
-    static let minHeight: CGFloat = 40
+    static let minHeight: CGFloat = 42
     static let maxHeight: CGFloat = 200
     
     var inputFieldHeightIsInvalid: Bool = false
@@ -44,7 +44,7 @@ class ChatInputFieldContainer: UIView {
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
-            
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -71,8 +71,8 @@ class ChatInputFieldContainer: UIView {
         let size: CGFloat = ChatInputFieldContainer.minHeight - verticalPadding
         
         NSLayoutConstraint.activate([
-            sendBtn.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -(verticalPadding / 2) - 1),
-            sendBtn.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -4),
+            sendBtn.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -(verticalPadding / 2) - 1.5),
+            sendBtn.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -6),
             sendBtn.widthAnchor.constraint(equalToConstant: size),
             sendBtn.heightAnchor.constraint(equalToConstant: size),
         ])

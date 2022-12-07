@@ -35,7 +35,7 @@ class MessageComposerView: UIView, UITextViewDelegate {
     
     init() {
         super.init(frame: .zero)
-        addBlurEffect(style: .systemChromeMaterial)
+        addBlurEffect(style: .systemChromeMaterial, withCascadingColor: .systemBackground)
         setupSubviews()
     }
     
