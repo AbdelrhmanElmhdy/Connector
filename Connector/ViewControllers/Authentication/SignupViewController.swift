@@ -16,9 +16,9 @@ class SignupViewController: AuthViewController {
     
     // MARK: Initialization
     
-    init(coordinator: Authenticating & LoggingIn, viewModel: AuthViewModel) {
+    init(coordinator: Authenticating & LoggingIn, viewModel: AuthViewModel, view: SignupView) {
         self.coordinator = coordinator
-        super.init(viewModel: viewModel)
+        super.init(view: view, viewModel: viewModel)
     }
     
     required init?(coder: NSCoder) {
@@ -30,10 +30,10 @@ class SignupViewController: AuthViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Configure labels and button titles
-        authenticationBtn.setTitle("Create Account".localized, for: .normal)
-        otherAuthMethodLabel.text = "Already have an account?".localized
-        otherAuthMethodBtn.setTitle("Login".localized, for: .normal)
+        guard let controlledView = controlledView as? SignupView else { return }
+        
+        controlledView.signupButton.addTarget(self, action: #selector(didPressSignup), for: .touchUpInside)
+        controlledView.loginButton.addTarget(self, action: #selector(didPressLogin), for: .touchUpInside)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -43,14 +43,14 @@ class SignupViewController: AuthViewController {
     
     // MARK: Event Handlers
     
-    override func didPressAuthenticationButton() {
+    @objc func didPressSignup() {
         // Validate all fields.
-        let (invalidInputs, errorMessages) = viewModel.validateInputs(firstNameTextFieldView,
-                                                                      lastNameTextFieldView,
-                                                                      usernameTextFieldView,
-                                                                      emailTextFieldView,
-                                                                      passwordTextFieldView,
-                                                                      confirmPasswordTextFieldView)
+        let (invalidInputs, errorMessages) = viewModel.validateInputs(controlledView.firstNameTextFieldView,
+                                                                      controlledView.lastNameTextFieldView,
+                                                                      controlledView.usernameTextFieldView,
+                                                                      controlledView.emailTextFieldView,
+                                                                      controlledView.passwordTextFieldView,
+                                                                      controlledView.confirmPasswordTextFieldView)
         
         // Check if all fields are valid and present error messages for the invalid ones.
         let allInputsAreValid = invalidInputs.isEmpty
@@ -81,7 +81,7 @@ class SignupViewController: AuthViewController {
             .store(in: &subscriptions)
     }
     
-    override func didPressOtherAuthMethodButton() {
+    @objc func didPressLogin() {
         coordinator.loginWithExistingAccount()
     }
     
@@ -95,35 +95,30 @@ class SignupViewController: AuthViewController {
     }
         
     func presentPasswordsDoNotMatchErrorMessage() {
-        confirmPasswordTextFieldView.presentErrorMessage("Passwords don't match".localized)
+        controlledView.confirmPasswordTextFieldView.presentErrorMessage("Passwords don't match".localized)
     }
     
     func disableUserInteractionsAndShowSpinner() {
-        view.isUserInteractionEnabled = false
-        authenticationBtn.isLoading = true
+        controlledView.isUserInteractionEnabled = false
+        controlledView.authenticationBtn.isLoading = true
     }
         
     func handleUserSignupCompletion(completion: Subscribers.Completion<Error>) {
-            self.view.isUserInteractionEnabled = true
-            self.authenticationBtn.isLoading = false
+        controlledView.isUserInteractionEnabled = true
+        controlledView.authenticationBtn.isLoading = false
 
-            switch completion {
-            case .failure(let error):
-                handleSignupFailure(error: error)
-            case .finished:
-                coordinator.didFinishAuthentication()
-            }
+        switch completion {
+        case .failure(let error):
+            handleSignupFailure(error: error)
+        case .finished:
+            coordinator.didFinishAuthentication()
+        }
     }
     
     func handleSignupFailure(error: Error) {
         ErrorManager.shared.reportError(error)
         let alertPopup = AlertPopup()
         alertPopup.presentAsError(withMessage: error.localizedDescription)
-    }
-        
-    override func getTextFieldsStackArrangedSubviews() -> [UIView] {
-        let arrangedSubviews = [firstNameTextFieldView, lastNameTextFieldView, emailTextFieldView, usernameTextFieldView, passwordTextFieldView, confirmPasswordTextFieldView]
-        return arrangedSubviews
     }
     
 }

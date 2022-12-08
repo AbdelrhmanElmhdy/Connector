@@ -5,27 +5,15 @@
 //  Created by Abdelrhman Elmahdy on 06/12/2022.
 //
 
-import Foundation
+import UIKit
 
-extension SettingsViewController { // + Actions
+extension SettingsTableViewController: SettingsViewController { // + Actions
     
-    func didTabGeneral() {
-        coordinator.customizeGeneralSettings()
+    @objc func didToggleReceiveNotificationsSwitch(sender: UISwitch) {
+        print(sender.isOn)
     }
-    
-    func didTabAccount() {
-        coordinator.customizeAccountSettings()
-    }
-    
-    func didTabNotifications() {
-        coordinator.customizeNotificationsSettings()
-    }
-    
-    func didTabSoundAndHaptics() {
-        coordinator.customizeSoundsAndHapticsSettings()
-    }
-    
-    func didTabLogout() {
+        
+    func didPressLogout() {
         do { try viewModel.signOut() }
         catch { ErrorManager.shared.presentSomethingWentWrongError(originalError: error, reportError: true); return; }
         

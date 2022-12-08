@@ -1,20 +1,30 @@
 //
-//  ChatRoomViewController+TableViewDelegate.swift
+//  MessagesDataSource.swift
 //  Connector
 //
-//  Created by Abdelrhman Elmahdy on 25/08/2022.
+//  Created by Abdelrhman Elmahdy on 08/12/2022.
 //
 
+import Foundation
 import UIKit
 import CoreData
 
-extension ChatRoomViewController: UITableViewDelegate, UITableViewDataSource {
+class MessagesDataSource: NSObject, UITableViewDataSource {
+    
+    let fetchController: NSFetchedResultsController<Message>
+    
+    init(fetchController: NSFetchedResultsController<Message>) {
+        self.fetchController = fetchController
+    }
+    
+    // MARK: Data source
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return numberOfMessages
+        return fetchController.sections?.first?.numberOfObjects ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = fetchedResultsController.object(at: indexPath)
+        let message = fetchController.object(at: indexPath)
         let cell: MessageTableViewCell!
         
         switch message.messageType {
@@ -29,10 +39,6 @@ extension ChatRoomViewController: UITableViewDelegate, UITableViewDataSource {
         cell.model = message
         
         return cell
-    }
-    
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
     }
     
 }

@@ -5,7 +5,7 @@
 //  Created by Abdelrhman Elmahdy on 26/11/2022.
 //
 
-import Foundation
+import UIKit
 
 class MainDependencyContainer: DependencyContainer {
     // MARK: Managers
@@ -51,13 +51,15 @@ class MainDependencyContainer: DependencyContainer {
 extension MainDependencyContainer: AuthViewControllerFactory {
     func createLoginViewController(for coordinator: Authenticating & CreatingAccount) -> LoginViewController {
         let viewModel = AuthViewModel(authServices: authServices, userServices: userServices)
-        let viewController = LoginViewController(coordinator: coordinator, viewModel: viewModel)
+        let view = LoginView(viewModel: viewModel)
+        let viewController = LoginViewController(coordinator: coordinator, viewModel: viewModel, view: view)
         return viewController
     }
     
     func createSignupViewController(for coordinator: Authenticating & LoggingIn) -> SignupViewController {
         let viewModel = AuthViewModel(authServices: authServices, userServices: userServices)
-        let viewController = SignupViewController(coordinator: coordinator, viewModel: viewModel)
+        let view = SignupView(viewModel: viewModel)
+        let viewController = SignupViewController(coordinator: coordinator, viewModel: viewModel, view: view)
         return viewController
     }
 }
@@ -74,7 +76,8 @@ extension MainDependencyContainer: ChatsViewControllerFactory {
     
     func createChatRoomViewController(for coordinator: Coordinator, chatRoom: ChatRoom) -> ChatRoomViewController {
         let viewModel = ChatRoomViewModel(chatMessageServices: chatMessageServices, userServices: userServices)
-        let viewController = ChatRoomViewController(coordinator: coordinator, chatRoom: chatRoom, viewModel: viewModel)
+        let view = ChatRoomView()
+        let viewController = ChatRoomViewController(coordinator: coordinator, chatRoom: chatRoom, viewModel: viewModel, view: view)
         return viewController
     }
 }
@@ -86,18 +89,19 @@ extension MainDependencyContainer: CallsTableViewControllerFactory {
     }
 }
 
-extension MainDependencyContainer: SettingsViewControllerFactory {
-    func createSettingsViewController(for coordinator: SettingsViewController.CoordinatorFunctionality) -> SettingsViewController {
+extension MainDependencyContainer: SettingsTableViewControllerFactory {
+    func createSettingsTableViewController(for coordinator: SettingsCoordinator, settingsSections: [SettingsSection]? = nil) -> SettingsTableViewController {
+        
         let viewModel = SettingsViewModel(authServices: authServices)
-        let viewController = SettingsViewController(coordinator: coordinator, viewModel: viewModel)
+        let viewController = SettingsTableViewController(coordinator: coordinator, viewModel: viewModel)
+        
+        let settingsSections = settingsSections ?? SettingsSectionsFactory.createRootSettingsSections(forTargetVC: viewController)
+        
+        let dataSource = SettingsDataSource(settingsSections: settingsSections)
+        viewController.datasource = dataSource
+        
         return viewController
     }
-}
-
-extension MainDependencyContainer: SettingsCustomizationTableViewControllerFactory {
-    func createSettingsCustomizationTableViewController(for coordinator: Coordinator) -> SettingsCustomizationTableViewController {
-        let viewController = SettingsCustomizationTableViewController(coordinator: coordinator)
-        return viewController
-    }
+    
 }
 

@@ -11,18 +11,6 @@ protocol LoggingOut: AnyObject {
     func logout()
 }
 
-protocol CustomizingGeneralSettings {
-    func customizeGeneralSettings()
-}
-
-protocol CustomizingAccountSettings {
-    func customizeAccountSettings()
-}
-
-protocol CustomizingNotificationsSettings {
-    func customizeNotificationsSettings()
-}
-
-protocol CustomizingSoundsAndHapticsSettings {
-    func customizeSoundsAndHapticsSettings()
+protocol DisclosingSettings {
+    func disclose(settings settingsSections: [SettingsSection], settingsTitle: String)
 }

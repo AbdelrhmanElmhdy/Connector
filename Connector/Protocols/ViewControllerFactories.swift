@@ -21,12 +21,8 @@ protocol CallsTableViewControllerFactory: AnyObject {
     func createCallsTableViewController(for coordinator: Coordinator) -> CallsTableViewController
 }
 
-protocol SettingsViewControllerFactory: AnyObject {
-    func createSettingsViewController(for coordinator: SettingsViewController.CoordinatorFunctionality) -> SettingsViewController
+protocol SettingsTableViewControllerFactory: AnyObject {
+    func createSettingsTableViewController(for coordinator: SettingsCoordinator, settingsSections: [SettingsSection]?) -> SettingsTableViewController
 }
 
-protocol SettingsCustomizationTableViewControllerFactory: AnyObject {
-    func createSettingsCustomizationTableViewController(for coordinator: Coordinator) -> SettingsCustomizationTableViewController
-}
-
-typealias ViewControllerFactory = AuthViewControllerFactory & ChatsViewControllerFactory & CallsTableViewControllerFactory & SettingsViewControllerFactory & SettingsCustomizationTableViewControllerFactory
+typealias ViewControllerFactory = AuthViewControllerFactory & ChatsViewControllerFactory & CallsTableViewControllerFactory & SettingsTableViewControllerFactory

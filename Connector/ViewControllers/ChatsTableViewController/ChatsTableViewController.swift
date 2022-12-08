@@ -8,13 +8,16 @@
 import UIKit
 import CoreData
 
-fileprivate let chatCellReuseIdentifier = "chatCellReuseIdentifier"
+let chatCellReuseIdentifier = "chatCellReuseIdentifier"
 
 class ChatsTableViewController: UITableViewController {
     // MARK: Properties
     
     unowned var coordinator: Chatting
     let viewModel: ChatsTableViewModel
+    
+    private lazy var fetchControllerDelegate = FetchedResultsControllerDelegate(tableView: tableView)
+    private lazy var dataSource = ChatRoomsDataSource(fetchController: fetchController)
     
     lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: SearchResultsTableViewController())
@@ -56,8 +59,12 @@ class ChatsTableViewController: UITableViewController {
         title = "Chats".localized
         navigationItem.searchController = searchController
         
+        fetchController.delegate = fetchControllerDelegate
+        tableView.dataSource = dataSource
+        tableView.rowHeight = 85
+        
+        
         tableView.register(ChatTableViewCell.self, forCellReuseIdentifier: chatCellReuseIdentifier)
-        fetchController.delegate = self
         
         do {
             try fetchController.performFetch()
@@ -79,34 +86,7 @@ class ChatsTableViewController: UITableViewController {
         navigationItem.largeTitleDisplayMode = .always
     }
     
-    // MARK: Data source
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let numberOfFetchedObjects = fetchController.fetchedObjects?.count ?? 0
-        
-        if numberOfFetchedObjects == 0 {
-            self.tableView.setEmptyMessage("Your chats will appear here".localized)
-            tableView.isScrollEnabled = false
-        } else {
-            self.tableView.restore()
-            tableView.isScrollEnabled = true
-        }
-
-        return numberOfFetchedObjects
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: chatCellReuseIdentifier, for: indexPath) as! ChatTableViewCell
-        
-        let chatRoom = fetchController.object(at: indexPath)
-        cell.model = chatRoom
-        
-        return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 85
-    }
+    // MARK: TableView Delegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let chatRoom = fetchController.object(at: indexPath)

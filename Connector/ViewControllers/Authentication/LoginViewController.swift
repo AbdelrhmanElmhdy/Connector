@@ -15,9 +15,9 @@ class LoginViewController: AuthViewController {
     
     // MARK: Initialization
     
-    init(coordinator: Authenticating & CreatingAccount, viewModel: AuthViewModel) {
+    init(coordinator: Authenticating & CreatingAccount, viewModel: AuthViewModel, view: LoginView) {
         self.coordinator = coordinator
-        super.init(viewModel: viewModel)
+        super.init(view: view, viewModel: viewModel)
     }
     
     required init?(coder: NSCoder) {
@@ -29,13 +29,10 @@ class LoginViewController: AuthViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Remove the password field complexity validator.
-        passwordTextFieldView.validators = [viewModel.nonEmptyFieldValidator]
+        guard let controlledView = controlledView as? LoginView else { return }
         
-        // Configure labels and button titles
-        authenticationBtn.setTitle("Login".localized, for: .normal)
-        otherAuthMethodLabel.text = "Not an existing user?".localized
-        otherAuthMethodBtn.setTitle("Create an account".localized, for: .normal)
+        controlledView.loginButton.addTarget(self, action: #selector(didPressLogin), for: .touchUpInside)
+        controlledView.createAccountButton.addTarget(self, action: #selector(didPressCreateAccount), for: .touchUpInside)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,9 +42,10 @@ class LoginViewController: AuthViewController {
     
     // MARK: Actions
     
-    override func didPressAuthenticationButton() {
+    @objc func didPressLogin() {
         // Validate all inputs.
-        let (invalidInputs, errorMessages) = viewModel.validateInputs(emailTextFieldView, passwordTextFieldView)
+        let (invalidInputs, errorMessages) = viewModel.validateInputs(controlledView.emailTextFieldView,
+                                                                      controlledView.passwordTextFieldView)
         
         for (index, input) in invalidInputs.enumerated() {
             let errorMessage = errorMessages[index]
@@ -58,8 +56,8 @@ class LoginViewController: AuthViewController {
         guard allInputsAreValid else { return }
         
         // Disable user interactions and show spinner.
-        view.isUserInteractionEnabled = false
-        authenticationBtn.isLoading = true
+        controlledView.isUserInteractionEnabled = false
+        controlledView.authenticationBtn.isLoading = true
         
         // Commence login procedure.
         viewModel.login(email: viewModel.email, password: viewModel.password)
@@ -68,15 +66,15 @@ class LoginViewController: AuthViewController {
             .store(in: &subscriptions)
     }
     
-    override func didPressOtherAuthMethodButton() {
+    @objc func didPressCreateAccount() {
         coordinator.createNewAccount()
     }
     
     // MARK: Convenience
         
     func handleUserLoginCompletion(completion: Subscribers.Completion<Error>) {
-       self.view.isUserInteractionEnabled = true
-       self.authenticationBtn.isLoading = false
+        controlledView.isUserInteractionEnabled = true
+        controlledView.authenticationBtn.isLoading = false
        
         switch completion {
         case .failure(let error):
@@ -89,10 +87,4 @@ class LoginViewController: AuthViewController {
     func handleLoginFailure(error: Error) {
         ErrorManager.shared.presentError(errorMessage: "Incorrect email or password".localized, originalError: error, reportError: true)
     }
-    
-    override func getTextFieldsStackArrangedSubviews() -> [UIView] {
-        let arrangedSubviews = [emailTextFieldView, passwordTextFieldView]
-        return arrangedSubviews
-    }
-    
 }

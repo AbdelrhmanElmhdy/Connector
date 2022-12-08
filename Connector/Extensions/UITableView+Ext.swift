@@ -15,7 +15,7 @@ extension UITableView {
         messageLabel.textColor = .systemGray2
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .center
-        messageLabel.font = .systemFont(ofSize: 22, weight: .semibold)
+        messageLabel.font = .systemFont(ofSize: 22, weight: .medium)
         messageLabel.sizeToFit()
 
         self.backgroundView = messageLabel

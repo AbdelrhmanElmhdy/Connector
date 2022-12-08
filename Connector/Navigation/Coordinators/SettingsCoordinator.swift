@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SettingsCoordinator: Coordinator, LoggingOut, CustomizingGeneralSettings, CustomizingAccountSettings, CustomizingNotificationsSettings, CustomizingSoundsAndHapticsSettings {
+class SettingsCoordinator: Coordinator, LoggingOut, DisclosingSettings {
     var children = Array<Coordinator>()
     let navigationController: UINavigationController
     let viewControllerFactory: ViewControllerFactory
@@ -21,7 +21,8 @@ class SettingsCoordinator: Coordinator, LoggingOut, CustomizingGeneralSettings, 
     }
     
     func start() {
-        let viewController = viewControllerFactory.createSettingsViewController(for: self)
+        let viewController = viewControllerFactory.createSettingsTableViewController(for: self, settingsSections: nil)
+        viewController.title = "Settings".localized
         navigationController.pushViewController(viewController, animated: false)
     }
     
@@ -29,33 +30,9 @@ class SettingsCoordinator: Coordinator, LoggingOut, CustomizingGeneralSettings, 
         parentCoordinator.logout()
     }
     
-    func customizeGeneralSettings() {
-        let viewController = viewControllerFactory.createSettingsCustomizationTableViewController(for: self)
-        viewController.title = "General".localized
-        viewController.hidesBottomBarWhenPushed = true
-        
-        navigationController.pushViewController(viewController, animated: true)
-    }
-
-    func customizeAccountSettings() {
-        let viewController = viewControllerFactory.createSettingsCustomizationTableViewController(for: self)
-        viewController.title = "Account".localized
-        viewController.hidesBottomBarWhenPushed = true
-        
-        navigationController.pushViewController(viewController, animated: true)
-    }
-
-    func customizeNotificationsSettings() {
-        let viewController = viewControllerFactory.createSettingsCustomizationTableViewController(for: self)
-        viewController.title = "Notifications".localized
-        viewController.hidesBottomBarWhenPushed = true
-        
-        navigationController.pushViewController(viewController, animated: true)
-    }
-
-    func customizeSoundsAndHapticsSettings() {
-        let viewController = viewControllerFactory.createSettingsCustomizationTableViewController(for: self)
-        viewController.title = "Sounds & Haptics".localized
+    func disclose(settings settingsSections: [SettingsSection], settingsTitle: String) {
+        let viewController = viewControllerFactory.createSettingsTableViewController(for: self, settingsSections: settingsSections)
+        viewController.title = settingsTitle
         viewController.hidesBottomBarWhenPushed = true
         
         navigationController.pushViewController(viewController, animated: true)

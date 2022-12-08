@@ -19,13 +19,11 @@ class ChatRoomViewController: UIViewController {
     let chatRoom: ChatRoom
     var subscriptions = Set<AnyCancellable>()
     
-    var scrollViewLowestYOffset: CGFloat = 0
-    var viewHasLaidOutSubviews = false
-        
-    var numberOfMessages: Int {
-        fetchedResultsController.sections?.first?.numberOfObjects ?? 0
-    }
-        
+    private lazy var fetchControllerDelegate = FetchedResultsControllerDelegate(tableView: controlledView.tableView)
+    private lazy var dataSource = MessagesDataSource(fetchController: fetchedResultsController)
+    
+    let controlledView: ChatRoomView
+            
     lazy var fetchedResultsController: NSFetchedResultsController<Message> = {
         let fetchRequest = Message.fetchRequest()
         
@@ -36,61 +34,22 @@ class ChatRoomViewController: UIViewController {
         fetchRequest.sortDescriptors = [dateSort]
         
         let fetchedResultsController = viewModel.createMessagesFetchController(fetchRequest: fetchRequest)
-        
-        fetchedResultsController.delegate = self
-        
         return fetchedResultsController
     }()
     
-    lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero)
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
-        tableView.keyboardDismissMode = .interactive
-        tableView.rowHeight = UITableView.automaticDimension
-        
-        // Flip the table view on its vertical axis to make scrolling start from bottom to top
-        tableView.transform = CGAffineTransform(scaleX: 1, y: -1)
-        
-        tableView.register(PlainTextMessageTableViewCell.self,
-                           forCellReuseIdentifier: plainTextMessageCellReuseIdentifier)
-        
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        return tableView
-    }()
+    var scrollViewLowestYOffset: CGFloat = 0
     
-    lazy var messageComposerView: MessageComposerView = {
-        let composerView = MessageComposerView()
-        
-        composerView.inputFieldContainer.sendBtn.addTarget(self,
-                                                         action: #selector(didPressSendButton),
-                                                         for: .touchUpInside)
-        composerView.translatesAutoresizingMaskIntoConstraints = false
-        return composerView
-    }()
-    
-    private var tableViewTopContentInset: CGFloat {
-        let tableViewMarginFromNavBar: CGFloat = 15
-        return view.safeAreaInsets.top - view.safeAreaInsets.bottom + tableViewMarginFromNavBar
+    var numberOfMessages: Int {
+        fetchedResultsController.sections?.first?.numberOfObjects ?? 0
     }
-    
-    private var tableViewBottomContentInset: CGFloat {
-        let tableViewMarginFromComposerView: CGFloat = 15
-        return -view.safeAreaInsets.top + messageComposerView.frame.height + tableViewMarginFromComposerView
-    }
-    
-    private lazy var tableViewBottomAnchorConstraint = tableView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor)
-    private lazy var messageComposerBottomAnchorConstraint = messageComposerView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor)
     
     // MARK: Initialization
     
-    init(coordinator: Coordinator, chatRoom: ChatRoom, viewModel: ChatRoomViewModel) {
+    init(coordinator: Coordinator, chatRoom: ChatRoom, viewModel: ChatRoomViewModel, view: ChatRoomView) {
         self.coordinator = coordinator
         self.chatRoom = chatRoom
         self.viewModel = viewModel
-
+        self.controlledView = view
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -106,16 +65,25 @@ class ChatRoomViewController: UIViewController {
     
     // MARK: Life Cycle
     
+    override func loadView() {
+        view = controlledView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .systemBackground
+        fetchedResultsController.delegate = fetchControllerDelegate
+        controlledView.tableView.dataSource = dataSource
         
-        setupSubviews()
+        controlledView.messageComposerView.inputFieldContainer.sendBtn.addTarget(self,
+                                                                  action: #selector(didPressSendButton),
+                                                                  for: .touchUpInside)
+        
+        setupBindings()
         performFetch()
         scrollToBottom()
         setupKeyboardDismisserGestureRecognizer()
-        setupBindings()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -128,54 +96,9 @@ class ChatRoomViewController: UIViewController {
         forceNavBarToAlwaysBeCompact()
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-                
-        guard !viewHasLaidOutSubviews else { return }
-        viewHasLaidOutSubviews = true
-        
-        // Handle the top and bottom of the flipped table view to account for
-        // message composer view and nav bar
-        tableView.contentInset.bottom = tableViewTopContentInset
-        tableView.contentInset.top = tableViewBottomContentInset
-        
-        // Make both messageComposerView and tableView stretch to the bottom of the display.
-        tableViewBottomAnchorConstraint.constant = view.safeAreaInsets.bottom
-        messageComposerBottomAnchorConstraint.constant = view.safeAreaInsets.bottom
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         resetNavBarConfiguration() // To remove the effects from the global nav bar.
-    }
-    
-    // MARK: View Setups
-    
-    func setupSubviews() {
-        setupTableView()
-        setupMessageComposerView()
-    }
-    
-    func setupTableView() {
-        view.addSubview(tableView)
-        
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableViewBottomAnchorConstraint,
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
-    }
-        
-    func setupMessageComposerView() {
-        view.addSubview(messageComposerView)
-        
-        NSLayoutConstraint.activate([
-            messageComposerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            messageComposerBottomAnchorConstraint,
-            messageComposerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            messageComposerView.heightAnchor.constraint(greaterThanOrEqualToConstant: ChatInputFieldContainer.minHeight + MessageComposerView.verticalPadding),
-        ])
     }
     
     // MARK: Actions
@@ -208,7 +131,7 @@ class ChatRoomViewController: UIViewController {
     // MARK: Convenience
     
     func setupBindings() {
-        messageComposerView.inputFieldContainer.inputField
+        controlledView.messageComposerView.inputFieldContainer.inputField
             .createBidirectionalBinding(with: viewModel.$messageText,
                                         keyPath: \ChatRoomViewModel.messageText,
                                         for: viewModel,
@@ -217,7 +140,7 @@ class ChatRoomViewController: UIViewController {
         viewModel.$messageText
             .receive(on: DispatchQueue.main)
             .map { !$0.isEmpty }
-            .assign(to: \.isEnabled, on: messageComposerView.inputFieldContainer.sendBtn)
+            .assign(to: \.isEnabled, on: controlledView.messageComposerView.inputFieldContainer.sendBtn)
             .store(in: &subscriptions)
     }
     
@@ -232,8 +155,8 @@ class ChatRoomViewController: UIViewController {
         let lastIndex = IndexPath(row: 0, section: 0)
 
         DispatchQueue.main.async {
-            self.tableView.scrollToRow(at: lastIndex, at: .bottom, animated: animated)
-            self.scrollViewLowestYOffset = self.tableView.contentOffset.y
+            self.controlledView.tableView.scrollToRow(at: lastIndex, at: .bottom, animated: animated)
+            self.scrollViewLowestYOffset = self.controlledView.tableView.contentOffset.y
         }
     }
     
@@ -268,9 +191,9 @@ extension ChatRoomViewController: UIScrollViewDelegate {
         let minimumAlpha = self.traitCollection.userInterfaceStyle == .dark ? 0.65 : 0.25
         let alphaGreaterThanZero = CGFloat.maximum(alphaLessThanOne, minimumAlpha)
         
-        if messageComposerView.viewWithTag(UIView.cascadingViewTag)?.alpha != alphaGreaterThanZero {
+        if controlledView.messageComposerView.viewWithTag(UIView.cascadingViewTag)?.alpha != alphaGreaterThanZero {
             UIView.animate(withDuration: 0.2) { [weak self] in
-                self?.messageComposerView.viewWithTag(UIView.cascadingViewTag)?.alpha = alphaGreaterThanZero
+                self?.controlledView.messageComposerView.viewWithTag(UIView.cascadingViewTag)?.alpha = alphaGreaterThanZero
             }
         }
     }
