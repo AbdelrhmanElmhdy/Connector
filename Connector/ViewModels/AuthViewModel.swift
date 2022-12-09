@@ -100,4 +100,9 @@ class AuthViewModel {
         return (invalidInputs, errorMessages)
     }
     
+    func interpretFirebaseAuthenticationError(error: Error) -> UserFriendlyError? {
+        print(error._code)
+        return nil
+    }
+    
 }

@@ -9,7 +9,7 @@ import UIKit
 
 class LoginView: AuthView {
     
-    override var textFields: [TextFieldView] {
+    override var textFieldViews: [TextFieldView] {
         return [emailTextFieldView, passwordTextFieldView]
     }
     

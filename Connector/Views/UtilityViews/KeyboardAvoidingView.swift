@@ -7,6 +7,9 @@
 
 import UIKit
 
+/// Exposes a  property called keyboardAvoidanceLayoutGuide that can be used as a guide to anchor the top most container view
+/// the keyboardAvoidanceLayoutGuide avoids the keyboard only if it covers the first responder view and it avoids the view only with by the needed margin
+/// to keep the first responder visible with a comfortable margin
 class KeyboardAvoidingView: UIView {
 
     public let keyboardAvoidanceLayoutGuide = UILayoutGuide()
@@ -61,13 +64,13 @@ class KeyboardAvoidingView: UIView {
         if let firstResponder = firstResponder {
             firstResponderGlobalFrame = firstResponder.globalFrame
         }
-                        
+        
         guard let firstResponderGlobalFrame = firstResponderGlobalFrame else { return }
         
         let padding = firstResponderGlobalFrame.height > 80 ? 50 : firstResponderGlobalFrame.height + 35
         
         let firstResponderMaxYWithPadding = firstResponderGlobalFrame.maxY + padding + keyboardHeightConstraint.constant
-                
+        
         if endFrameY >= firstResponderMaxYWithPadding {
             self.keyboardHeightConstraint.constant = 0.0
         } else {

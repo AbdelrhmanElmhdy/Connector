@@ -8,16 +8,24 @@
 import UIKit
 import Combine
 
-class LoginViewController: AuthViewController {
+class LoginViewController: UIViewController {
+    
     // MARK: Properties
     
-    unowned var coordinator: Authenticating & CreatingAccount
+    private let controlledView: AuthView
+    private let viewModel: AuthViewModel
+    private unowned let coordinator: Authenticating & CreatingAccount
+    
+    private var subscriptions = Set<AnyCancellable>()
     
     // MARK: Initialization
     
     init(coordinator: Authenticating & CreatingAccount, viewModel: AuthViewModel, view: LoginView) {
         self.coordinator = coordinator
-        super.init(view: view, viewModel: viewModel)
+        self.viewModel = viewModel
+        self.controlledView = view
+        
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -26,13 +34,20 @@ class LoginViewController: AuthViewController {
     
     // MARK: Life Cycle
 
+    override func loadView() {
+        view = controlledView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
         
         guard let controlledView = controlledView as? LoginView else { return }
         
         controlledView.loginButton.addTarget(self, action: #selector(didPressLogin), for: .touchUpInside)
         controlledView.createAccountButton.addTarget(self, action: #selector(didPressCreateAccount), for: .touchUpInside)
+        
+        configureTextFieldsForKeyboardTraversal(controlledView.textFields)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -71,7 +86,23 @@ class LoginViewController: AuthViewController {
     }
     
     // MARK: Convenience
+    
+    func setupBindings() {
+        controlledView.emailTextFieldView.textField.createBidirectionalBinding(
+            with: viewModel.$email,
+            keyPath: \AuthViewModel.email,
+            for: viewModel,
+            storeIn: &subscriptions
+        )
         
+        controlledView.passwordTextFieldView.textField.createBidirectionalBinding(
+            with: viewModel.$password,
+            keyPath: \AuthViewModel.password,
+            for: viewModel,
+            storeIn: &subscriptions
+        )
+    }
+    
     func handleUserLoginCompletion(completion: Subscribers.Completion<Error>) {
         controlledView.isUserInteractionEnabled = true
         controlledView.authenticationBtn.isLoading = false
@@ -85,6 +116,6 @@ class LoginViewController: AuthViewController {
     }
     
     func handleLoginFailure(error: Error) {
-        ErrorManager.shared.presentError(errorMessage: "Incorrect email or password".localized, originalError: error, reportError: true)
+        ErrorManager.shared.presentError(errorMessage: error.localizedDescription, originalError: error, reportError: true)
     }
 }

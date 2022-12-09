@@ -11,8 +11,12 @@ class AuthView: KeyboardAvoidingView {
     
     let viewModel: AuthViewModel
     
-    var textFields: [TextFieldView] {
+    var textFieldViews: [TextFieldView] {
         return []
+    }
+    
+    var textFields: [UITextField] {
+        return textFieldViews.map { $0.textField }
     }
     
     let scrollView = UIScrollView()
@@ -54,7 +58,7 @@ class AuthView: KeyboardAvoidingView {
     }()
     
     lazy var textFieldsStackView: UIStackView = {
-        let arrangedSubviews = textFields
+        let arrangedSubviews = textFieldViews
         let stackView = UIStackView(arrangedSubviews: arrangedSubviews)
 
         stackView.axis = .vertical

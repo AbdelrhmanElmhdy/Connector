@@ -26,7 +26,7 @@ class ChatsCoordinator: Coordinator, Chatting {
         navigationController.pushViewController(viewController, animated: false)
     }
     
-    func chatIn(_ chatRoom: ChatRoom) {
+    func chat(in chatRoom: ChatRoom) {
         let viewController = viewControllerFactory.createChatRoomViewController(for: self, chatRoom: chatRoom)
         viewController.hidesBottomBarWhenPushed = true
         

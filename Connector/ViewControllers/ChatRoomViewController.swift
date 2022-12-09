@@ -19,7 +19,7 @@ class ChatRoomViewController: UIViewController {
     let chatRoom: ChatRoom
     var subscriptions = Set<AnyCancellable>()
     
-    private lazy var fetchControllerDelegate = FetchedResultsControllerDelegate(tableView: controlledView.tableView)
+    private lazy var fetchControllerDelegate = TableViewFetchedResultsControllerDelegate(tableView: controlledView.tableView)
     private lazy var dataSource = MessagesDataSource(fetchController: fetchedResultsController)
     
     let controlledView: ChatRoomView
@@ -146,7 +146,7 @@ class ChatRoomViewController: UIViewController {
     
     func performFetch() {
         do { try fetchedResultsController.performFetch() }
-        catch { ErrorManager.shared.reportError(error) }
+        catch { ErrorManager.shared.presentError(error, reportError: true) }
     }
     
     func scrollToBottom(animated: Bool = false) {

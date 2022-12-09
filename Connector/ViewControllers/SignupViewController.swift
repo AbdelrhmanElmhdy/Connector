@@ -9,16 +9,22 @@ import UIKit
 import CoreData
 import Combine
 
-class SignupViewController: AuthViewController {
+class SignupViewController: UIViewController {
     // MARK: Properties
     
-    unowned var coordinator: Authenticating & LoggingIn
+    private let controlledView: AuthView
+    private let viewModel: AuthViewModel
+    private unowned let coordinator: Authenticating & LoggingIn
+    
+    private var subscriptions = Set<AnyCancellable>()
     
     // MARK: Initialization
     
     init(coordinator: Authenticating & LoggingIn, viewModel: AuthViewModel, view: SignupView) {
         self.coordinator = coordinator
-        super.init(view: view, viewModel: viewModel)
+        self.viewModel = viewModel
+        self.controlledView = view
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -26,14 +32,21 @@ class SignupViewController: AuthViewController {
     }
     
     // MARK: Life Cycle
-
+    
+    override func loadView() {
+        view = controlledView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
         
         guard let controlledView = controlledView as? SignupView else { return }
         
         controlledView.signupButton.addTarget(self, action: #selector(didPressSignup), for: .touchUpInside)
         controlledView.loginButton.addTarget(self, action: #selector(didPressLogin), for: .touchUpInside)
+        
+        configureTextFieldsForKeyboardTraversal(controlledView.textFields)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -86,7 +99,51 @@ class SignupViewController: AuthViewController {
     }
     
     // MARK: Convenience
+    
+    func setupBindings() {
+        controlledView.firstNameTextFieldView.textField.createBidirectionalBinding(
+            with: viewModel.$firstName,
+            keyPath: \AuthViewModel.firstName,
+            for: viewModel,
+            storeIn: &subscriptions
+        )
         
+        controlledView.lastNameTextFieldView.textField.createBidirectionalBinding(
+            with: viewModel.$lastName,
+            keyPath: \AuthViewModel.lastName,
+            for: viewModel,
+            storeIn: &subscriptions
+        )
+        
+        controlledView.usernameTextFieldView.textField.createBidirectionalBinding(
+            with: viewModel.$username,
+            keyPath: \AuthViewModel.username,
+            for: viewModel,
+            storeIn: &subscriptions
+        )
+                
+        controlledView.emailTextFieldView.textField.createBidirectionalBinding(
+            with: viewModel.$email,
+            keyPath: \AuthViewModel.email,
+            for: viewModel,
+            storeIn: &subscriptions
+        )
+        
+        controlledView.passwordTextFieldView.textField.createBidirectionalBinding(
+            with: viewModel.$password,
+            keyPath: \AuthViewModel.password,
+            for: viewModel,
+            storeIn: &subscriptions
+        )
+        
+        controlledView.confirmPasswordTextFieldView.textField.createBidirectionalBinding(
+            with: viewModel.$passwordConfirmation,
+            keyPath: \AuthViewModel.passwordConfirmation,
+            for: viewModel,
+            storeIn: &subscriptions
+        )
+    }
+    
     func presentErrorMessagesForInvalidInputs(invalidInputs: [Validatable], errorMessages: [String]) {
         for (index, input) in invalidInputs.enumerated() {
             let errorMessage = errorMessages[index]

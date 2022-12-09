@@ -25,7 +25,7 @@ extension ChatsTableViewController: UISearchControllerDelegate, UISearchResultsU
             return
         }
         
-        coordinator.chatIn(chatRoom)
+        coordinator.chat(in: chatRoom)
     }
     
     func updateSearchResults(for searchController: UISearchController) {

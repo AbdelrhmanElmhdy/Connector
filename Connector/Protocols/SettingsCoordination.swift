@@ -12,5 +12,5 @@ protocol LoggingOut: AnyObject {
 }
 
 protocol DisclosingSettings {
-    func disclose(settings settingsSections: [SettingsSection], settingsTitle: String)
+    func disclose(_ settingsDisclosureOption: SettingsDisclosureOption)
 }

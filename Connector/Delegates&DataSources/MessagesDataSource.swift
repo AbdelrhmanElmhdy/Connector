@@ -19,8 +19,12 @@ class MessagesDataSource: NSObject, UITableViewDataSource {
     
     // MARK: Data source
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return fetchController.sections?.count ?? 0
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return fetchController.sections?.first?.numberOfObjects ?? 0
+        return fetchController.sections?[section].numberOfObjects ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

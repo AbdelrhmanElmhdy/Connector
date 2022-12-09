@@ -30,9 +30,10 @@ class SettingsCoordinator: Coordinator, LoggingOut, DisclosingSettings {
         parentCoordinator.logout()
     }
     
-    func disclose(settings settingsSections: [SettingsSection], settingsTitle: String) {
+    func disclose(_ settingsDisclosureOption: SettingsDisclosureOption) {
+        let settingsSections = settingsDisclosureOption.children
         let viewController = viewControllerFactory.createSettingsTableViewController(for: self, settingsSections: settingsSections)
-        viewController.title = settingsTitle
+        viewController.title = settingsDisclosureOption.label
         viewController.hidesBottomBarWhenPushed = true
         
         navigationController.pushViewController(viewController, animated: true)

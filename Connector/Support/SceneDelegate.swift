@@ -25,11 +25,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
         
         let dependencyContainer = (UIApplication.shared.delegate as! AppDelegate).dependencyContainer
+        let userPreferences = dependencyContainer.userDefaultsManager.userPreferences
+        
+        configureWindow(window, userPreferences: userPreferences)
         
         coordinator = MainCoordinator(navigationController: navigationController,
                                       viewControllerFactory: dependencyContainer,
                                       authServices: dependencyContainer.authServices)
         coordinator?.start()
+    }
+    
+    func configureWindow(_ window: UIWindow?, userPreferences: UserPreferences) {
+        window?.overrideUserInterfaceStyle = userPreferences.userInterfaceStyle
     }
 
 }

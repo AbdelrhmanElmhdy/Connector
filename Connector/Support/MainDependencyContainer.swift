@@ -15,6 +15,10 @@ class MainDependencyContainer: DependencyContainer {
     lazy var coreDataManager = CoreDataManager(persistentContainerName: "Connector")
     lazy var firebaseManager = FirebaseManager()
     
+    // MARK: Factories
+    
+    lazy var settingsSectionFactory = SettingsSectionsFactory(userDefaultsManager: userDefaultsManager)
+    
     // MARK: Services
     
     lazy var authNetworkServices: AuthNetworkServicesProtocol = AuthNetworkServices(firebaseManager: firebaseManager)
@@ -44,6 +48,8 @@ class MainDependencyContainer: DependencyContainer {
         userServices: userServices,
         authServices: authServices
     )
+    
+    lazy var userPreferencesServices: UserPreferencesServices = UserPreferencesServices(userDefaultsManager: userDefaultsManager)
 }
 
 // MARK: Factories
@@ -92,10 +98,10 @@ extension MainDependencyContainer: CallsTableViewControllerFactory {
 extension MainDependencyContainer: SettingsTableViewControllerFactory {
     func createSettingsTableViewController(for coordinator: SettingsCoordinator, settingsSections: [SettingsSection]? = nil) -> SettingsTableViewController {
         
-        let viewModel = SettingsViewModel(authServices: authServices)
+        let viewModel = SettingsViewModel(userPreferencesServices: userPreferencesServices, authServices: authServices)
         let viewController = SettingsTableViewController(coordinator: coordinator, viewModel: viewModel)
         
-        let settingsSections = settingsSections ?? SettingsSectionsFactory.createRootSettingsSections(forTargetVC: viewController)
+        let settingsSections = settingsSections ?? settingsSectionFactory.createRootSettingsSections(forTargetVC: viewController)
         
         let dataSource = SettingsDataSource(settingsSections: settingsSections)
         viewController.datasource = dataSource

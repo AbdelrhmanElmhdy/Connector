@@ -12,6 +12,10 @@ extension SettingsTableViewController: SettingsViewController { // + Actions
     @objc func didToggleReceiveNotificationsSwitch(sender: UISwitch) {
         print(sender.isOn)
     }
+    
+    func didSelectUserInterfaceStyle(_ style: UIUserInterfaceStyle?) {
+        viewModel.selectUserInterfaceStyle(style)
+    }
         
     func didPressLogout() {
         do { try viewModel.signOut() }

@@ -44,6 +44,7 @@ class SettingsTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureNavBar()
+        tableView.reloadData()
     }
     
     // MARK: Convenience
@@ -64,11 +65,15 @@ class SettingsTableViewController: UITableViewController {
         
         switch settingsOption {
         case let .disclosure(option):
-            coordinator.disclose(settings: option.children, settingsTitle: option.label)
+            coordinator.disclose(option)
         case let .button(option):
-            option.tabHandler()
-        case .switch, .option, .none:
+            option.tapHandler()
+        case let .value(option):
+            option.tapHandler(option.value)
+            datasource?.updateSelectedValue(option.value, forTableView: tableView)
             tableView.deselectRow(at: indexPath, animated: true)
+        case .switch, .none:
+            break
         }
     }
     

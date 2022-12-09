@@ -7,7 +7,11 @@
 
 import UIKit
 
-@objc protocol SettingsViewController {
-    func didPressLogout()
+@objc protocol ObjcSettingsViewController {
     @objc func didToggleReceiveNotificationsSwitch(sender: UISwitch)
+}
+
+protocol SettingsViewController: ObjcSettingsViewController {
+    func didPressLogout()
+    func didSelectUserInterfaceStyle(_ style: UIUserInterfaceStyle?)
 }

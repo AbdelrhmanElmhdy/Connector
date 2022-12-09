@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-class FetchedResultsControllerDelegate: NSObject, NSFetchedResultsControllerDelegate {
+class TableViewFetchedResultsControllerDelegate: NSObject, NSFetchedResultsControllerDelegate {
     let tableView: UITableView
     
     init(tableView: UITableView) {
@@ -33,7 +33,7 @@ class FetchedResultsControllerDelegate: NSObject, NSFetchedResultsControllerDele
             return
         }
     }
-     
+    
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         switch type {
         case .insert:
@@ -48,7 +48,7 @@ class FetchedResultsControllerDelegate: NSObject, NSFetchedResultsControllerDele
             return
         }
     }
-     
+    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         tableView.endUpdates()
     }

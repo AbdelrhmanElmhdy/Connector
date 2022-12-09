@@ -17,8 +17,6 @@ class ChatRoomsDataSource: NSObject, UITableViewDataSource {
         self.fetchController = fetchController
     }
     
-    // MARK: Data source
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let numberOfFetchedObjects = fetchController.fetchedObjects?.count ?? 0
         

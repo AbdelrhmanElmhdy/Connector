@@ -16,9 +16,6 @@ class ChatsTableViewController: UITableViewController {
     unowned var coordinator: Chatting
     let viewModel: ChatsTableViewModel
     
-    private lazy var fetchControllerDelegate = FetchedResultsControllerDelegate(tableView: tableView)
-    private lazy var dataSource = ChatRoomsDataSource(fetchController: fetchController)
-    
     lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: SearchResultsTableViewController())
         
@@ -39,6 +36,9 @@ class ChatsTableViewController: UITableViewController {
         return fetchController
     }()
     
+    private lazy var fetchControllerDelegate = TableViewFetchedResultsControllerDelegate(tableView: tableView)
+    private lazy var dataSource = ChatRoomsDataSource(fetchController: fetchController)
+    
     // MARK: Initialization
     
     init(coordinator: Chatting, viewModel: ChatsTableViewModel) {
@@ -57,12 +57,11 @@ class ChatsTableViewController: UITableViewController {
         super.viewDidLoad()
         
         title = "Chats".localized
-        navigationItem.searchController = searchController
         
+        navigationItem.searchController = searchController
         fetchController.delegate = fetchControllerDelegate
         tableView.dataSource = dataSource
         tableView.rowHeight = 85
-        
         
         tableView.register(ChatTableViewCell.self, forCellReuseIdentifier: chatCellReuseIdentifier)
         
@@ -90,6 +89,6 @@ class ChatsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let chatRoom = fetchController.object(at: indexPath)
-        coordinator.chatIn(chatRoom)
+        coordinator.chat(in: chatRoom)
     }
 }
