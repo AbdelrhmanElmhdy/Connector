@@ -9,43 +9,43 @@ import Foundation
 import CoreData
 
 class ChatsTableViewModel {
-    private let userServices: UserServicesProtocol
-    private let chatRoomServices: ChatRoomServicesProtocol
-    private let chatMessageServices: ChatMessageServicesProtocol
+    private let userService: UserService
+    private let chatRoomService: ChatRoomService
+    private let chatMessageService: ChatMessageService
             
-    init(userServices: UserServicesProtocol, chatRoomServices: ChatRoomServicesProtocol, chatMessageServices: ChatMessageServicesProtocol) {
-        self.userServices = userServices
-        self.chatRoomServices = chatRoomServices
-        self.chatMessageServices = chatMessageServices
+    init(userService: UserService, chatRoomService: ChatRoomService, chatMessageService: ChatMessageService) {
+        self.userService = userService
+        self.chatRoomService = chatRoomService
+        self.chatMessageService = chatMessageService
     }
     
     func startListeningForIncomingMessages() throws {
-        try chatMessageServices.startListeningForIncomingMessages()
+        try chatMessageService.startListeningForIncomingMessages()
     }
     
     func createChatRoomsFetchController(fetchRequest: NSFetchRequest<ChatRoom>) -> NSFetchedResultsController<ChatRoom> {
-        chatRoomServices.createChatRoomsFetchController(fetchRequest: fetchRequest)
+        chatRoomService.createChatRoomsFetchController(fetchRequest: fetchRequest)
     }
     
     func createNewChatRoom(withParticipants participants: [User]) -> ChatRoom? {
-        chatRoomServices.createChatRoom(withParticipants: participants)
+        chatRoomService.createChatRoom(withParticipants: participants)
     }
     
     func getExistingChatRoom(_ participantsIDs: [String]) -> ChatRoom? {
-        chatRoomServices.fetchChatRoom(withParticipantsIDs: participantsIDs)
+        chatRoomService.fetchChatRoom(withParticipantsIDs: participantsIDs)
     }
     
-    func getCurrentUser() throws -> User { try userServices.getCurrentUser() }
+    func getCurrentUser() throws -> User { try userService.getCurrentUser() }
     
     func prepareToMoveUsersToDifferentThread(users: [User]) throws -> [NSManagedObjectID] {
-        try userServices.prepareToMoveUsersToDifferentThread(users)
+        try userService.prepareToMoveUsersToDifferentThread(users)
     }
     
     func getExistingUsers(withObjectIDs objectIDs: [NSManagedObjectID]) -> [User]? {
-        userServices.fetchUsers(withObjectIDs: objectIDs)
+        userService.fetchUsers(withObjectIDs: objectIDs)
     }
     
     func searchForUsers(by username: String, completion: @escaping ([User]?, Error?) -> Void) {
-        userServices.searchForRemoteUsers(withUsernameSimilarTo: username, handler: completion)
+        userService.searchForRemoteUsers(withUsernameSimilarTo: username, handler: completion)
     }
 }

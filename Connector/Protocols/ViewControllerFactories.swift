@@ -7,22 +7,22 @@
 
 import Foundation
 
-protocol AuthViewControllerFactory: AnyObject {
+protocol AuthViewControllersFactory: AnyObject {
     func createLoginViewController(for coordinator: Authenticating & CreatingAccount) -> LoginViewController
     func createSignupViewController(for coordinator: Authenticating & LoggingIn) -> SignupViewController
 }
 
-protocol ChatsViewControllerFactory: AnyObject {
+protocol ChatViewControllersFactory: AnyObject {
     func createChatsTableViewController(for coordinator: Chatting) -> ChatsTableViewController
     func createChatRoomViewController(for coordinator: Coordinator, chatRoom: ChatRoom) -> ChatRoomViewController
 }
 
-protocol CallsTableViewControllerFactory: AnyObject {
+protocol CallViewControllersFactory: AnyObject {
     func createCallsTableViewController(for coordinator: Coordinator) -> CallsTableViewController
 }
 
-protocol SettingsTableViewControllerFactory: AnyObject {
+protocol SettingsViewControllersFactory: AnyObject {
     func createSettingsTableViewController(for coordinator: SettingsCoordinator, settingsSections: [SettingsSection]?) -> SettingsTableViewController
 }
 
-typealias ViewControllerFactory = AuthViewControllerFactory & ChatsViewControllerFactory & CallsTableViewControllerFactory & SettingsTableViewControllerFactory
+typealias ViewControllerFactory = AuthViewControllersFactory & ChatViewControllersFactory & CallViewControllersFactory & SettingsViewControllersFactory

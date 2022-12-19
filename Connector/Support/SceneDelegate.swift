@@ -31,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         coordinator = MainCoordinator(navigationController: navigationController,
                                       viewControllerFactory: dependencyContainer,
-                                      authServices: dependencyContainer.authServices)
+                                      authService: dependencyContainer.authService)
         coordinator?.start()
     }
     

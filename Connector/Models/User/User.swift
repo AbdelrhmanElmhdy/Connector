@@ -11,7 +11,7 @@ import CoreData
 import FirebaseFirestore
 
 @objc(User)
-public class User: NSManagedObject, FirebaseCodableMo, Codable {
+public class User: NSManagedObject, FirebaseCodableManagedObject, Codable {
         
     enum CodingKeys: CodingKey {
          case id, firstName, lastName, username, email, chatRoomIds, imageUrl, isCurrentUser, thumbnailImageUrl

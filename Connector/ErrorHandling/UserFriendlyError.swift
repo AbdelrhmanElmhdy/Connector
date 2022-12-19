@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// An error that can be used to present a user friendly error message to the user and some advice.
+/// An error that can be used to present a user friendly error message to the user and some advice, while retaining the developer friendly description.
 protocol UserFriendlyError: Error {
     
     var description: String { get }

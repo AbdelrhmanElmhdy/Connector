@@ -76,7 +76,7 @@ class ChatRoomViewController: UIViewController {
         fetchedResultsController.delegate = fetchControllerDelegate
         controlledView.tableView.dataSource = dataSource
         
-        controlledView.messageComposerView.inputFieldContainer.sendBtn.addTarget(self,
+        controlledView.messageComposerView.inputFieldContainer.sendButton.addTarget(self,
                                                                   action: #selector(didPressSendButton),
                                                                   for: .touchUpInside)
         
@@ -140,7 +140,7 @@ class ChatRoomViewController: UIViewController {
         viewModel.$messageText
             .receive(on: DispatchQueue.main)
             .map { !$0.isEmpty }
-            .assign(to: \.isEnabled, on: controlledView.messageComposerView.inputFieldContainer.sendBtn)
+            .assign(to: \.isEnabled, on: controlledView.messageComposerView.inputFieldContainer.sendButton)
             .store(in: &subscriptions)
     }
     

@@ -14,7 +14,7 @@ class ChatInputFieldContainer: UIView {
     
     var inputFieldHeightIsInvalid: Bool = false
     
-    let sendBtn: UIButton = {
+    let sendButton: UIButton = {
         let button = UIButton(type: .system)
         
         let image = UIImage(systemName: "arrow.up")?.withTintColor(.white).withRenderingMode(.alwaysOriginal)
@@ -59,25 +59,25 @@ class ChatInputFieldContainer: UIView {
     }
     
     func setupSubViews() {
-        setupSendBtn()
+        setupSendButton()
         setupInputView()
     }
     
-    func setupSendBtn() {
-        addSubview(sendBtn)
+    func setupSendButton() {
+        addSubview(sendButton)
         
         
         let verticalPadding: CGFloat = 10
         let size: CGFloat = ChatInputFieldContainer.minHeight - verticalPadding
         
         NSLayoutConstraint.activate([
-            sendBtn.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -(verticalPadding / 2) - 1.5),
-            sendBtn.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -6),
-            sendBtn.widthAnchor.constraint(equalToConstant: size),
-            sendBtn.heightAnchor.constraint(equalToConstant: size),
+            sendButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -(verticalPadding / 2) - 1.5),
+            sendButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -6),
+            sendButton.widthAnchor.constraint(equalToConstant: size),
+            sendButton.heightAnchor.constraint(equalToConstant: size),
         ])
         
-        sendBtn.layer.cornerRadius = size / 2
+        sendButton.layer.cornerRadius = size / 2
     }
     
     func setupInputView() {
@@ -86,7 +86,7 @@ class ChatInputFieldContainer: UIView {
             inputField.topAnchor.constraint(equalTo: self.topAnchor),
             inputField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12),
             inputField.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            inputField.trailingAnchor.constraint(equalTo: sendBtn.leadingAnchor, constant: -8),
+            inputField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -8),
         ])
     }
 }

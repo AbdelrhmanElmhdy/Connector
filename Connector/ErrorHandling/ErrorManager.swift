@@ -40,8 +40,10 @@ struct ErrorManager {
     }
     
     
-    func presentError(_ error: Error, reportError: Bool) {
-        if let error = error as? UserFriendlyError {
+    func presentError(_ error: Error, withMessage message: String? = nil, reportError: Bool) {
+        if let message = message, !message.isEmpty {
+            AlertPopup().presentAsError(withMessage: message)
+        } else if let error = error as? UserFriendlyError {
             AlertPopup().presentAsError(withMessage: error.userFriendlyDescription, advice: error.userFriendlyAdvice)
         } else {
             AlertPopup().presentAsError(withMessage: "Something went wrong! Please try again later")
@@ -54,7 +56,7 @@ struct ErrorManager {
     
     func presentError(errorMessage: String, originalError: Error? = nil, reportError: Bool) {
         let error = originalError ?? GenericError.somethingWentWrong(description: errorMessage)
-        presentError(error, reportError: reportError)
+        presentError(error, withMessage: errorMessage, reportError: reportError)
     }
     
     func presentSomethingWentWrongError(originalError: Error? = nil, reportError: Bool) {

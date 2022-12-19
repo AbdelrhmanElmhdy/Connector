@@ -25,6 +25,8 @@ enum SettingsOption {
     case value(option: SettingsValueOption)
 }
 
+// Note: The settings option types must be reference types (classes) so changes in their values can be propagated through all the settings view-controllers in the stack automatically.
+
 class SettingsDisclosureOption {
     let icon: UIImage?
     let label: String

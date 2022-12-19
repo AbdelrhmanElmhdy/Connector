@@ -20,41 +20,11 @@ class AuthView: KeyboardAvoidingView {
     }
     
     let scrollView = UIScrollView()
-        
+    
     let logoImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "AuthScreenAppIcon"))
         imageView.contentMode = .scaleAspectFit
         return imageView
-    }()
-        
-    lazy var firstNameTextFieldView = createAuthTextField(name: "First Name".localized,
-                                                          icon: UIImage(systemName: "person.circle.fill"))
-    
-    lazy var lastNameTextFieldView = createAuthTextField(name: "Last Name".localized,
-                                                         icon: UIImage(systemName: "person.circle.fill"))
-    
-    lazy var emailTextFieldView = createEmailTextField(name: "Email".localized,
-                                                       icon: UIImage(systemName: "envelope.circle.fill"),
-                                                       validators: [
-                                                        viewModel.emailValidator
-                                                       ])
-    
-    lazy var usernameTextFieldView = createUsernameTextField(name: "Username".localized,
-                                                             icon: UIImage(systemName: "person.circle.fill"))
-    
-    lazy var passwordTextFieldView = createPasswordTextField(name: "Password".localized,
-                                                           icon: UIImage(systemName: "lock.circle.fill"),
-                                                           validators: [
-                                                            viewModel.passwordMinimumLengthValidator,
-                                                            viewModel.passwordComplexityValidator
-                                                           ])
-    
-    
-    lazy var confirmPasswordTextFieldView: TextFieldView = {
-        let textField = createPasswordTextField(name: "Confirm Password".localized,
-                                                icon: UIImage(systemName: "lock.circle.fill"))
-        textField.nameAsNoun = "Password Confirmation".localized
-        return textField
     }()
     
     lazy var textFieldsStackView: UIStackView = {
@@ -69,8 +39,8 @@ class AuthView: KeyboardAvoidingView {
         return stackView
     }()
     
-    lazy var authenticationBtn: PrimaryBtn = {
-        let button = PrimaryBtn(theme: .accent)
+    lazy var authenticationButton: PrimaryButton = {
+        let button = PrimaryButton(theme: .accent)
         return button
     }()
     
@@ -82,7 +52,7 @@ class AuthView: KeyboardAvoidingView {
         return label
     }()
     
-    lazy var otherAuthMethodBtn: UIButton = {
+    lazy var otherAuthMethodButton: UIButton = {
         var button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -91,8 +61,8 @@ class AuthView: KeyboardAvoidingView {
         return button
     }()
     
-    lazy var otherAuthMethodLabelAndBtnHorizontalStack: UIStackView = {
-        var stackView = UIStackView(arrangedSubviews: [otherAuthMethodLabel, otherAuthMethodBtn])
+    lazy var otherAuthMethodLabelAndButtonHorizontalStack: UIStackView = {
+        var stackView = UIStackView(arrangedSubviews: [otherAuthMethodLabel, otherAuthMethodButton])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .fillProportionally
         stackView.spacing = 3
@@ -100,14 +70,14 @@ class AuthView: KeyboardAvoidingView {
     }()
     
     lazy var rootStackView: UIStackView = {
-        var stackView = UIStackView(arrangedSubviews: [logoImageView, textFieldsStackView, authenticationBtn, otherAuthMethodLabelAndBtnHorizontalStack])
+        var stackView = UIStackView(arrangedSubviews: [logoImageView, textFieldsStackView, authenticationButton, otherAuthMethodLabelAndButtonHorizontalStack])
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .fill
         stackView.alignment = .center
         stackView.setCustomSpacing(15, after: logoImageView)
         stackView.setCustomSpacing(30, after: textFieldsStackView)
-        stackView.setCustomSpacing(10, after: authenticationBtn)
+        stackView.setCustomSpacing(10, after: authenticationButton)
         return stackView
     }()
     
@@ -131,10 +101,10 @@ class AuthView: KeyboardAvoidingView {
         setupRootStackView()
         setupImageView()
         setupTextFieldsStackView()
-        setupAuthenticationBtn()
+        setupAuthenticationButton()
     }
-                
-    func setupScrollView() {
+    
+    private func setupScrollView() {
         addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.contentInset.bottom = 20
@@ -146,8 +116,8 @@ class AuthView: KeyboardAvoidingView {
             scrollView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor),
         ])
     }
-        
-    func setupRootStackView() {
+    
+    private func setupRootStackView() {
         scrollView.addSubview(rootStackView)
         
         // Try to Make the height of the stack view not exceed 85% of the height of the scroll view
@@ -171,23 +141,23 @@ class AuthView: KeyboardAvoidingView {
         logoImageView.setContentCompressionResistancePriority(.defaultLow - 1, for: .vertical)
         logoImageView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200).isActive = true
     }
-        
-    func setupTextFieldsStackView() {
+    
+    private func setupTextFieldsStackView() {
         NSLayoutConstraint.activate([
             textFieldsStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.9),
         ])
     }
     
-    func setupAuthenticationBtn() {
+    private func setupAuthenticationButton() {
         NSLayoutConstraint.activate([
-            authenticationBtn.heightAnchor.constraint(equalToConstant: 50),
-            authenticationBtn.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.75),
+            authenticationButton.heightAnchor.constraint(equalToConstant: 50),
+            authenticationButton.widthAnchor.constraint(equalTo: scrollView.widthAnchor, multiplier: 0.75),
         ])
     }
     
     // MARK: Convenience
     
-    private func createAuthTextField(name: String, icon: UIImage?, validators: [Validatable.Validator] = []) -> TextFieldView {
+    func createAuthTextField(name: String, icon: UIImage?, validators: [Validatable.Validator] = []) -> TextFieldView {
         
         let icon = icon?.withTintColor(.accentForLightGrayForDark).withRenderingMode(.alwaysOriginal)
         let textFieldView = TextFieldView(name: name,
@@ -201,22 +171,36 @@ class AuthView: KeyboardAvoidingView {
         return textFieldView
     }
     
-    private func createUsernameTextField(name: String, icon: UIImage?, validators: [Validatable.Validator] = []) -> TextFieldView {
-        let usernameTextFieldView = createAuthTextField(name: name, icon: icon, validators: validators)
+    func createNameTextField(name: String) -> TextFieldView {
+        let icon = UIImage(systemName: "person.circle.fill")
+        return createAuthTextField(name: name, icon: icon, validators: [])
+    }
+    
+    func createUsernameTextField() -> TextFieldView {
+        let name = "Username".localized
+        let icon = UIImage(systemName: "person.circle.fill")
+        
+        let usernameTextFieldView = createAuthTextField(name: name, icon: icon, validators: [])
         usernameTextFieldView.textField.textContentType = .username
         
         return usernameTextFieldView
     }
     
-    private func createEmailTextField(name: String, icon: UIImage?, validators: [Validatable.Validator] = []) -> TextFieldView {
-        let usernameTextFieldView = createAuthTextField(name: name, icon: icon, validators: validators)
-        usernameTextFieldView.textField.textContentType = .emailAddress
-        usernameTextFieldView.textField.keyboardType = .emailAddress
+    func createEmailTextField() -> TextFieldView {
+        let name = "Email".localized
+        let icon = UIImage(systemName: "envelope.circle.fill")
+        let validators = [viewModel.emailValidator]
         
-        return usernameTextFieldView
+        let emailTextFieldView = createAuthTextField(name: name, icon: icon, validators: validators)
+        emailTextFieldView.textField.textContentType = .emailAddress
+        emailTextFieldView.textField.keyboardType = .emailAddress
+        
+        return emailTextFieldView
     }
     
-    private func createPasswordTextField(name: String, icon: UIImage?, validators: [Validatable.Validator] = []) -> TextFieldView {
+    func createPasswordTextField(name: String, validators: [Validatable.Validator] = []) -> TextFieldView {
+        let icon = UIImage(systemName: "lock.circle.fill")
+        
         let passwordTextFieldView = createAuthTextField(name: name, icon: icon, validators: validators)
         passwordTextFieldView.textField.textContentType = .password
         passwordTextFieldView.textField.isSecureTextEntry = true

@@ -13,7 +13,8 @@ class SettingsCoordinator: Coordinator, LoggingOut, DisclosingSettings {
     let viewControllerFactory: ViewControllerFactory
     unowned var parentCoordinator: TabBarCoordinator
     
-    init(navigationController: UINavigationController, viewControllerFactory: ViewControllerFactory,
+    init(navigationController: UINavigationController,
+         viewControllerFactory: ViewControllerFactory,
          parentCoordinator: TabBarCoordinator) {
         self.navigationController = navigationController
         self.viewControllerFactory = viewControllerFactory

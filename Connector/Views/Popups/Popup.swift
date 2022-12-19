@@ -13,13 +13,13 @@ class Popup: UIView {
 		return visualEffectView
 	}()
     
-	lazy var dismissBtn: UIButton = {
+	lazy var dismissButton: UIButton = {
 		let button = UIButton(type: .system)
 		button.translatesAutoresizingMaskIntoConstraints = false
 		
 		button.setImage(UIImage(systemName: "xmark"), for: .normal)
 		button.tintColor = .white
-		button.addTarget(self, action: #selector(handleOverlayAndDismissBtnTab), for: .touchUpInside)
+		button.addTarget(self, action: #selector(handleOverlayAndDismissButtonTab), for: .touchUpInside)
 		button.imageView?.contentMode = .scaleAspectFit
 		
 		return button
@@ -37,7 +37,7 @@ class Popup: UIView {
 		return view
 	}()
 	
-	lazy var overlayTapGestureRecognizer: UIGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleOverlayAndDismissBtnTab))
+	lazy var overlayTapGestureRecognizer: UIGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleOverlayAndDismissButtonTab))
 	
 	var blurEffectStyle: UIBlurEffect.Style {
 		return traitCollection.userInterfaceStyle == .dark ? .light : .dark
@@ -67,19 +67,19 @@ class Popup: UIView {
 		addSubview(blurOverlay)
 		blurOverlay.fillSuperView()
 		
-		setupDismissBtn()
+		setupDismissButton()
 		addSubview(contentView)
         setupContentView()
 	}
 	
-	 func setupDismissBtn() {
-		addSubview(dismissBtn)
+	 func setupDismissButton() {
+		addSubview(dismissButton)
 		
 		NSLayoutConstraint.activate([
-			dismissBtn.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 5),
-			dismissBtn.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
-			dismissBtn.heightAnchor.constraint(equalToConstant: 18),
-			dismissBtn.widthAnchor.constraint(equalToConstant: 18),
+			dismissButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 5),
+			dismissButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
+			dismissButton.heightAnchor.constraint(equalToConstant: 18),
+			dismissButton.widthAnchor.constraint(equalToConstant: 18),
 		])
 	}
 	
@@ -92,15 +92,15 @@ class Popup: UIView {
         ])
     }
 	
-	@objc func handleOverlayAndDismissBtnTab() {
+	@objc func handleOverlayAndDismissButtonTab() {
 		dismiss(animated: true)
 	}
 	
 	// MARK: Tools
 			
 	func present(animated: Bool) {
-		let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-		keyWindow?.addSubview(self)
+        guard let window = UIApplication.shared.keyWindow else { return }
+        window.addSubview(self)
         
         prepareForPresentation()
         
@@ -130,9 +130,9 @@ class Popup: UIView {
 		
 		contentView.scale(to: contentViewInitialScale)
 		blurOverlay.alpha = 1
-		dismissBtn.alpha = 1
+		dismissButton.alpha = 1
 		
-		fillScreen()
+		fillSuperView()
 	}
     
     func animateContentViewIn(withDuration animationDuration: TimeInterval) {
@@ -151,7 +151,7 @@ class Popup: UIView {
 				self.contentView.alpha = 0
 				self.contentView.scale(to: self.contentViewInitialScale)
 				self.blurOverlay.alpha = 0
-				self.dismissBtn.alpha = 0
+				self.dismissButton.alpha = 0
 			},
 			completion: completionHandler
 		)

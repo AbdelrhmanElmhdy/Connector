@@ -602,6 +602,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.24):
     - BoringSSL-GRPC/Interface (= 0.0.24)
   - BoringSSL-GRPC/Interface (0.0.24)
+  - Fakery (5.1.0)
   - FirebaseAuth (9.4.0):
     - FirebaseCore (~> 9.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
@@ -719,21 +720,27 @@ PODS:
   - ShimmerSwift (2.1.1)
   - Socket.IO-Client-Swift (16.0.1):
     - Starscream (~> 4.0)
+  - Sourcery (1.9.2):
+    - Sourcery/CLI-Only (= 1.9.2)
+  - Sourcery/CLI-Only (1.9.2)
   - Starscream (4.0.4)
   - SwiftKeychainWrapper (4.0.1)
 
 DEPENDENCIES:
+  - Fakery
   - FirebaseAuth
   - FirebaseCore (from `https://github.com/firebase/firebase-ios-sdk.git`, branch `master`)
   - FirebaseFirestore
   - ShimmerSwift
   - Socket.IO-Client-Swift (~> 16.0.1)
+  - Sourcery
   - SwiftKeychainWrapper (~> 4.0)
 
 SPEC REPOS:
   trunk:
     - abseil
     - BoringSSL-GRPC
+    - Fakery
     - FirebaseAuth
     - FirebaseCoreDiagnostics
     - FirebaseCoreInternal
@@ -749,6 +756,7 @@ SPEC REPOS:
     - PromisesObjC
     - ShimmerSwift
     - Socket.IO-Client-Swift
+    - Sourcery
     - Starscream
     - SwiftKeychainWrapper
 
@@ -765,6 +773,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
+  Fakery: a90caff00ca5cacde6c161c3eafc72314a03d34d
   FirebaseAuth: ae5d4402e1516497357d909162b091b3ca2a2e9c
   FirebaseCore: 25c0400b670fd1e2f2104349cd3b5dcce8d9418f
   FirebaseCoreDiagnostics: aaa87098082c4d4bdd1a9557b1186d18ca85ce8c
@@ -781,9 +790,10 @@ SPEC CHECKSUMS:
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   ShimmerSwift: f7ed2daf9c246de8299dfd9e12c6ab465cba9842
   Socket.IO-Client-Swift: c116d6dc9fd6be9c259bacfe143f8725bce7d79e
+  Sourcery: 179539341c2261068528cd15a31837b7238fd901
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SwiftKeychainWrapper: 807ba1d63c33a7d0613288512399cd1eda1e470c
 
-PODFILE CHECKSUM: b798b8e2e8545bcd231af2e2511c45249d2cbb19
+PODFILE CHECKSUM: c05dfbeca362f7ed81e02c7be07b5fba45049b47
 
 COCOAPODS: 1.11.3

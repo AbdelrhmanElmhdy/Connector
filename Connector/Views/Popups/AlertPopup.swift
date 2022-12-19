@@ -48,6 +48,10 @@ class AlertPopup: Popup {
 		didSet {
 			actionsRow.removeAllArrangedSubviews()
 			
+            if actions.count == 1 {
+                actionsRow.addSeparatorView(withColor: .separator, andWidth: 0.5)
+            }
+            
 			guard !actions.isEmpty else {
 				actionsRowHeightConstraint.constant = 0
 				return
@@ -58,7 +62,7 @@ class AlertPopup: Popup {
 				actionsRow.addArrangedSubview(action)
 			}
 			
-			actionsRowHeightConstraint.constant = 35
+			actionsRowHeightConstraint.constant = 40
 		}
 	}
 	
@@ -97,7 +101,7 @@ class AlertPopup: Popup {
         contentView.addSubview(messageLabel)
         
         NSLayoutConstraint.activate([
-            messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: LayoutConstants.screenHeight * 0.018),
+            messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 18),
             messageLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             messageLabel.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.9),
         ])
@@ -109,7 +113,7 @@ class AlertPopup: Popup {
 		actionsRowHeightConstraint = actionsRow.heightAnchor.constraint(equalToConstant: 0)
 		
 		NSLayoutConstraint.activate([
-			actionsRow.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: LayoutConstants.screenHeight * 0.018),
+			actionsRow.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 18),
 			actionsRow.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 			actionsRow.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
 			actionsRow.widthAnchor.constraint(equalTo: contentView.widthAnchor),
@@ -128,34 +132,36 @@ class AlertPopup: Popup {
 		adjustTitleLabelTopAnchorConstraint(image)
     }
     
-    func presentAsError(withMessage message: String, advice: String, actions: [AlertPopupAction]? = nil) {
-        let image = UIImage(named: "errorImage")
-        
+    func presentAsError(withMessage message: String, advice: String? = nil, actions: [AlertPopupAction]? = nil) {
         let dismissAction = AlertPopupAction(title: "Ok".localized, style: .normal) { [weak self] in
             self?.dismiss(animated: true)
         }
         
-        present(withImage: image, title: message, message: advice, actions: actions ?? [dismissAction])
-    }
-    
-    func presentAsError(withMessage message: String, actions: [AlertPopupAction] = []) {
         let image = UIImage(named: "errorImage")
+        let actions = actions ?? [dismissAction]
+        
+        if let advice = advice, !advice.isEmpty {
+            present(withImage: image, title: message, message: advice, actions: actions)
+            return
+        }
+        
         let title = "Error".localized
-		present(withImage: image, title: title, message: message, actions: actions)
+        present(withImage: image, title: title, message: message, actions: actions)
     }
     
     func presentAsInternetConnectionError() {
         presentAsError(withMessage: "No Internet Connection".localized)
     }
 	
-    func presentAsConfirmationAlert(title: String, message: String, confirmationBtnTitle: String, confirmationBtnStyle: AlertPopupAction.Style, confirmationHandler: @escaping () -> Void) {
+    /// When asking the user if they're sure they want to proceed in something
+    func presentAsConfirmationAlert(title: String, message: String, confirmationButtonTitle: String, confirmationButtonStyle: AlertPopupAction.Style, confirmationHandler: @escaping () -> Void) {
 		let cancelAction = AlertPopupAction(title: "Cancel".localized, style: .normal) {[weak self] in
 			self?.dismiss(animated: true)
 		}
 		
-		let signOutAction = AlertPopupAction(title: confirmationBtnTitle, style: confirmationBtnStyle, handler: confirmationHandler)
+		let confirmAction = AlertPopupAction(title: confirmationButtonTitle, style: confirmationButtonStyle, handler: confirmationHandler)
 		
-		present(title: title, message: message, actions: [cancelAction, signOutAction])
+		present(title: title, message: message, actions: [cancelAction, confirmAction])
 	}
 	
 	func adjustTitleLabelTopAnchorConstraint(_ image: UIImage?) {

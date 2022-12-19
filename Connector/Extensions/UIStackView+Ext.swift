@@ -10,23 +10,24 @@ extension UIStackView {
 		}
 	}
     
-    func calculateHeightBasedOn(arrangedSubviewHeight: CGFloat) -> CGFloat {
-        return calculateMainAxisLengthBasedOn(arrangedSubviewMainAxisLength: arrangedSubviewHeight)
-    }
-    
-    func calculateWidthBasedOn(arrangedSubviewWidth: CGFloat) -> CGFloat {
-        return calculateMainAxisLengthBasedOn(arrangedSubviewMainAxisLength: arrangedSubviewWidth)
-    }
-    
-    private func calculateMainAxisLengthBasedOn(arrangedSubviewMainAxisLength: CGFloat) -> CGFloat {
-        let numberOfArrangedSubviews = arrangedSubviews.count
+    func insertDividers(withColor dividerColor: UIColor = .systemGray3, thickness: CGFloat = 1, multiplier: CGFloat = 0.5) {
+        let originalSubviews = arrangedSubviews
         
-        let totalArrangedSubviewsRealEstate = CGFloat(numberOfArrangedSubviews) * arrangedSubviewMainAxisLength
-        let totalSpacingRealEstate = spacing * CGFloat((numberOfArrangedSubviews - 1))
-        
-        let stackViewMainAxisLength = totalArrangedSubviewsRealEstate + totalSpacingRealEstate
-        
-        return stackViewMainAxisLength
+        for subview in originalSubviews {
+            if subview == originalSubviews.last { break }
+            
+            let divider = UIView()
+            divider.backgroundColor = dividerColor
+            self.insertSubview(divider, belowSubview: subview)
+            
+            if self.axis == .horizontal {
+                divider.widthAnchor.constraint(equalToConstant: thickness).isActive = true
+                divider.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: multiplier).isActive = true
+            } else {
+                divider.heightAnchor.constraint(equalToConstant: thickness).isActive = true
+                divider.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: multiplier).isActive = true
+            }
+        }
     }
     
 }

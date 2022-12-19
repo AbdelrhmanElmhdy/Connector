@@ -1,7 +1,7 @@
 import UIKit
 
-class PrimaryBtn: UIButton {
-    enum BtnTheme {
+class PrimaryButton: UIButton {
+    enum ButtonTheme {
         case accent, white
     }
 	    
@@ -15,7 +15,7 @@ class PrimaryBtn: UIButton {
     }()
     
     var title = ""
-    var theme: BtnTheme = .accent
+    var theme: ButtonTheme = .accent
         
     var isLoading = false {
         didSet {
@@ -25,7 +25,7 @@ class PrimaryBtn: UIButton {
         }
     }
     
-	init(title: String = "", theme: BtnTheme) {
+	init(title: String = "", theme: ButtonTheme) {
         super.init(frame: .zero)
         
         self.title = title

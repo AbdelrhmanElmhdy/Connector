@@ -9,17 +9,17 @@ import UIKit
 
 struct SettingsSectionsFactory {
     
-    let userDefaultsManager: UserDefaultsManager
+    let userPreferences: UserPreferences
     
-    init(userDefaultsManager: UserDefaultsManager) {
-        self.userDefaultsManager = userDefaultsManager
+    init(userPreferences: UserPreferences) {
+        self.userPreferences = userPreferences
     }
     
-    func createRootSettingsSections(forTargetVC targetVC: SettingsViewController) -> [SettingsSection] {
-        let generalSettings = createGeneralSettingsSections(forTargetVC: targetVC)
-        let accountSettings = createAccountSettingsSections(forTargetVC: targetVC)
-        let notificationsSettings = createNotificationsSettingsSections(forTargetVC: targetVC)
-        let soundsAndHapticsSettings = createSoundsAndHapticsSettingsSections(forTargetVC: targetVC)
+    func createRootSettingsSections(forViewController targetVC: SettingsViewController) -> [SettingsSection] {
+        let generalSettings = createGeneralSettingsSections(forViewController: targetVC)
+        let accountSettings = createAccountSettingsSections(forViewController: targetVC)
+        let notificationsSettings = createNotificationsSettingsSections(forViewController: targetVC)
+        let soundsAndHapticsSettings = createSoundsAndHapticsSettingsSections(forViewController: targetVC)
         
         let generalSettingsOption = SettingsDisclosureOption(
             icon: UIImage(named: "GeneralSettingsIcon"),
@@ -63,9 +63,8 @@ struct SettingsSectionsFactory {
         ]
     }
     
-    /// - Stub
-    func createGeneralSettingsSections(forTargetVC targetVC: SettingsViewController) -> [SettingsSection] {
-        let darkModeSettingsOptions = createDarkModeSettingsOptions(forTargetVC: targetVC)
+    func createGeneralSettingsSections(forViewController targetVC: SettingsViewController) -> [SettingsSection] {
+        let darkModeSettingsOptions = createDarkModeSettingsOptions(forViewController: targetVC)
         
         let darkModeSettingsOption = SettingsDisclosureOption(icon: nil, label: "Dark Mode".localized, children: darkModeSettingsOptions)
         
@@ -77,12 +76,11 @@ struct SettingsSectionsFactory {
     }
     
     /// - Stub
-    func createAccountSettingsSections(forTargetVC targetVC: SettingsViewController) -> [SettingsSection] {
+    func createAccountSettingsSections(forViewController targetVC: SettingsViewController) -> [SettingsSection] {
         return []
     }
     
-    /// - Stub
-    func createNotificationsSettingsSections(forTargetVC targetVC: SettingsViewController) -> [SettingsSection] {
+    func createNotificationsSettingsSections(forViewController targetVC: SettingsViewController) -> [SettingsSection] {
         let receiveNotificationsSwitch = SettingsSwitchOption(
             icon: nil,
             label: "Receive notifications",
@@ -98,11 +96,11 @@ struct SettingsSectionsFactory {
     }
     
     /// - Stub
-    func createSoundsAndHapticsSettingsSections(forTargetVC targetVC: SettingsViewController) -> [SettingsSection] {
+    func createSoundsAndHapticsSettingsSections(forViewController targetVC: SettingsViewController) -> [SettingsSection] {
         return []
     }
     
-    func createDarkModeSettingsOptions(forTargetVC targetVC: SettingsViewController) -> [SettingsSection] {
+    func createDarkModeSettingsOptions(forViewController targetVC: SettingsViewController) -> [SettingsSection] {
         let tapHandler: (_: Int) -> Void = {[weak targetVC] value in
             let selectedUserInterfaceStyle = UIUserInterfaceStyle.init(rawValue: value)
             targetVC?.didSelectUserInterfaceStyle(selectedUserInterfaceStyle)
@@ -128,7 +126,7 @@ struct SettingsSectionsFactory {
             ])
         ]
         
-        let selectedValue = userDefaultsManager.userPreferences.userInterfaceStyle.rawValue
+        let selectedValue = userPreferences.userInterfaceStyle.rawValue
         darkModeOptions.updateSelectedValue(selectedValue: selectedValue)
         return darkModeOptions
     }

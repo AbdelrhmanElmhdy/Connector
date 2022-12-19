@@ -11,7 +11,7 @@ import CoreData
 import FirebaseFirestore
 
 @objc(Message)
-public class Message: NSManagedObject, FirebaseCodableMo, Codable {
+public class Message: NSManagedObject, FirebaseCodableManagedObject, Codable {
     enum MessageType: Int16 {
         case text
         case voiceNote

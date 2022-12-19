@@ -10,24 +10,24 @@ import Combine
 import CoreData
 
 class ChatRoomViewModel {
-    private let chatMessageServices: ChatMessageServicesProtocol
-    private let userServices: UserServicesProtocol
+    private let chatMessageService: ChatMessageService
+    private let userService: UserService
     
     @Published var messageText: String = ""
     
-    init(chatMessageServices: ChatMessageServicesProtocol, userServices: UserServicesProtocol) {
-        self.chatMessageServices = chatMessageServices
-        self.userServices = userServices
+    init(chatMessageService: ChatMessageService, userService: UserService) {
+        self.chatMessageService = chatMessageService
+        self.userService = userService
     }
     
     func createMessagesFetchController(fetchRequest: NSFetchRequest<Message>) -> NSFetchedResultsController<Message> {
-        chatMessageServices.createMessagesFetchController(fetchRequest: fetchRequest)
+        chatMessageService.createMessagesFetchController(fetchRequest: fetchRequest)
     }
     
-    func getCurrentUser() throws -> User { try userServices.getCurrentUser() }
+    func getCurrentUser() throws -> User { try userService.getCurrentUser() }
     
     func createMessage(in chatRoom: ChatRoom, senderId: String, roomId: String, type: Message.MessageType, text: String) -> Message {
-        let message = chatMessageServices.createMessage(
+        let message = chatMessageService.createMessage(
             senderId: senderId,
             roomId: roomId,
             repliedAtMessageId: nil,
@@ -45,11 +45,11 @@ class ChatRoomViewModel {
     }
     
     func sendMessage(message: Message) throws {
-        try chatMessageServices.sendMessage(message)
+        try chatMessageService.sendMessage(message)
     }
     
     func deleteMessage(_ message: Message) {
-        chatMessageServices.deleteMessage(message)
+        chatMessageService.deleteMessage(message)
     }
     
 }

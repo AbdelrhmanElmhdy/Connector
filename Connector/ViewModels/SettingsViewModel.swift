@@ -8,17 +8,17 @@
 import UIKit
 
 class SettingsViewModel {
-    private let userPreferencesServices: UserPreferencesServices
-    private let authServices: AuthServicesProtocol
+    private let userPreferencesService: UserPreferencesService
+    private let authService: AuthService
     
-    init(userPreferencesServices: UserPreferencesServices, authServices: AuthServicesProtocol) {
-        self.authServices = authServices
-        self.userPreferencesServices = userPreferencesServices
+    init(userPreferencesService: UserPreferencesService, authService: AuthService) {
+        self.authService = authService
+        self.userPreferencesService = userPreferencesService
     }
     
     func selectUserInterfaceStyle(_ selectedStyle: UIUserInterfaceStyle?) {
         guard let selectedStyle = selectedStyle else { return }
-        userPreferencesServices.updateUserInterfaceStyle(with: selectedStyle)
+        userPreferencesService.updateUserInterfaceStyle(with: selectedStyle)
         
         guard let window = UIApplication.shared.keyWindow else { return }
         
@@ -29,6 +29,6 @@ class SettingsViewModel {
     }
     
     func signOut() throws {
-        try authServices.signOut()
+        try authService.signOut()
     }
 }

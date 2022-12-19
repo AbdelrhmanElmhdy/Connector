@@ -8,106 +8,49 @@
 import UIKit
 
 class MainDependencyContainer: DependencyContainer {
+    
     // MARK: Managers
     
-    lazy var userDefaultsManager = UserDefaultsManager()
-    lazy var keychainManager = KeychainManager()
-    lazy var coreDataManager = CoreDataManager(persistentContainerName: "Connector")
-    lazy var firebaseManager = FirebaseManager()
+    lazy var userDefaultsManager: UserDefaultsManager = RealUserDefaultsManager()
+    lazy var keychainManager: KeychainManager = RealKeychainManager()
+    lazy var coreDataManager: CoreDataManager = CoreDataManagerFactory.create()
+    lazy var firebaseManager: FirebaseManager = FirebaseManagerFactory.create()
     
     // MARK: Factories
     
-    lazy var settingsSectionFactory = SettingsSectionsFactory(userDefaultsManager: userDefaultsManager)
+    lazy var settingsSectionFactory = SettingsSectionsFactory(userPreferences: userDefaultsManager.userPreferences)
     
     // MARK: Services
     
-    lazy var authNetworkServices: AuthNetworkServicesProtocol = AuthNetworkServices(firebaseManager: firebaseManager)
+    lazy var authNetworkService: AuthNetworkService = RealAuthNetworkService(firebaseManager: firebaseManager)
     
-    lazy var authServices: AuthServicesProtocol = AuthServices(userDefaultsManager: userDefaultsManager,
-                                                               keychainManager: keychainManager,
-                                                               coreDataManager: coreDataManager,
-                                                               authNetworkServices: authNetworkServices)
-    
-    lazy var userNetworkServices: UserNetworkServicesProtocol = UserNetworkServices(firebaseManager: firebaseManager)
-    
-    lazy var userServices: UserServicesProtocol = UserServices(
+    lazy var authService: AuthService = RealAuthService(
+        userDefaultsManager: userDefaultsManager,
+        keychainManager: keychainManager,
         coreDataManager: coreDataManager,
-        userNetworkServices: userNetworkServices,
-        authServices: authServices
+        authNetworkService: authNetworkService
     )
-        
-    lazy var chatRoomServices: ChatRoomServicesProtocol = ChatRoomServices(coreDataManager: coreDataManager)
     
-    lazy var chatMessageNetworkServices: ChatMessageNetworkServicesProtocol = ChatMessageNetworkServices(
+    lazy var userNetworkService: UserNetworkService = RealUserNetworkService(firebaseManager: firebaseManager)
+    
+    lazy var userService: UserService = RealUserService(
+        coreDataManager: coreDataManager,
+        userNetworkService: userNetworkService,
+        authService: authService
+    )
+    
+    lazy var chatRoomService: ChatRoomService = RealChatRoomService(coreDataManager: coreDataManager)
+    
+    lazy var chatMessageNetworkService: ChatMessageNetworkService = RealChatMessageNetworkService(
         firebaseManager: firebaseManager
     )
     
-    lazy var chatMessageServices: ChatMessageServicesProtocol = ChatMessageServices(
+    lazy var chatMessageService: ChatMessageService = RealChatMessageService(
         coreDataManager: coreDataManager,
-        chatMessageNetworkServices: chatMessageNetworkServices,
-        userServices: userServices,
-        authServices: authServices
+        chatMessageNetworkService: chatMessageNetworkService,
+        userService: userService,
+        authService: authService
     )
     
-    lazy var userPreferencesServices: UserPreferencesServices = UserPreferencesServices(userDefaultsManager: userDefaultsManager)
+    lazy var userPreferencesService: UserPreferencesService = RealUserPreferencesService(userDefaultsManager: userDefaultsManager)
 }
-
-// MARK: Factories
-
-extension MainDependencyContainer: AuthViewControllerFactory {
-    func createLoginViewController(for coordinator: Authenticating & CreatingAccount) -> LoginViewController {
-        let viewModel = AuthViewModel(authServices: authServices, userServices: userServices)
-        let view = LoginView(viewModel: viewModel)
-        let viewController = LoginViewController(coordinator: coordinator, viewModel: viewModel, view: view)
-        return viewController
-    }
-    
-    func createSignupViewController(for coordinator: Authenticating & LoggingIn) -> SignupViewController {
-        let viewModel = AuthViewModel(authServices: authServices, userServices: userServices)
-        let view = SignupView(viewModel: viewModel)
-        let viewController = SignupViewController(coordinator: coordinator, viewModel: viewModel, view: view)
-        return viewController
-    }
-}
-
-extension MainDependencyContainer: ChatsViewControllerFactory {
-    func createChatsTableViewController(for coordinator: Chatting) -> ChatsTableViewController {
-        let viewModel = ChatsTableViewModel(userServices: userServices,
-                                            chatRoomServices: chatRoomServices,
-                                            chatMessageServices: chatMessageServices)
-        
-        let viewController = ChatsTableViewController(coordinator: coordinator, viewModel: viewModel)
-        return viewController
-    }
-    
-    func createChatRoomViewController(for coordinator: Coordinator, chatRoom: ChatRoom) -> ChatRoomViewController {
-        let viewModel = ChatRoomViewModel(chatMessageServices: chatMessageServices, userServices: userServices)
-        let view = ChatRoomView()
-        let viewController = ChatRoomViewController(coordinator: coordinator, chatRoom: chatRoom, viewModel: viewModel, view: view)
-        return viewController
-    }
-}
-
-extension MainDependencyContainer: CallsTableViewControllerFactory {
-    func createCallsTableViewController(for coordinator: Coordinator) -> CallsTableViewController {
-        let viewController = CallsTableViewController(coordinator: coordinator)
-        return viewController
-    }
-}
-
-extension MainDependencyContainer: SettingsTableViewControllerFactory {
-    func createSettingsTableViewController(for coordinator: SettingsCoordinator, settingsSections: [SettingsSection]? = nil) -> SettingsTableViewController {
-        
-        let viewModel = SettingsViewModel(userPreferencesServices: userPreferencesServices, authServices: authServices)
-        let viewController = SettingsTableViewController(coordinator: coordinator, viewModel: viewModel)
-        
-        let settingsSections = settingsSections ?? settingsSectionFactory.createRootSettingsSections(forTargetVC: viewController)
-        
-        let dataSource = SettingsDataSource(settingsSections: settingsSections)
-        viewController.datasource = dataSource
-        
-        return viewController
-    }
-    
-}
-

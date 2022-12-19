@@ -11,21 +11,21 @@ class MainCoordinator: Coordinator {
     var children = Array<Coordinator>()
     let navigationController: UINavigationController
     let viewControllerFactory: ViewControllerFactory
-    var authServices: AuthServicesProtocol
+    var authService: AuthService
     lazy var rootTabBarController = RootTabBarController(coordinator: self)
     
     init(navigationController: UINavigationController,
          viewControllerFactory: ViewControllerFactory,
-         authServices: AuthServicesProtocol) {
+         authService: AuthService) {
         self.navigationController = navigationController
         self.viewControllerFactory = viewControllerFactory
-        self.authServices = authServices
+        self.authService = authService
         
         self.navigationController.view.backgroundColor = .systemBackground
     }
     
     func start() {
-        if authServices.isLoggedIn {
+        if authService.isLoggedIn {
             startTabBar()
         } else {
             startAuthentication()
@@ -57,7 +57,7 @@ class MainCoordinator: Coordinator {
         tabBarNavigationController.modalPresentationStyle = .fullScreen
         navigationController.present(tabBarNavigationController, animated: animated)
     }
-                
+    
     func childDidFinish(_ finishedChild: Coordinator) {
         finishedChild.dismiss(animated: true)
         removeChild(finishedChild)

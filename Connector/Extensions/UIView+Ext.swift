@@ -6,21 +6,6 @@ extension UIView {
         fatalError("Attempting to set constraints to a \(type(of: self)) before adding it to a superView")
     }
     
-    func fillScreen() {
-        guard let superview = superview else {
-            throwNoSuperviewError()
-            return
-        }
-        disableAutoresizingMaskTranslationIfEnabled()
-        
-        NSLayoutConstraint.activate([
-            heightAnchor.constraint(equalToConstant: LayoutConstants.screenHeight),
-            widthAnchor.constraint(equalToConstant: LayoutConstants.screenWidth),
-            centerXAnchor.constraint(equalTo: superview.centerXAnchor),
-            centerYAnchor.constraint(equalTo: superview.centerYAnchor),
-        ])
-    }
-    
     func fillSuperView() {
         guard let superview = superview else {
             throwNoSuperviewError()
@@ -153,13 +138,31 @@ extension UIView {
         }
     }
     
+    func addSeparatorView(withColor color: UIColor, andWidth width: CGFloat = 0.75) {
+        let border = UIView()
+        border.tag = 1001
+        border.backgroundColor = color
+        self.addSubview(border)
+        border.constrainEdgesToCorrespondingEdges(of: self, top: 0, leading: 0, trailing: 0)
+        border.heightAnchor.constraint(equalToConstant: width).isActive = true
+    }
+        
+    func scale(to scale: CGFloat) {
+        self.transform = CGAffineTransform(scaleX: scale, y: scale)
+    }
+    
     func removeBlurEffect() {
         viewWithTag(UIView.blurEffectTag)?.removeFromSuperview()
     }
-            	
-	func scale(to scale: CGFloat) {
-		self.transform = CGAffineTransform(scaleX: scale, y: scale)
-	}
+    
+    func removeAllBorders() {
+        for view in self.subviews {
+            if view.tag >= 1001 && view.tag <= 1004 {
+                view.removeFromSuperview()
+            }
+        }
+    }
+    
 }
 
 // MARK: Tools

@@ -12,10 +12,12 @@ target 'Connector' do
   pod 'FirebaseCore', :git => 'https://github.com/firebase/firebase-ios-sdk.git', :branch => 'master'
   pod 'FirebaseFirestore'
   pod 'FirebaseAuth'
+  pod 'Sourcery'
   
   target 'ConnectorTests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'Fakery'
   end
 
   target 'ConnectorUITests' do

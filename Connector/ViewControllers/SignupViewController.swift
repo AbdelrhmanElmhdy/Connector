@@ -12,18 +12,23 @@ import Combine
 class SignupViewController: UIViewController {
     // MARK: Properties
     
-    private let controlledView: AuthView
-    private let viewModel: AuthViewModel
+    private let controlledView: SignupView
+    private let viewModel: SignupViewModel
+    private let dataBinder: ViewAndViewModelBinder<SignupView, SignupViewModel>
     private unowned let coordinator: Authenticating & LoggingIn
     
     private var subscriptions = Set<AnyCancellable>()
     
     // MARK: Initialization
     
-    init(coordinator: Authenticating & LoggingIn, viewModel: AuthViewModel, view: SignupView) {
+    init(coordinator: Authenticating & LoggingIn,
+         view: SignupView,
+         viewModel: SignupViewModel,
+         dataBinder: ViewAndViewModelBinder<SignupView, SignupViewModel>) {
         self.coordinator = coordinator
         self.viewModel = viewModel
         self.controlledView = view
+        self.dataBinder = dataBinder
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -41,12 +46,11 @@ class SignupViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        guard let controlledView = controlledView as? SignupView else { return }
-        
         controlledView.signupButton.addTarget(self, action: #selector(didPressSignup), for: .touchUpInside)
         controlledView.loginButton.addTarget(self, action: #selector(didPressLogin), for: .touchUpInside)
         
         configureTextFieldsForKeyboardTraversal(controlledView.textFields)
+        dataBinder.setupBindings()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -58,28 +62,19 @@ class SignupViewController: UIViewController {
     
     @objc func didPressSignup() {
         // Validate all fields.
-        let (invalidInputs, errorMessages) = viewModel.validateInputs(controlledView.firstNameTextFieldView,
-                                                                      controlledView.lastNameTextFieldView,
-                                                                      controlledView.usernameTextFieldView,
-                                                                      controlledView.emailTextFieldView,
-                                                                      controlledView.passwordTextFieldView,
-                                                                      controlledView.confirmPasswordTextFieldView)
+        let invalidInputsErrorMessages = viewModel.validateInputs(controlledView.firstNameTextFieldView,
+                                                                  controlledView.lastNameTextFieldView,
+                                                                  controlledView.usernameTextFieldView,
+                                                                  controlledView.emailTextFieldView,
+                                                                  controlledView.passwordTextFieldView,
+                                                                  controlledView.confirmPasswordTextFieldView)
         
-        // Check if all fields are valid and present error messages for the invalid ones.
-        let allInputsAreValid = invalidInputs.isEmpty
-        if (!allInputsAreValid) {
-            presentErrorMessagesForInvalidInputs(invalidInputs: invalidInputs, errorMessages: errorMessages)
-        }
+        viewModel.presentErrorMessagesForInvalidInputs(invalidInputsErrorMessages: invalidInputsErrorMessages)
         
-        // Check that password confirmation matches password and present error message if it doesn't.
-        let passwordsMatch = viewModel.passwordConfirmation == viewModel.password
-        if !passwordsMatch {
-            presentPasswordsDoNotMatchErrorMessage()
-        }
+        let allInputsAreValid = invalidInputsErrorMessages.isEmpty
+        guard allInputsAreValid else { return }
         
-        guard allInputsAreValid && passwordsMatch else { return }
-        
-        disableUserInteractionsAndShowSpinner()
+        viewModel.disableUserInteraction(); /* & */ viewModel.showLoadingSpinner();
         
         // Create user.
         let user = viewModel.createUser(firstName: viewModel.firstName,
@@ -98,71 +93,10 @@ class SignupViewController: UIViewController {
         coordinator.loginWithExistingAccount()
     }
     
-    // MARK: Convenience
+    // MARK: Completion Handlers
     
-    func setupBindings() {
-        controlledView.firstNameTextFieldView.textField.createBidirectionalBinding(
-            with: viewModel.$firstName,
-            keyPath: \AuthViewModel.firstName,
-            for: viewModel,
-            storeIn: &subscriptions
-        )
-        
-        controlledView.lastNameTextFieldView.textField.createBidirectionalBinding(
-            with: viewModel.$lastName,
-            keyPath: \AuthViewModel.lastName,
-            for: viewModel,
-            storeIn: &subscriptions
-        )
-        
-        controlledView.usernameTextFieldView.textField.createBidirectionalBinding(
-            with: viewModel.$username,
-            keyPath: \AuthViewModel.username,
-            for: viewModel,
-            storeIn: &subscriptions
-        )
-                
-        controlledView.emailTextFieldView.textField.createBidirectionalBinding(
-            with: viewModel.$email,
-            keyPath: \AuthViewModel.email,
-            for: viewModel,
-            storeIn: &subscriptions
-        )
-        
-        controlledView.passwordTextFieldView.textField.createBidirectionalBinding(
-            with: viewModel.$password,
-            keyPath: \AuthViewModel.password,
-            for: viewModel,
-            storeIn: &subscriptions
-        )
-        
-        controlledView.confirmPasswordTextFieldView.textField.createBidirectionalBinding(
-            with: viewModel.$passwordConfirmation,
-            keyPath: \AuthViewModel.passwordConfirmation,
-            for: viewModel,
-            storeIn: &subscriptions
-        )
-    }
-    
-    func presentErrorMessagesForInvalidInputs(invalidInputs: [Validatable], errorMessages: [String]) {
-        for (index, input) in invalidInputs.enumerated() {
-            let errorMessage = errorMessages[index]
-            input.presentErrorMessage(errorMessage)
-        }
-    }
-        
-    func presentPasswordsDoNotMatchErrorMessage() {
-        controlledView.confirmPasswordTextFieldView.presentErrorMessage("Passwords don't match".localized)
-    }
-    
-    func disableUserInteractionsAndShowSpinner() {
-        controlledView.isUserInteractionEnabled = false
-        controlledView.authenticationBtn.isLoading = true
-    }
-        
     func handleUserSignupCompletion(completion: Subscribers.Completion<Error>) {
-        controlledView.isUserInteractionEnabled = true
-        controlledView.authenticationBtn.isLoading = false
+        viewModel.enableUserInteraction(); /* & */ viewModel.hideLoadingSpinner();
 
         switch completion {
         case .failure(let error):
@@ -173,9 +107,8 @@ class SignupViewController: UIViewController {
     }
     
     func handleSignupFailure(error: Error) {
-        ErrorManager.shared.reportError(error)
-        let alertPopup = AlertPopup()
-        alertPopup.presentAsError(withMessage: error.localizedDescription)
+        let reportError = (error as? FirebaseAuthError)?.isFatal ?? true // Only report a FirebaseAuthError if it's marked fatal.
+        ErrorManager.shared.presentError(error, reportError: reportError)
     }
     
 }

@@ -19,7 +19,7 @@ class ChatTableViewCell: UITableViewCell {
             lastMessageLabel.text = model.lastMessageLabel
         }
     }
-        
+    
     let chatImageView: RemoteImageView = {
         let imageView = RemoteImageView(isRound: true)
         imageView.contentMode = .scaleAspectFit
@@ -47,7 +47,7 @@ class ChatTableViewCell: UITableViewCell {
         label.minimumScaleFactor = 0.8
         return label
     }()
-        
+    
     lazy var headerHStack: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [chatNameLabel, timeAndDateLabel])
         
