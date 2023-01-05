@@ -1,0 +1,108 @@
+/* 
+  Localizable.strings
+  Connector
+
+  Created by Abdelrhman Elmahdy on 03/01/2023.
+  
+*/
+
+// MARK: Auth UI Texts
+"Username" = "اسم المستخدم";
+"Email" = "البريد الإلكتروني";
+"Password" = "كلمة السر";
+"Login" = "تسجيل الدخول";
+"Logout" = "تسجيل الخروج";
+
+"Not an existing user?" = "ليس لديك حساب؟";
+"Create an account" = "إنشاء حساب";
+"First Name" = "الاسم الأول";
+"Last Name" = "الاسم الآخير";
+
+"Confirm Password" = "تأكيد كلمة السر";
+"Password Confirmation" = "تأكيد كلمة السر";
+"Create Account" = "إنشاء حساب";
+"Already have an account?" = "لديك حساب بالفعل؟";
+  
+// MARK: `ChatsTableViewController` UI Texts
+"Search Chats" = "البحث";
+
+// MARK: `CallsTableViewController` UI Texts
+"Calls you make will appear here" = "مكالماتك ستظهر هنا";
+
+// MARK: `SettingsViewController` UI Texts
+"General" = "عام";
+"Account" = "حساب";
+"Notifications" = "الإشعارات";
+"Sounds & Haptics" = "الأصوات و الإهتزازات";
+
+"Dark Mode" = "الوضع الليلي";
+"Receive notifications" = "استقبال الإشعارات";
+
+// MARK: `ChatRoom` UI Texts
+"Group Chat" = "مجموعة";
+
+// MARK: ChatRoomViewController` UI Texts
+"message" = "رسالة";
+
+// MARK: ChatsTableViewController` UI Texts
+"Your chats will appear here" = "محادثاتك ستظهر هنا";
+
+// MARK: Generic
+"Chats" = "المحادثات";
+"Calls" = "المكالمات";
+"Settings" = "الإعدادات";
+
+"Ok" = "حسنًا";
+"Cancel" = "إلغاء";
+"Done" = "تم";
+"and" = "و";
+"," = "،";
+
+"Error" = "خطأ";
+
+"Photo" = "صورة";
+"Video" = "مقطع فيديو";
+"VoiceNote" = "مقطع صوتي";
+"File" = "ملف";
+"Location" = "موقع";
+"Contact" = "<#translation#>";
+
+"Off" = "مغلق";
+"On" = "مفعل";
+"System" = "نظام";
+
+
+// MARK: Errors
+
+"No Internet Connection" = "لا يوجد اتصال بالإنترنت";
+"Invalid email" = "البريد الإكتروني غير صحيح";
+"Password must be at least 8 characters long" = "كلمة السر يجب ألا تقل عن ثمانية أحرف";
+
+"1 upper case letter" = "حرف كبير";
+"1 lower case letter" = "حرف صغير";
+"1 digit" = "رقم";
+"Password must contain at least" = "كلمة السر يجب ان تحتوي على";
+"Passwords don't match" = "كلمات السر غير متطابقين";
+
+"Enter" = "ادخل";
+
+"Something went wrong!" = "حدث خطأ ما";
+
+"Try again later" = "حاول مجددًا";
+
+"Please login again" = "برجاء تسجيل الدخول";
+
+"No internet connection" = "لا يوجد اتصال بالإنترنت";
+"Check your internet connection and try again" = "تأكد من اتصالك بالإنترنت و حاول مجددًا";
+
+"Account not found" = "هذا الحساب غير موجود";
+"Signup to create an account" = "قم بإنشاء حساب";
+
+"Invalid Email" = "البريد الإكتروني غير صحيح";
+
+"This email is already in use" = "هذا البريد الإلكتروني مستخدم بالفعل";
+
+"Password too weak" = "كلمة السر ضعيفة جدًا";
+"Please enter a strong password with at least 1 digit, 1 lower cased letter, 1 upper cased letter" = "برجاء ادخال كلمة سر قوية تحتوي على الأقل على حرف كبير، حرف صغير و رقم";
+
+"Incorrect password" = "كلمة السر غير صحيحة";

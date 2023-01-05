@@ -8,11 +8,9 @@
 import CoreData
 
 class CoreDataManagerFactory {
-    static func create() -> CoreDataManager {
-        let environment = ProcessInfo.processInfo.environment["ENV"]
-        
-        return environment == "Test"
-            ? RealCoreDataManager(persistentContainerName: "Connector", storageType: NSInMemoryStoreType)
-            : RealCoreDataManager(persistentContainerName: "Connector")
-    }
+	static func make() -> CoreDataManagerProtocol {
+		return ENV.context == .test
+		? CoreDataManager(persistentContainerName: "Connector", storageType: NSInMemoryStoreType)
+		: CoreDataManager(persistentContainerName: "Connector")
+	}
 }

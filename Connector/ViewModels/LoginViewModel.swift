@@ -9,12 +9,12 @@ import UIKit
 import Combine
 
 class LoginViewModel: AuthViewModel {
-    // MARK: State
-    
-    @Published var email: String = ""
-    @Published var password: String = ""
-    
-    func login(email: String, password: String) -> Future <Void, Error> {
-        return authService.login(email: email, password: password)
-    }
+	// MARK: State
+	
+	@Published var email: String = ""
+	@Published var password: String = ""
+	
+	func login(email: String, password: String) -> Future <Void, Error> {
+		return authService.login(email: email, password: password)
+	}
 }

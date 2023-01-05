@@ -8,9 +8,9 @@
 import Foundation
 
 protocol LoggingOut: AnyObject {
-    func logout()
+	func logout()
 }
 
 protocol DisclosingSettings {
-    func disclose(_ settingsDisclosureOption: SettingsDisclosureOption)
+	func disclose(_ settingsDisclosureOption: SettingsDisclosureOption)
 }

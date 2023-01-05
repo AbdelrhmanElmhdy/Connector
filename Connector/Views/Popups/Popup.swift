@@ -1,7 +1,7 @@
 import UIKit
 
 class Popup: UIView {
-    
+	
 	// MARK: Properties
 	
 	lazy var blurOverlay: UIVisualEffectView = {
@@ -12,12 +12,12 @@ class Popup: UIView {
 		
 		return visualEffectView
 	}()
-    
+	
 	lazy var dismissButton: UIButton = {
 		let button = UIButton(type: .system)
 		button.translatesAutoresizingMaskIntoConstraints = false
 		
-		button.setImage(UIImage(systemName: "xmark"), for: .normal)
+		button.setImage(.cancel, for: .normal)
 		button.tintColor = .white
 		button.addTarget(self, action: #selector(handleOverlayAndDismissButtonTab), for: .touchUpInside)
 		button.imageView?.contentMode = .scaleAspectFit
@@ -29,7 +29,7 @@ class Popup: UIView {
 		let view = UIView(frame: .zero)
 		view.translatesAutoresizingMaskIntoConstraints = false
 		
-        view.backgroundColor = .secondarySystemGroupedBackground
+		view.backgroundColor = .secondarySystemGroupedBackground
 		view.layer.cornerRadius = 18
 		view.alpha = 0
 		view.scale(to: contentViewInitialScale)
@@ -42,7 +42,7 @@ class Popup: UIView {
 	var blurEffectStyle: UIBlurEffect.Style {
 		return traitCollection.userInterfaceStyle == .dark ? .light : .dark
 	}
-    
+	
 	let contentViewInitialScale: CGFloat = 1.2
 	var popupDismissalHandler: (() -> Void)?
 	
@@ -51,7 +51,7 @@ class Popup: UIView {
 			overlayTapGestureRecognizer.isEnabled = hideOnOverlayTap
 		}
 	}
-		
+	
 	init() {
 		super.init(frame: .zero)
 		setupSubViews()
@@ -60,19 +60,19 @@ class Popup: UIView {
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
-		
+	
 	// MARK: views setups
-			
+	
 	func setupSubViews() {
 		addSubview(blurOverlay)
 		blurOverlay.fillSuperView()
 		
 		setupDismissButton()
 		addSubview(contentView)
-        setupContentView()
+		setupContentView()
 	}
 	
-	 func setupDismissButton() {
+	func setupDismissButton() {
 		addSubview(dismissButton)
 		
 		NSLayoutConstraint.activate([
@@ -83,29 +83,29 @@ class Popup: UIView {
 		])
 	}
 	
-	 func setupContentView() {
-        NSLayoutConstraint.activate([
-            contentView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            contentView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            contentView.heightAnchor.constraint(greaterThanOrEqualTo: heightAnchor, multiplier: 0.2),
-            contentView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.78),
-        ])
-    }
+	func setupContentView() {
+		NSLayoutConstraint.activate([
+			contentView.centerXAnchor.constraint(equalTo: centerXAnchor),
+			contentView.centerYAnchor.constraint(equalTo: centerYAnchor),
+			contentView.heightAnchor.constraint(greaterThanOrEqualTo: heightAnchor, multiplier: 0.2),
+			contentView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.78),
+		])
+	}
 	
 	@objc func handleOverlayAndDismissButtonTab() {
 		dismiss(animated: true)
 	}
 	
 	// MARK: Tools
-			
+	
 	func present(animated: Bool) {
-        guard let window = UIApplication.shared.keyWindow else { return }
-        window.addSubview(self)
-        
-        prepareForPresentation()
-        
-        let animationDuration: TimeInterval = animated ? 0.2 : 0
-        animateContentViewIn(withDuration: animationDuration)
+		guard let window = UIApplication.shared.keyWindow else { return }
+		window.addSubview(self)
+		
+		prepareForPresentation()
+		
+		let animationDuration: TimeInterval = animated ? 0.2 : 0
+		animateContentViewIn(withDuration: animationDuration)
 	}
 	
 	func dismiss(animated: Bool) {
@@ -123,7 +123,7 @@ class Popup: UIView {
 		}
 	}
 	
-	 func prepareForPresentation() {
+	func prepareForPresentation() {
 		if !(blurOverlay.gestureRecognizers?.contains(overlayTapGestureRecognizer) ?? false) {
 			blurOverlay.addGestureRecognizer(overlayTapGestureRecognizer)
 		}
@@ -134,19 +134,19 @@ class Popup: UIView {
 		
 		fillSuperView()
 	}
-    
-    func animateContentViewIn(withDuration animationDuration: TimeInterval) {
-        UIView.animate(withDuration: animationDuration, delay: 0, options: .curveEaseOut) {
-            self.contentView.alpha = 1
-            self.contentView.scale(to: 1)
-        }
-    }
-		
+	
+	func animateContentViewIn(withDuration animationDuration: TimeInterval) {
+		UIView.animate(withDuration: animationDuration, delay: 0, options: .curveEaseOut) {
+			self.contentView.alpha = 1
+			self.contentView.scale(to: 1)
+		}
+	}
+	
 	func animateContentViewOut(completionHandler: @escaping (Bool) -> Void) {
 		UIView.animate(
 			withDuration: 0.1,
-            delay: 0,
-            options: .curveEaseIn,
+			delay: 0,
+			options: .curveEaseIn,
 			animations: {
 				self.contentView.alpha = 0
 				self.contentView.scale(to: self.contentViewInitialScale)

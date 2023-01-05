@@ -8,8 +8,7 @@
 import Foundation
 
 class FirebaseManagerFactory {
-    static func create() -> FirebaseManager {
-        let environment = ProcessInfo.processInfo.environment["ENV"]
-        return environment == "Test" ? RealFirebaseManager(fireStorePort: 8080, authPort: 9099) : RealFirebaseManager()
-    }
+	static func make() -> FirebaseManagerProtocol {
+		return ENV.context == .test ? FirebaseManager(fireStorePort: 8080, authPort: 9099) : FirebaseManager()
+	}
 }

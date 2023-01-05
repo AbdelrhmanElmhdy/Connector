@@ -10,12 +10,12 @@ import UIKit
 @testable import Connector
 
 class UserPreferencesServiceTests: XCTestCase {
-    
-    func updateUserInterfaceStyle() {
-        
-    }
-    
-    func saveChanges() {
-        
-    }
+  
+  func updateUserInterfaceStyle() {
+      
+  }
+  
+  func saveChanges() {
+      
+  }
 }

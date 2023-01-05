@@ -1,0 +1,108 @@
+/* 
+  Localizable.strings
+  Connector
+
+  Created by Abdelrhman Elmahdy on 03/01/2023.
+  
+*/
+
+// MARK: Auth UI Texts
+"Username" = "Username";
+"Email" = "Email";
+"Password" = "Password";
+"Login" = "Login";
+"Logout" = "Logout";
+
+"Not an existing user?" = "Not an existing user?";
+"Create an account" = "Create an account";
+"First Name" = "First Name";
+"Last Name" = "Last Name";
+
+"Confirm Password" = "Confirm Password";
+"Password Confirmation" = "Password Confirmation";
+"Create Account" = "Create Account";
+"Already have an account?" = "Already have an account?";
+  
+// MARK: `ChatsTableViewController` UI Texts
+"Search Chats" = "Search Chats";
+
+// MARK: `CallsTableViewController` UI Texts
+"Calls you make will appear here" = "Calls you make will appear here";
+
+// MARK: `SettingsViewController` UI Texts
+"General" = "General";
+"Account" = "Account";
+"Notifications" = "Notifications";
+"Sounds & Haptics" = "Sounds & Haptics";
+
+"Dark Mode" = "Dark Mode";
+"Receive notifications" = "Receive notifications";
+
+// MARK: `ChatRoom` UI Texts
+"Group Chat" = "Group Chat";
+
+// MARK: ChatRoomViewController` UI Texts
+"message" = "message";
+
+// MARK: ChatsTableViewController` UI Texts
+"Your chats will appear here" = "Your chats will appear here";
+
+// MARK: Generic
+"Chats" = "Chats";
+"Calls" = "Calls";
+"Settings" = "Settings";
+
+"Ok" = "Ok";
+"Cancel" = "Cancel";
+"Done" = "Done";
+"and" = "and";
+"," = ",";
+
+"Error" = "Error";
+
+"Photo" = "Photo";
+"Video" = "Video";
+"VoiceNote" = "VoiceNote";
+"File" = "File";
+"Location" = "Location";
+"Contact" = "Contact";
+
+"Off" = "Off";
+"On" = "On";
+"System" = "System";
+
+
+// MARK: Errors
+
+"No Internet Connection" = "No Internet Connection";
+"Invalid email" = "Invalid email";
+"Password must be at least 8 characters long" = "Password must be at least 8 characters long";
+
+"1 upper case letter" = "1 upper case letter";
+"1 lower case letter" = "1 lower case letter";
+"1 digit" = "1 digit";
+"Password must contain at least" = "Password must contain at least";
+"Passwords don't match" = "Passwords don't match";
+
+"Enter" = "Enter";
+
+"Something went wrong!" = "Something went wrong!";
+
+"Try again later" = "Try again later";
+
+"Please login again" = "Please login again";
+
+"No internet connection" = "No internet connection";
+"Check your internet connection and try again" = "Check your internet connection and try again";
+
+"Account not found" = "Account not found";
+"Signup to create an account" = "Signup to create an account";
+
+"Invalid Email" = "Invalid Email";
+
+"This email is already in use" = "This email is already in use";
+
+"Password too weak" = "Password too weak";
+"Please enter a strong password with at least 1 digit, 1 lower cased letter, 1 upper cased letter" = "Please enter a strong password with at least 1 digit, 1 lower cased letter, 1 upper cased letter";
+
+"Incorrect password" = "Incorrect password";

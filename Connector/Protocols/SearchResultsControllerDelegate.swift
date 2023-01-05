@@ -9,5 +9,5 @@ import Foundation
 import UIKit
 
 protocol SearchResultsControllerDelegate {
-    func didSelectPerson(person: User)
+	func didSelectPerson(person: User)
 }

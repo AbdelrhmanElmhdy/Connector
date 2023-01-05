@@ -8,10 +8,10 @@
 import UIKit
 
 @objc protocol ObjcSettingsViewController {
-    @objc func didToggleReceiveNotificationsSwitch(sender: UISwitch)
+	@objc func didToggleReceiveNotificationsSwitch(sender: UISwitch)
 }
 
 protocol SettingsViewController: ObjcSettingsViewController {
-    func didPressLogout()
-    func didSelectUserInterfaceStyle(_ style: UIUserInterfaceStyle?)
+	func didPressLogout()
+	func didSelectUserInterfaceStyle(_ style: UIUserInterfaceStyle?)
 }

@@ -10,23 +10,23 @@ import XCTest
 import CoreData
 
 class ChatRoomServiceTests: XCTestCase {
-    func createChatRoom() {
-        
-    }
-    
-    func fetchChatRoom() {
-        
-    }
-    
-    func fetchChatRooms() {
-        
-    }
-    
-    func createChatRoomsFetchController() {
-        
-    }
-    
-    func prepareToMoveChatRoomsToDifferentThread() {
-        
-    }
+  func createChatRoom() {
+      
+  }
+  
+  func fetchChatRoom() {
+      
+  }
+  
+  func fetchChatRooms() {
+      
+  }
+  
+  func createChatRoomsFetchController() {
+      
+  }
+  
+  func prepareToMoveChatRoomsToDifferentThread() {
+      
+  }
 }

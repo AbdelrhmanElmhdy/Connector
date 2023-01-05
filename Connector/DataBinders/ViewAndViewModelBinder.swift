@@ -9,27 +9,27 @@ import UIKit
 import Combine
 
 class ViewAndViewModelBinder<View: UIView, ViewModel: AnyObject> {
-    let view: View
-    let viewModel: ViewModel
-    
-    var subscriptions: Set<AnyCancellable> = []
-    
-    init(view: View, viewModel: ViewModel) {
-        self.view = view
-        self.viewModel = viewModel
-    }
-        
-    // Abstract
-    func setupBindings() {
-        
-    }
-    
-    func removeBindings() {
-        subscriptions.removeAll()
-    }
-    
-    deinit {
-        removeBindings()
-    }
+	let view: View
+	let viewModel: ViewModel
+	
+	var subscriptions: Set<AnyCancellable> = []
+	
+	init(view: View, viewModel: ViewModel) {
+		self.view = view
+		self.viewModel = viewModel
+	}
+	
+	// Abstract
+	func setupBindings() {
+		
+	}
+	
+	func removeBindings() {
+		subscriptions.removeAll()
+	}
+	
+	deinit {
+		removeBindings()
+	}
 }
 

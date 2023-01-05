@@ -6,40 +6,40 @@ import UIKit
 class UserPreferencesServiceMock: UserPreferencesService {
 
 
-    var userDefaultsManager: UserDefaultsManager {
-        get { return underlyingUserDefaultsManager }
-        set(value) { underlyingUserDefaultsManager = value }
-    }
-    var underlyingUserDefaultsManager: UserDefaultsManager!
+  var userDefaultsManager: UserDefaultsManagerProtocol {
+      get { return underlyingUserDefaultsManager }
+      set(value) { underlyingUserDefaultsManager = value }
+  }
+  var underlyingUserDefaultsManager: UserDefaultsManagerProtocol!
 
-    //MARK: - updateUserInterfaceStyle
+  //MARK: - updateUserInterfaceStyle
 
-    var updateUserInterfaceStyleWithCallsCount = 0
-    var updateUserInterfaceStyleWithCalled: Bool {
-        return updateUserInterfaceStyleWithCallsCount > 0
-    }
-    var updateUserInterfaceStyleWithReceivedState: UIUserInterfaceStyle?
-    var updateUserInterfaceStyleWithReceivedInvocations: [UIUserInterfaceStyle] = []
-    var updateUserInterfaceStyleWithClosure: ((UIUserInterfaceStyle) -> Void)?
+  var updateUserInterfaceStyleWithCallsCount = 0
+  var updateUserInterfaceStyleWithCalled: Bool {
+      return updateUserInterfaceStyleWithCallsCount > 0
+  }
+  var updateUserInterfaceStyleWithReceivedState: UIUserInterfaceStyle?
+  var updateUserInterfaceStyleWithReceivedInvocations: [UIUserInterfaceStyle] = []
+  var updateUserInterfaceStyleWithClosure: ((UIUserInterfaceStyle) -> Void)?
 
-    func updateUserInterfaceStyle(with state: UIUserInterfaceStyle) {
-        updateUserInterfaceStyleWithCallsCount += 1
-        updateUserInterfaceStyleWithReceivedState = state
-        updateUserInterfaceStyleWithReceivedInvocations.append(state)
-        updateUserInterfaceStyleWithClosure?(state)
-    }
+  func updateUserInterfaceStyle(with state: UIUserInterfaceStyle) {
+      updateUserInterfaceStyleWithCallsCount += 1
+      updateUserInterfaceStyleWithReceivedState = state
+      updateUserInterfaceStyleWithReceivedInvocations.append(state)
+      updateUserInterfaceStyleWithClosure?(state)
+  }
 
-    //MARK: - saveChanges
+  //MARK: - saveChanges
 
-    var saveChangesCallsCount = 0
-    var saveChangesCalled: Bool {
-        return saveChangesCallsCount > 0
-    }
-    var saveChangesClosure: (() -> Void)?
+  var saveChangesCallsCount = 0
+  var saveChangesCalled: Bool {
+      return saveChangesCallsCount > 0
+  }
+  var saveChangesClosure: (() -> Void)?
 
-    func saveChanges() {
-        saveChangesCallsCount += 1
-        saveChangesClosure?()
-    }
+  func saveChanges() {
+      saveChangesCallsCount += 1
+      saveChangesClosure?()
+  }
 
 }

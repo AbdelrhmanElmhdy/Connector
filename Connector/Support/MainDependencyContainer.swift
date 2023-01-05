@@ -8,49 +8,45 @@
 import UIKit
 
 class MainDependencyContainer: DependencyContainer {
-    
-    // MARK: Managers
-    
-    lazy var userDefaultsManager: UserDefaultsManager = RealUserDefaultsManager()
-    lazy var keychainManager: KeychainManager = RealKeychainManager()
-    lazy var coreDataManager: CoreDataManager = CoreDataManagerFactory.create()
-    lazy var firebaseManager: FirebaseManager = FirebaseManagerFactory.create()
-    
-    // MARK: Factories
-    
-    lazy var settingsSectionFactory = SettingsSectionsFactory(userPreferences: userDefaultsManager.userPreferences)
-    
-    // MARK: Services
-    
-    lazy var authNetworkService: AuthNetworkService = RealAuthNetworkService(firebaseManager: firebaseManager)
-    
-    lazy var authService: AuthService = RealAuthService(
-        userDefaultsManager: userDefaultsManager,
-        keychainManager: keychainManager,
-        coreDataManager: coreDataManager,
-        authNetworkService: authNetworkService
-    )
-    
-    lazy var userNetworkService: UserNetworkService = RealUserNetworkService(firebaseManager: firebaseManager)
-    
-    lazy var userService: UserService = RealUserService(
-        coreDataManager: coreDataManager,
-        userNetworkService: userNetworkService,
-        authService: authService
-    )
-    
-    lazy var chatRoomService: ChatRoomService = RealChatRoomService(coreDataManager: coreDataManager)
-    
-    lazy var chatMessageNetworkService: ChatMessageNetworkService = RealChatMessageNetworkService(
-        firebaseManager: firebaseManager
-    )
-    
-    lazy var chatMessageService: ChatMessageService = RealChatMessageService(
-        coreDataManager: coreDataManager,
-        chatMessageNetworkService: chatMessageNetworkService,
-        userService: userService,
-        authService: authService
-    )
-    
-    lazy var userPreferencesService: UserPreferencesService = RealUserPreferencesService(userDefaultsManager: userDefaultsManager)
+	
+	// MARK: Managers
+	
+	lazy var userDefaultsManager = UserDefaultsManagerFactory.make()
+	lazy var keychainManager = KeychainManagerFactory.make()
+	lazy var coreDataManager = CoreDataManagerFactory.make()
+	lazy var firebaseManager = FirebaseManagerFactory.make()
+	
+	// MARK: Services
+	
+	lazy var authNetworkService: AuthNetworkService = MainAuthNetworkService(firebaseManager: firebaseManager)
+	
+	lazy var authService: AuthService = MainAuthService(
+		userDefaultsManager: userDefaultsManager,
+		keychainManager: keychainManager,
+		coreDataManager: coreDataManager,
+		authNetworkService: authNetworkService
+	)
+	
+	lazy var userNetworkService: UserNetworkService = MainUserNetworkService(firebaseManager: firebaseManager)
+	
+	lazy var userService: UserService = MainUserService(
+		coreDataManager: coreDataManager,
+		userNetworkService: userNetworkService,
+		authService: authService
+	)
+	
+	lazy var chatRoomService: ChatRoomService = MainChatRoomService(coreDataManager: coreDataManager)
+	
+	lazy var chatMessageNetworkService: ChatMessageNetworkService = MainChatMessageNetworkService(
+		firebaseManager: firebaseManager
+	)
+	
+	lazy var chatMessageService: ChatMessageService = MainChatMessageService(
+		coreDataManager: coreDataManager,
+		chatMessageNetworkService: chatMessageNetworkService,
+		userService: userService,
+		authService: authService
+	)
+	
+	lazy var userPreferencesService: UserPreferencesService = MainUserPreferencesService(userDefaultsManager: userDefaultsManager)
 }

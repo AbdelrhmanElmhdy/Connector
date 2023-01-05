@@ -8,16 +8,16 @@
 import UIKit
 
 extension UINavigationController {
-    
-    var previousViewController: UIViewController? {
-        guard viewControllers.count >= 2 else {
-            return nil
-        }
-        
-        let previousVCIndex = viewControllers.count - 2
-        let previousVC = viewControllers[previousVCIndex]
-        
-        return previousVC
-    }
-    
+	
+	var previousViewController: UIViewController? {
+		guard viewControllers.count >= 2 else {
+			return nil
+		}
+		
+		let previousVCIndex = viewControllers.count - 2
+		let previousVC = viewControllers[previousVCIndex]
+		
+		return previousVC
+	}
+	
 }

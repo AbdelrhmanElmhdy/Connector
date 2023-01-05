@@ -2242,7 +2242,7 @@
 		5FBF99674AD5109B78212D1AD386DA95 /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = A8BB77027B70AB78ADEFC55F78546EB1 /* util.h */; };
 		5FCE0B9BEFD088AF2D95D5367F2EB6D0 /* http.upb.c in Sources */ = {isa = PBXBuildFile; fileRef = B2500F21F85E16014C37AB41A033D25F /* http.upb.c */; settings = {COMPILER_FLAGS = "-DGRPC_ARES=0 -Wno-comma -DBORINGSSL_PREFIX=GRPC -Wno-unreachable-code -Wno-shorten-64-to-32 -fno-objc-arc"; }; };
 		5FD0E83EBF468E4190FB40201BFD27D0 /* merger.cc in Sources */ = {isa = PBXBuildFile; fileRef = EAC9D0B8D6D3ACA9824CE44BFAA34BC9 /* merger.cc */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		5FE06459D3339A5F238C5DCE16FFA595 /* Fakery-Faker in Resources */ = {isa = PBXBuildFile; fileRef = FB9EDEF446E3F7D484CA4B8085AFEAA6 /* Fakery-Faker */; };
+		5FE06459D3339A5F238C5DCE16FFA595 /* Faker.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FB9EDEF446E3F7D484CA4B8085AFEAA6 /* Faker.bundle */; };
 		5FE75EBAB781F9706B5866AB066D163A /* trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 8851A46604E9705CE97CDBFD0A25B53A /* trace.h */; };
 		5FEA2BB67C08300724629F9A32DC14FA /* sysinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D3AC3AD2036EADAE46AF43CF38B8FDA /* sysinfo.h */; };
 		5FF5E9D0EC1A3EEFEA2161775B07B35A /* validate_service_config.h in Copy support Public Headers */ = {isa = PBXBuildFile; fileRef = DD6B67E6B22A9CF31D1660260EEC74A2 /* validate_service_config.h */; };
@@ -16941,7 +16941,7 @@
 		FB926442523EB8345A57C55537CA7C5E /* custom_tag.upbdefs.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = custom_tag.upbdefs.h; path = "src/core/ext/upbdefs-generated/envoy/type/tracing/v3/custom_tag.upbdefs.h"; sourceTree = "<group>"; };
 		FB98C1DD01A8FEAB98ACBAA8B485F685 /* cluster.upb.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = cluster.upb.c; path = "src/core/ext/upb-generated/envoy/config/cluster/v3/cluster.upb.c"; sourceTree = "<group>"; };
 		FB9D7CECC4C225E6281D51BBB02E07E8 /* cfstream_handle.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cfstream_handle.h; path = src/core/lib/iomgr/cfstream_handle.h; sourceTree = "<group>"; };
-		FB9EDEF446E3F7D484CA4B8085AFEAA6 /* Fakery-Faker */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "Fakery-Faker"; path = Faker.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB9EDEF446E3F7D484CA4B8085AFEAA6 /* Faker.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Faker.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBAF3ED0734F7D2B61DDE3C24F4A2CFD /* global_subchannel_pool.cc */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = global_subchannel_pool.cc; path = src/core/ext/filters/client_channel/global_subchannel_pool.cc; sourceTree = "<group>"; };
 		FBBC84AE0775F0AFEEC20558288814E0 /* resource.upbdefs.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = resource.upbdefs.h; path = "src/core/ext/upbdefs-generated/envoy/annotations/resource.upbdefs.h"; sourceTree = "<group>"; };
 		FBC57E45358A74704DD0BB7C56531B14 /* FBLPromise+Await.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "FBLPromise+Await.m"; path = "Sources/FBLPromises/FBLPromise+Await.m"; sourceTree = "<group>"; };
@@ -20729,7 +20729,7 @@
 				BF96B57ADE05E8909F823BDF6868B3E3 /* abseil */,
 				514D7742C6CBB0BDBD9984AEE97DDFDE /* BoringSSL-GRPC */,
 				135B9EA8498D8BD288DE862D407255AE /* Fakery */,
-				FB9EDEF446E3F7D484CA4B8085AFEAA6 /* Fakery-Faker */,
+				FB9EDEF446E3F7D484CA4B8085AFEAA6 /* Faker.bundle */,
 				43B1E4CD7B30B9FD278100133C2AC788 /* FirebaseAuth */,
 				E2B63D462DB7F827C4B11FD51E4F8E2D /* FirebaseCore */,
 				8CC9178C366942FD6FF6A115604EAD58 /* FirebaseCoreDiagnostics */,
@@ -25720,7 +25720,7 @@
 			);
 			name = "Fakery-Faker";
 			productName = Faker;
-			productReference = FB9EDEF446E3F7D484CA4B8085AFEAA6 /* Fakery-Faker */;
+			productReference = FB9EDEF446E3F7D484CA4B8085AFEAA6 /* Faker.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 		25E9E9A17BC3F670357D7385C521E48E /* FirebaseCoreInternal */ = {
@@ -26634,7 +26634,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FE06459D3339A5F238C5DCE16FFA595 /* Fakery-Faker in Resources */,
+				5FE06459D3339A5F238C5DCE16FFA595 /* Faker.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29600,6 +29600,7 @@
 			baseConfigurationReference = FAF85CE8543B8BDFA21F465400B6BAD5 /* Fakery.debug.xcconfig */;
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Fakery";
+				DEVELOPMENT_TEAM = MG2N6H9TP7;
 				IBSC_MODULE = Fakery;
 				INFOPLIST_FILE = "Target Support Files/Fakery/ResourceBundle-Faker-Fakery-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -30040,6 +30041,7 @@
 			baseConfigurationReference = 93588A9337293FE7CA34EDB2A3D65D35 /* Fakery.release.xcconfig */;
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Fakery";
+				DEVELOPMENT_TEAM = MG2N6H9TP7;
 				IBSC_MODULE = Fakery;
 				INFOPLIST_FILE = "Target Support Files/Fakery/ResourceBundle-Faker-Fakery-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;

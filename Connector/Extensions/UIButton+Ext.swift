@@ -8,11 +8,11 @@
 import UIKit
 
 extension UIButton {
-    open override var isEnabled: Bool {
-        didSet {
-            UIView.animate(withDuration: 0.4) {
-                self.alpha = self.isEnabled ? 1.0 : 0.5
-            }
-        }
-    }
+	open override var isEnabled: Bool {
+		didSet {
+			UIView.animate(withDuration: 0.4) {
+				self.alpha = self.isEnabled ? 1.0 : 0.5
+			}
+		}
+	}
 }

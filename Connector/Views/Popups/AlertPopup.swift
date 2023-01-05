@@ -1,38 +1,38 @@
 import UIKit
 
 class AlertPopup: Popup {
-    
-    let imageView: UIImageView = {
-        var imageView = UIImageView(frame: .zero)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        imageView.contentMode = .scaleAspectFit
-        
-        return imageView
-    }()
-    
-    let titleLabel: UILabel = {
-        var label = UILabel(frame: .zero)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.font = UIFont.systemFont(ofSize: 19)
-        label.textColor = .highContrastText
-        
-        return label
-    }()
-    
-    let messageLabel: UILabel = {
-        let label = UILabel(frame: .zero)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.lineBreakMode = .byWordWrapping
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.textColor = .gray
-        
-        return label
-    }()
+	
+	let imageView: UIImageView = {
+		var imageView = UIImageView(frame: .zero)
+		imageView.translatesAutoresizingMaskIntoConstraints = false
+		
+		imageView.contentMode = .scaleAspectFit
+		
+		return imageView
+	}()
+	
+	let titleLabel: UILabel = {
+		var label = UILabel(frame: .zero)
+		label.translatesAutoresizingMaskIntoConstraints = false
+		
+		label.font = UIFont.systemFont(ofSize: 19)
+		label.textColor = .highContrastText
+		
+		return label
+	}()
+	
+	let messageLabel: UILabel = {
+		let label = UILabel(frame: .zero)
+		label.translatesAutoresizingMaskIntoConstraints = false
+		
+		label.lineBreakMode = .byWordWrapping
+		label.textAlignment = .center
+		label.numberOfLines = 0
+		label.font = UIFont.systemFont(ofSize: 16)
+		label.textColor = .gray
+		
+		return label
+	}()
 	
 	var actionsRow: UIStackView = {
 		let stackView = UIStackView()
@@ -48,10 +48,10 @@ class AlertPopup: Popup {
 		didSet {
 			actionsRow.removeAllArrangedSubviews()
 			
-            if actions.count == 1 {
-                actionsRow.addSeparatorView(withColor: .separator, andWidth: 0.5)
-            }
-            
+			if actions.count == 1 {
+				actionsRow.addSeparatorView(withColor: .separator, andWidth: 0.5)
+			}
+			
 			guard !actions.isEmpty else {
 				actionsRowHeightConstraint.constant = 0
 				return
@@ -68,44 +68,44 @@ class AlertPopup: Popup {
 	
 	var actionsRowHeightConstraint: NSLayoutConstraint!
 	var titleLabelTopAnchorConstraint: NSLayoutConstraint?
-    
-    override func setupSubViews() {
-		super.setupSubViews()
-        setupImageView()
-        setupTitleLabel()
-        setupMessageLabel()
-		setupActionsRow()
-    }
 	
-    func setupImageView() {
-        contentView.addSubview(imageView)
-        
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 14),
-            imageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            imageView.heightAnchor.constraint(lessThanOrEqualTo: contentView.heightAnchor),
-            imageView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.35),
-        ])
-    }
-    
-    func setupTitleLabel() {
-        contentView.addSubview(titleLabel)
-        		
-        NSLayoutConstraint.activate([
-            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            titleLabel.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.9),
-        ])
-    }
-    
-    func setupMessageLabel() {
-        contentView.addSubview(messageLabel)
-        
-        NSLayoutConstraint.activate([
-            messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 18),
-            messageLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            messageLabel.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.9),
-        ])
-    }
+	override func setupSubViews() {
+		super.setupSubViews()
+		setupImageView()
+		setupTitleLabel()
+		setupMessageLabel()
+		setupActionsRow()
+	}
+	
+	func setupImageView() {
+		contentView.addSubview(imageView)
+		
+		NSLayoutConstraint.activate([
+			imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 14),
+			imageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+			imageView.heightAnchor.constraint(lessThanOrEqualTo: contentView.heightAnchor),
+			imageView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.35),
+		])
+	}
+	
+	func setupTitleLabel() {
+		contentView.addSubview(titleLabel)
+		
+		NSLayoutConstraint.activate([
+			titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+			titleLabel.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.9),
+		])
+	}
+	
+	func setupMessageLabel() {
+		contentView.addSubview(messageLabel)
+		
+		NSLayoutConstraint.activate([
+			messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 18),
+			messageLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+			messageLabel.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.9),
+		])
+	}
 	
 	func setupActionsRow() {
 		contentView.addSubview(actionsRow)
@@ -120,42 +120,42 @@ class AlertPopup: Popup {
 			actionsRowHeightConstraint,
 		])
 	}
-    
+	
 	func present(withImage image: UIImage? = nil, title: String, message: String?, actions: [AlertPopupAction] = []) {
-        imageView.image = image
-        titleLabel.text = title
-        messageLabel.text = message
+		imageView.image = image
+		titleLabel.text = title
+		messageLabel.text = message
 		self.actions = actions
 		
-        present(animated: true)
-        
+		present(animated: true)
+		
 		adjustTitleLabelTopAnchorConstraint(image)
-    }
-    
-    func presentAsError(withMessage message: String, advice: String? = nil, actions: [AlertPopupAction]? = nil) {
-        let dismissAction = AlertPopupAction(title: "Ok".localized, style: .normal) { [weak self] in
-            self?.dismiss(animated: true)
-        }
-        
-        let image = UIImage(named: "errorImage")
-        let actions = actions ?? [dismissAction]
-        
-        if let advice = advice, !advice.isEmpty {
-            present(withImage: image, title: message, message: advice, actions: actions)
-            return
-        }
-        
-        let title = "Error".localized
-        present(withImage: image, title: title, message: message, actions: actions)
-    }
-    
-    func presentAsInternetConnectionError() {
-        presentAsError(withMessage: "No Internet Connection".localized)
-    }
+	}
 	
-    /// When asking the user if they're sure they want to proceed in something
-    func presentAsConfirmationAlert(title: String, message: String, confirmationButtonTitle: String, confirmationButtonStyle: AlertPopupAction.Style, confirmationHandler: @escaping () -> Void) {
-		let cancelAction = AlertPopupAction(title: "Cancel".localized, style: .normal) {[weak self] in
+	func presentAsError(withMessage message: String, advice: String? = nil, actions: [AlertPopupAction]? = nil) {
+		let dismissAction = AlertPopupAction(title: .ui.ok, style: .normal) { [weak self] in
+			self?.dismiss(animated: true)
+		}
+		
+		let image = UIImage.error
+		let actions = actions ?? [dismissAction]
+		
+		if let advice = advice, !advice.isEmpty {
+			present(withImage: image, title: message, message: advice, actions: actions)
+			return
+		}
+		
+		let title = String.ui.error
+		present(withImage: image, title: title, message: message, actions: actions)
+	}
+	
+	func presentAsInternetConnectionError() {
+		presentAsError(withMessage: .errors.noInternetConnection)
+	}
+	
+	/// When asking the user if they're sure they want to proceed in something
+	func presentAsConfirmationAlert(title: String, message: String, confirmationButtonTitle: String, confirmationButtonStyle: AlertPopupAction.Style, confirmationHandler: @escaping () -> Void) {
+		let cancelAction = AlertPopupAction(title: .ui.cancel, style: .normal) {[weak self] in
 			self?.dismiss(animated: true)
 		}
 		
@@ -168,10 +168,10 @@ class AlertPopup: Popup {
 		titleLabelTopAnchorConstraint?.isActive = false
 		
 		titleLabelTopAnchorConstraint = image != nil
-			? titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16)
-			: titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor)
+		? titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16)
+		: titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor)
 		
 		titleLabelTopAnchorConstraint?.isActive = true
 	}
-    
+	
 }

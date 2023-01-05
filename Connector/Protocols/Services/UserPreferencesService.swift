@@ -8,6 +8,6 @@
 import UIKit
 
 protocol UserPreferencesService: AutoMockable {
-    func updateUserInterfaceStyle(with state: UIUserInterfaceStyle)
-    func saveChanges()
+	func updateUserInterfaceStyle(with state: UIUserInterfaceStyle)
+	func saveChanges()
 }

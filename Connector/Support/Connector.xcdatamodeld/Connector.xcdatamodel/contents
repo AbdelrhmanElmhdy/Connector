@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="21G320" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ChatRoom" representedClassName="ChatRoom" syncable="YES">
         <attribute name="groupChatImageUrl" optional="YES" attributeType="String"/>
         <attribute name="groupChatName" optional="YES" attributeType="String"/>
-        <attribute name="id" optional="YES" attributeType="String"/>
-        <attribute name="lastMessageLabel" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="String" defaultValueString=""/>
+        <attribute name="lastMessageLabel" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="lastMessageTimeStamp" optional="YES" attributeType="Double" defaultValueString="-1" usesScalarValueType="YES"/>
-        <attribute name="participantsIDs" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
+        <attribute name="participantsIDs" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Message" inverseName="room" inverseEntity="Message"/>
         <relationship name="participants" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="chatRooms" inverseEntity="User"/>
         <uniquenessConstraints>
@@ -28,15 +28,14 @@
     </entity>
     <entity name="Message" representedClassName="Message" syncable="YES" codeGenerationType="category">
         <attribute name="id" attributeType="String"/>
-        <attribute name="interactionType" optional="YES" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="isIncoming" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="mediaOrFileURL" optional="YES" attributeType="String"/>
+        <attribute name="mediaOrFileURL" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="receiptDateUnixTimeStamp" optional="YES" attributeType="Double" defaultValueString="-1" usesScalarValueType="YES"/>
-        <attribute name="repliedAtMessageId" optional="YES" attributeType="String"/>
-        <attribute name="roomId" optional="YES" attributeType="String"/>
-        <attribute name="senderId" attributeType="String"/>
+        <attribute name="repliedAtMessageId" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="roomId" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="senderId" attributeType="String" defaultValueString=""/>
         <attribute name="sentDateUnixTimeStamp" optional="YES" attributeType="Double" defaultValueString="-1" usesScalarValueType="YES"/>
-        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="contact" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Contact" inverseName="message" inverseEntity="Contact"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="message" inverseEntity="Location"/>
@@ -60,11 +59,4 @@
         <relationship name="chatRooms" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChatRoom" inverseName="participants" inverseEntity="ChatRoom"/>
     </entity>
     <fetchRequest name="AllChatRooms" entity="ChatRoom" predicateString="id == $name" returnObjectsAsFaults="YES"/>
-    <elements>
-        <element name="ChatRoom" positionX="125.8098754882812" positionY="33.62164306640625" width="128" height="149"/>
-        <element name="Contact" positionX="-286.5863037109375" positionY="32.29388427734375" width="128" height="89"/>
-        <element name="Location" positionX="-287.4215087890625" positionY="184.7117614746094" width="128" height="88"/>
-        <element name="Message" positionX="-103.6895141601562" positionY="31.84768676757812" width="153.3314208984375" height="239"/>
-        <element name="User" positionX="-91.9141845703125" positionY="-171.2455749511719" width="128" height="14"/>
-    </elements>
 </model>

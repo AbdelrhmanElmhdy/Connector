@@ -10,48 +10,48 @@ import XCTest
 import CoreData
 
 class ChatMessageServiceTests: XCTestCase {
-    
-    func createMessage() {
-        
-    }
-    
-    func fetchMessage() {
-        
-    }
-    
-    func fetchMessages() {
-        
-    }
-    
-    func startListeningForIncomingMessages() {
-        
-    }
-    
-    func stopListeningForIncomingMessages() {
-        
-    }
-    
-    func incomingMessagesHandler() {
-        
-    }
-    
-    func sendMessage() {
-        
-    }
-    
-    func deleteMessage() {
-        
-    }
-    
-    func deleteMessageAndAmendChatRoom() {
-        
-    }
-    
-    func createMessagesFetchController() {
-        
-    }
-    
-    func prepareToMoveMessagesToDifferentThread() {
-        
-    }
+  
+  func createMessage() {
+      
+  }
+  
+  func fetchMessage() {
+      
+  }
+  
+  func fetchMessages() {
+      
+  }
+  
+  func startListeningForIncomingMessages() {
+      
+  }
+  
+  func stopListeningForIncomingMessages() {
+      
+  }
+  
+  func incomingMessagesHandler() {
+      
+  }
+  
+  func sendMessage() {
+      
+  }
+  
+  func deleteMessage() {
+      
+  }
+  
+  func deleteMessageAndAmendChatRoom() {
+      
+  }
+  
+  func createMessagesFetchController() {
+      
+  }
+  
+  func prepareToMoveMessagesToDifferentThread() {
+      
+  }
 }

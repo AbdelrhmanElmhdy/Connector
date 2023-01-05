@@ -10,12 +10,16 @@ import FirebaseCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    let dependencyContainer = MainDependencyContainer()
-    
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        FirebaseApp.configure()
-        return true
-    }
-    
+	static var shared: AppDelegate { _shared }
+	private static var _shared: AppDelegate!
+	
+	let dependencyContainer = MainDependencyContainer()
+	lazy var viewControllerFactory = MainViewControllerFactory(dependencyContainer: dependencyContainer)
+	
+	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		Self._shared = self
+		FirebaseApp.configure()
+		return true
+	}
+	
 }

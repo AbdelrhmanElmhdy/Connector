@@ -12,23 +12,23 @@ import FirebaseFirestore
 @testable import Connector
 
 class ChatMessageNetworkServiceTests: XCTestCase {
-    func listenForIncomingMessages() {
-        
-    }
-    
-    func removeCurrentUidFromListOfMessageReceivers() {
-        
-    }
-    
-    func initializeChatRoom() {
-        
-    }
-    
-    func sendMessage() {
-        
-    }
-    
-    func stopListeningForIncomingMessages() {
-        
-    }
+  func listenForIncomingMessages() {
+      
+  }
+  
+  func removeCurrentUidFromListOfMessageReceivers() {
+      
+  }
+  
+  func initializeChatRoom() {
+      
+  }
+  
+  func sendMessage() {
+      
+  }
+  
+  func stopListeningForIncomingMessages() {
+      
+  }
 }

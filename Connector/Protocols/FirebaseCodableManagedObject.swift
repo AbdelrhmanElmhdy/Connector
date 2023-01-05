@@ -12,7 +12,7 @@ import FirebaseFirestore
 typealias FirebaseData = [String : Any]
 
 protocol FirebaseCodableManagedObject: NSManagedObject {
-    init?(document: DocumentSnapshot?, context: NSManagedObjectContext)
-    
-    func encodeToFirebaseData() -> FirebaseData
+	init?(document: DocumentSnapshot?, context: NSManagedObjectContext)
+	
+	func encodeToFirebaseData() -> FirebaseData
 }

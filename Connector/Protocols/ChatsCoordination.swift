@@ -8,5 +8,5 @@
 import Foundation
 
 protocol Chatting: AnyObject {
-    func chat(in chatRoom: ChatRoom)
+  func chat(in chatRoom: ChatRoom)
 }
