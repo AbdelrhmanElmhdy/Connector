@@ -78,6 +78,39 @@
 
 > Event handler methods are all methods that are fired in response to some event. e.g. lifecycle events, user tap events and data fetch completion events.
 
+  examples:
+
+  LoginViewController.swift
+  ```swift
+  @objc private func didPressLogin() {
+	  dismissKeyboard()
+	  
+	  viewModel.validateInputs()
+	  guard viewModel.allInputsAreValid else { return }
+	  
+	  viewModel.isLoading = true
+	  
+	  // Commence login procedure.
+	  viewModel.login(email: viewModel.email, password: viewModel.password)
+	  	.receive(on: RunLoop.main)
+	  	.sink(receiveCompletion: handleUserLoginCompletion, receiveValue: {})
+	  	.store(in: &subscriptions)
+  }
+  ```
+  LoginUITests.swift
+  ```swift
+
+  func testValidInputs() {
+      controller.enter("Abdelrhman@test.com", in: .emailInput)
+      controller.enter("Testtest1", in: .passwordInput)
+  	
+      controller.press(.loginButton)
+  	
+      expectAny(of: .noConnectionError, .userNotFoundError, .successfulAuthentication, timeout: 20)
+  }
+
+  ```
+
 # Non-Production Concessions & Cut Downs
 I have been working on and releasing multiple production apps, since 2018, that are collectively used by hundreds of thousands, and though not all were native iOS apps, but they all certainly did give me a lot of experience in covering up all the details that combine to offer a seamless and bug free user experience.
 
