@@ -66,16 +66,10 @@ class LoginViewController: UIViewController {
 	@objc private func didPressLogin() {
 		dismissKeyboard()
 		
-		// Validate all inputs.
-		let invalidInputsErrorMessages = viewModel.validateInputs(controlledView.emailTextFieldView,
-																															controlledView.passwordTextFieldView)
+		viewModel.validateInputs()
+		guard viewModel.allInputsAreValid else { return }
 		
-		viewModel.presentErrorMessagesForInvalidInputs(invalidInputsErrorMessages: invalidInputsErrorMessages)
-		
-		let allInputsAreValid = invalidInputsErrorMessages.isEmpty
-		guard allInputsAreValid else { return }
-		
-		viewModel.disableUserInteraction(); /* & */ viewModel.showLoadingSpinner();
+		viewModel.isLoading = true
 		
 		// Commence login procedure.
 		viewModel.login(email: viewModel.email, password: viewModel.password)
@@ -92,7 +86,7 @@ class LoginViewController: UIViewController {
 	// MARK: Completion Handlers
 	
 	private func handleUserLoginCompletion(completion: Subscribers.Completion<Error>) {
-		viewModel.enableUserInteraction(); /* & */ viewModel.hideLoadingSpinner();
+		viewModel.isLoading = false
 		
 		switch completion {
 		case .failure(let error):

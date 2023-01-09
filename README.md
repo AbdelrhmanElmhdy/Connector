@@ -6,7 +6,7 @@
 > For more details check the [Non-Production Concessions & Cut Downs](https://github.com/AbdelrhmanElmhdy/connector/#non-production-concessions--cut-downs) illustrated below.
 
 # Quick Core Flow Demo
-![Demo](Demo.GIF)
+![Demo](Demo.gif)
 
 # Brief Description of the Architecture
 
@@ -52,19 +52,15 @@
   The view controller responsibilities are thus reduced to the following main five:
 
     - Playing the orchestrator that joins all the parts together and passes them the necessary data.
-    - Initiate the data fetching though the view model or a managed-object-fetch-controller.
+    - Initiate the data fetching through the view model or a managed-object-fetch-controller.
     - Responding to lifecycle, user, and network initiated events with the assist of the view model’s logic.
     - Configuring the navigation bar inside its life cycle methods.
     - Loading the view. *(of course)*
-    
-  
-  > **Note:** The line between the view-model’s and view-controller’s responsibilities in UIKit has always been a blurry one.  And consequently there are many approaches to UIKit & MVVM and I decided to make the view model only contain view state and discrete methods that contain business logic and or serve as an interface to the low level services layer, in order to increase its testability.
  
 - ## Insuring Reusability
   Reusability is almost exploited to its maximum in the codebase to increase maintainability and development speed.\
   Some reusability examples include:
     
-    - All views are designed to be as generic as possible.
     - The table view data sources are extracted into separate reusable objects.
     - The auth view is reused by the login and signup views through inheritance.
     - The settings table view controller is designed for total reusability as all the settings screens are instances of the same view controller.
@@ -76,7 +72,7 @@
   - All methods have only one job to do.
   - All non-void methods must introduce no side effects.
   - Methods must rely, whenever possible, only on their received arguments.
-  - Only event handler methods may be exempt from the single concern princible.
+  - Only event handler methods may be exempt from the single concern principle.
   - Event handler methods contain the highest abstraction level code, merely just performing function calls and updating properties.
 
 
@@ -101,9 +97,9 @@ And the cut downs continue throughout the rest of the app. For example:
 
 # Testing
 > For time conservation the testing was also narrowed down to the authentication related services, view models and view controllers.
-- Tests are conducted by isolating the SUT and providing mock dependencies to perform a unit test, or by only mocking the managers and testing the view models with real service dependencies to perfrom an integration test.
+- Tests are conducted by isolating the SUT and providing mock dependencies to perform a unit test, or by only mocking the managers and testing the view models with real service dependencies to perform an integration test.
 - The view models and services go through open box unit and integration testing while the views and view controllers go through black box UI testing.
-- All tests follow the FIRST test principles, except for the UI tests as they depend, only, on a locally hosted firebase emulator.
+- All tests follow the FIRST test principles.
 - The test coverage goal is ~85%, if it's to be production ready.
 - All mock objects are auto generated using a [Sourcery](https://github.com/krzysztofzablocki/Sourcery) script.
 

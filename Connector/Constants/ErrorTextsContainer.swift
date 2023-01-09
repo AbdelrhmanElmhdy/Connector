@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ErrorTextsContainer {
+class ErrorTextsContainer {
 	struct UserFriendlyErrorTextsContainer {
 		let description: String
 		let userDescription: String
@@ -69,6 +69,10 @@ struct ErrorTextsContainer {
 		userDescription: "Incorrect password".localized,
 		userAdvice: ""
 	)
+	
+	static func mustBeAtLeast(ofLength minimumLength: Int) -> String {
+		"must be at least \(minimumLength) characters long".localized
+	}
 	
 	static func passwordMustContainAtLeast(_ requiredConditions: [String]) -> String {
 		"Password must contain at least".localized + " " + requiredConditions.joinedAsSentence()

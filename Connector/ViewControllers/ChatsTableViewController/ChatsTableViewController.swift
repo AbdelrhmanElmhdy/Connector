@@ -7,6 +7,7 @@
 
 import CoreData
 import UIKit
+import Combine
 
 let chatCellReuseIdentifier = "chatCellReuseIdentifier"
 
@@ -17,10 +18,11 @@ class ChatsTableViewController: UITableViewController {
 	let viewModel: ChatsTableViewModel
 	
 	private lazy var searchController: UISearchController = {
-		let searchController = UISearchController(searchResultsController: SearchResultsTableViewController())
+		let searchResultsController = SearchResultsTableViewController()
+		searchResultsController.delegate = self
 		
-		searchController.delegate = self
-		searchController.searchResultsUpdater = self
+		let searchController = UISearchController(searchResultsController: searchResultsController)
+		
 		searchController.obscuresBackgroundDuringPresentation = false
 		searchController.searchBar.placeholder = .ui.chatsSearchBarPlaceholder
 		
@@ -39,6 +41,8 @@ class ChatsTableViewController: UITableViewController {
 	private lazy var fetchControllerDelegate = TableViewFetchedResultsControllerDelegate(tableView: tableView)
 	private lazy var dataSource = ChatRoomsDataSource(fetchController: fetchController)
 	
+	private var subscriptions = Set<AnyCancellable>()
+	
 	// MARK: Initialization
 	
 	init(coordinator: Chatting, viewModel: ChatsTableViewModel) {
@@ -52,11 +56,13 @@ class ChatsTableViewController: UITableViewController {
 	}
 	
 	// MARK: Life Cycle
-	
+		
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
 		title = .ui.chats
+		
+		bindSearchTextField()
 		
 		navigationItem.searchController = searchController
 		fetchController.delegate = fetchControllerDelegate
@@ -90,6 +96,17 @@ class ChatsTableViewController: UITableViewController {
 	private func configureNavBar() {
 		navigationController?.navigationBar.prefersLargeTitles = true
 		navigationItem.largeTitleDisplayMode = .always
+	}
+	
+	private func bindSearchTextField() {
+		searchController.searchBar.searchTextField.textPublisher
+			.debounce(for: 0.5, scheduler: RunLoop.main)
+			.compactMap { $0 }
+			.sink(receiveValue: {[weak self] text in
+				guard let self = self else { return }
+				self.didSearch(for: text, in: self.searchController)
+			})
+			.store(in: &subscriptions)
 	}
 }
 

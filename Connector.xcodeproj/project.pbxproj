@@ -31,7 +31,7 @@
 		BC12489F294CB89700AB40A6 /* AuthServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC124897294CB89700AB40A6 /* AuthServiceMock.swift */; };
 		BC1248A0294CB89700AB40A6 /* UserPreferencesServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC124898294CB89700AB40A6 /* UserPreferencesServiceMock.swift */; };
 		BC1248A4294CBFD600AB40A6 /* SourceryProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1248A3294CBFD600AB40A6 /* SourceryProtocols.swift */; };
-		BC125DB828B7EB59008D8C89 /* ChatsTableViewController+SearchControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC125DB728B7EB59008D8C89 /* ChatsTableViewController+SearchControllerDelegate.swift */; };
+		BC125DB828B7EB59008D8C89 /* ChatsTableViewController+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC125DB728B7EB59008D8C89 /* ChatsTableViewController+Actions.swift */; };
 		BC1A0048295E0F5D00190AA4 /* RealViewControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1A0047295E0F5D00190AA4 /* RealViewControllerFactory.swift */; };
 		BC1C7C48294108FA0092A290 /* KeyboardAvoidingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1C7C47294108F90092A290 /* KeyboardAvoidingView.swift */; };
 		BC20D2892933AA890089DF71 /* MainChatRoomService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC20D2882933AA890089DF71 /* MainChatRoomService.swift */; };
@@ -45,6 +45,7 @@
 		BC3A6A96294794C100DD64CB /* LoginViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA434D0284FB9CA001F39D8 /* LoginViewModelTests.swift */; };
 		BC3A6A97294794C100DD64CB /* ChatRoomStubsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7C3168294742150060B888 /* ChatRoomStubsFactory.swift */; };
 		BC3A6A98294794C200DD64CB /* UserStubsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7C3166294685F50060B888 /* UserStubsFactory.swift */; };
+		BC4D555929670AE600029760 /* ValidatableWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4D555829670AE600029760 /* ValidatableWrapper.swift */; };
 		BC50BACD28EC575E006D8E22 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC50BACC28EC575E006D8E22 /* FirebaseManager.swift */; };
 		BC50BAD128EC6F04006D8E22 /* MainUserNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC50BAD028EC6F04006D8E22 /* MainUserNetworkService.swift */; };
 		BC50BAD328EC8BC6006D8E22 /* MainAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC50BAD228EC8BC6006D8E22 /* MainAuthService.swift */; };
@@ -244,7 +245,7 @@
 		BC124897294CB89700AB40A6 /* AuthServiceMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthServiceMock.swift; sourceTree = "<group>"; };
 		BC124898294CB89700AB40A6 /* UserPreferencesServiceMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPreferencesServiceMock.swift; sourceTree = "<group>"; };
 		BC1248A3294CBFD600AB40A6 /* SourceryProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceryProtocols.swift; sourceTree = "<group>"; };
-		BC125DB728B7EB59008D8C89 /* ChatsTableViewController+SearchControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatsTableViewController+SearchControllerDelegate.swift"; sourceTree = "<group>"; };
+		BC125DB728B7EB59008D8C89 /* ChatsTableViewController+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatsTableViewController+Actions.swift"; sourceTree = "<group>"; };
 		BC1A0047295E0F5D00190AA4 /* RealViewControllerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealViewControllerFactory.swift; sourceTree = "<group>"; };
 		BC1C7C47294108F90092A290 /* KeyboardAvoidingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAvoidingView.swift; sourceTree = "<group>"; };
 		BC20D2882933AA890089DF71 /* MainChatRoomService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainChatRoomService.swift; sourceTree = "<group>"; };
@@ -255,6 +256,7 @@
 		BC20D2972937AF300089DF71 /* SecureStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorage.swift; sourceTree = "<group>"; };
 		BC3A6A892947799400DD64CB /* ConnectorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ConnectorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC3A6A8B2947799400DD64CB /* SignupUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupUITests.swift; sourceTree = "<group>"; };
+		BC4D555829670AE600029760 /* ValidatableWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatableWrapper.swift; sourceTree = "<group>"; };
 		BC50BACC28EC575E006D8E22 /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
 		BC50BAD028EC6F04006D8E22 /* MainUserNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainUserNetworkService.swift; sourceTree = "<group>"; };
 		BC50BAD228EC8BC6006D8E22 /* MainAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAuthService.swift; sourceTree = "<group>"; };
@@ -565,7 +567,7 @@
 			isa = PBXGroup;
 			children = (
 				BCA43513284FCBC7001F39D8 /* ChatsTableViewController.swift */,
-				BC125DB728B7EB59008D8C89 /* ChatsTableViewController+SearchControllerDelegate.swift */,
+				BC125DB728B7EB59008D8C89 /* ChatsTableViewController+Actions.swift */,
 			);
 			path = ChatsTableViewController;
 			sourceTree = "<group>";
@@ -594,6 +596,7 @@
 			children = (
 				BC20D29129365A070089DF71 /* Storage.swift */,
 				BC20D2972937AF300089DF71 /* SecureStorage.swift */,
+				BC4D555829670AE600029760 /* ValidatableWrapper.swift */,
 			);
 			path = PropertyWrappers;
 			sourceTree = "<group>";
@@ -1607,6 +1610,7 @@
 				BCA1D8A82931204400E31259 /* SettingsCoordinator.swift in Sources */,
 				BC99C6B3287EFF09008DFE97 /* SignupViewController.swift in Sources */,
 				BC6B2D9728E99ED600AC4E71 /* Validatable.swift in Sources */,
+				BC4D555929670AE600029760 /* ValidatableWrapper.swift in Sources */,
 				BCA434B9284FB9C5001F39D8 /* SceneDelegate.swift in Sources */,
 				BC8EED29294F28CE006DC1CC /* CoreDataManagerProtocol.swift in Sources */,
 				BC99C6AB287EEE42008DFE97 /* PrimaryBtn.swift in Sources */,
@@ -1615,7 +1619,7 @@
 				BCC098AB289984D800C943C3 /* MessageComposerView.swift in Sources */,
 				BC7C3111294256A20060B888 /* UserPreferencesService.swift in Sources */,
 				BC6B2DA528EB124000AC4E71 /* User+CoreDataProperties.swift in Sources */,
-				BC125DB828B7EB59008D8C89 /* ChatsTableViewController+SearchControllerDelegate.swift in Sources */,
+				BC125DB828B7EB59008D8C89 /* ChatsTableViewController+Actions.swift in Sources */,
 				BCF6668129598A8E00552424 /* SettingsCoordinatorMock.swift in Sources */,
 				BCF6514B2941972E00080E61 /* ChatRoomsDataSource.swift in Sources */,
 				BC1A0048295E0F5D00190AA4 /* RealViewControllerFactory.swift in Sources */,

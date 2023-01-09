@@ -60,8 +60,8 @@ extension ExpectsOutcomes {
 		guard let timeout = timeout else { return resolver() }
 		
 		while Date().timeIntervalSince(startTime) < timeout {
-			let didResolve = resolver()
-			if didResolve { return true }
+			let didOccur = resolver()
+			if didOccur { return true }
 			Thread.sleep(forTimeInterval: 0.1)
 		}
 		

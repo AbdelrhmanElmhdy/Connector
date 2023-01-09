@@ -9,58 +9,58 @@ import UIKit
 import Combine
 
 class SignupViewAndViewModelBinder: ViewAndViewModelBinder<SignupView, SignupViewModel> {
-	
+		
 	override func setupBindings() {
-		view.firstNameTextFieldView.textField.createBidirectionalBinding(
-			with: viewModel.$firstName,
-			keyPath: \SignupViewModel.firstName,
-			for: viewModel,
-			storeIn: &subscriptions
-		)
+		// First name
+		bind(view.firstNameTextFieldView, with: viewModel.$firstName.$value, keyPath: \SignupViewModel.firstName)
+		assign(viewModel.$firstName.$errorMessage, on: view.firstNameTextFieldView)
+		// Last name
+		bind(view.lastNameTextFieldView, with: viewModel.$lastName.$value, keyPath: \SignupViewModel.lastName)
+		assign(viewModel.$lastName.$errorMessage, on: view.lastNameTextFieldView)
+		// Email
+		bind(view.emailTextFieldView, with: viewModel.$email.$value, keyPath: \SignupViewModel.email)
+		assign(viewModel.$email.$errorMessage, on: view.emailTextFieldView)
+		// Username
+		bind(view.usernameTextFieldView, with: viewModel.$username.$value, keyPath: \SignupViewModel.username)
+		assign(viewModel.$username.$errorMessage, on: view.usernameTextFieldView)
+		// Password
+		bind(view.passwordTextFieldView, with: viewModel.$password.$value, keyPath: \SignupViewModel.password)
+		assign(viewModel.$password.$errorMessage, on: view.passwordTextFieldView)
+		// Confirm password
+		bind(view.confirmPasswordTextFieldView,
+				 with: viewModel.$passwordConfirmation.$value,
+				 keyPath: \SignupViewModel.passwordConfirmation)
+		assign(viewModel.$passwordConfirmation.$errorMessage, on: view.confirmPasswordTextFieldView)
 		
-		view.lastNameTextFieldView.textField.createBidirectionalBinding(
-			with: viewModel.$lastName,
-			keyPath: \SignupViewModel.lastName,
-			for: viewModel,
-			storeIn: &subscriptions
-		)
+		// View State
 		
-		view.usernameTextFieldView.textField.createBidirectionalBinding(
-			with: viewModel.$username,
-			keyPath: \SignupViewModel.username,
-			for: viewModel,
-			storeIn: &subscriptions
-		)
-		
-		view.emailTextFieldView.textField.createBidirectionalBinding(
-			with: viewModel.$email,
-			keyPath: \SignupViewModel.email,
-			for: viewModel,
-			storeIn: &subscriptions
-		)
-		
-		view.passwordTextFieldView.textField.createBidirectionalBinding(
-			with: viewModel.$password,
-			keyPath: \SignupViewModel.password,
-			for: viewModel,
-			storeIn: &subscriptions
-		)
-		
-		view.confirmPasswordTextFieldView.textField.createBidirectionalBinding(
-			with: viewModel.$passwordConfirmation,
-			keyPath: \SignupViewModel.passwordConfirmation,
-			for: viewModel,
-			storeIn: &subscriptions
-		)
-		
-		viewModel.$isUserInteractionEnabled
+		viewModel.$isLoading
 			.receive(on: DispatchQueue.main)
+			.map { !$0 }
 			.assign(to: \.isUserInteractionEnabled, on: view)
 			.store(in: &subscriptions)
 		
 		viewModel.$isLoading
 			.receive(on: DispatchQueue.main)
 			.assign(to: \.isLoading, on: view.signupButton)
+			.store(in: &subscriptions)
+	}
+	
+	private func bind(_ textFieldView: TextFieldView,
+										with publisher: Published<String>.Publisher,
+										keyPath: ReferenceWritableKeyPath<SignupViewModel, String>) {
+		textFieldView.textField.createBidirectionalBinding(
+			with: publisher,
+			keyPath: keyPath,
+			for: viewModel,
+			storeIn: &subscriptions
+		)
+	}
+	
+	private func assign(_ publisher: Published<String>.Publisher, on textFieldView: TextFieldView) {
+		publisher
+			.receive(on: DispatchQueue.main)
+			.assign(to: \.errorMessage, on: textFieldView)
 			.store(in: &subscriptions)
 	}
 	

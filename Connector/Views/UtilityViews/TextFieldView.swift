@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TextFieldView: UIView, Validatable {
+class TextFieldView: UIView {
 	
 	private let errorLabel: UILabel = {
 		let label = UILabel()
@@ -26,6 +26,17 @@ class TextFieldView: UIView, Validatable {
 	private let iconImageView = UIImageView()
 	
 	let textField = UITextField()
+	
+	var errorMessage: String {
+		get { errorLabel.text ?? "" }
+		set {
+			guard !newValue.isEmpty else {
+				errorLabel.text = " "
+				return
+			}
+			errorLabel.text = newValue
+		}
+	}
 	
 	private lazy var textFieldContainerHStack: UIStackView = {
 		let stackView = UIStackView(arrangedSubviews: [iconImageView, textField])
@@ -61,11 +72,6 @@ class TextFieldView: UIView, Validatable {
 	
 	let name: String
 	
-	/// By default mirrors the name value, which is usually a noun, unless manually set to a different value.
-	var nameAsNoun: String
-	
-	var validators: [Validator]
-	
 	override var backgroundColor: UIColor? {
 		get {
 			return textFieldContainerHStack.backgroundColor
@@ -96,11 +102,9 @@ class TextFieldView: UIView, Validatable {
 		}
 	}
 	
-	init(name: String, icon: UIImage?, validators: [Validatable.Validator] = []) {
+	init(name: String, icon: UIImage?) {
 		self.name = name
 		self.iconImageView.image = icon
-		self.validators = validators
-		self.nameAsNoun = name
 		
 		super.init(frame: .zero)
 		
@@ -162,10 +166,6 @@ class TextFieldView: UIView, Validatable {
 		if layoutDirection == .rightToLeft {
 			textField.textAlignment = .right
 		}
-	}
-	
-	func presentErrorMessage(_ errorMessage: String?) {
-		errorLabel.text = errorMessage
 	}
 	
 	@objc func hideErrorMessage() {

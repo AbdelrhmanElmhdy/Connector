@@ -23,7 +23,7 @@ class AuthUITestCase<Controller: XCUITextInputController>: XCTestCase, ExpectsOu
 			switch self {
 			case let .enter(missingValue): return container.contains(.errors.enter(missingValue))
 			case .invalidEmailError: return container.contains(.errors.invalidEmail)
-			case .shortPasswordError: return container.contains(.errors.shortPassword)
+			case .shortPasswordError: return container.contains(.ui.password + " " + .errors.mustBeAtLeast(ofLength: 8))
 
 			case .passwordMissingUpperAndLowerCaseError:
 				return container.contains(.errors.passwordMustContainAtLeast([.errors.oneUpperCaseLetter, .errors.oneLowerCaseLetter]))

@@ -64,20 +64,11 @@ class SignupViewController: UIViewController {
 	@objc private func didPressSignup() {
 		dismissKeyboard()
 		
-		// Validate all fields.
-		let invalidInputsErrorMessages = viewModel.validateInputs(controlledView.firstNameTextFieldView,
-																															controlledView.lastNameTextFieldView,
-																															controlledView.usernameTextFieldView,
-																															controlledView.emailTextFieldView,
-																															controlledView.passwordTextFieldView,
-																															controlledView.confirmPasswordTextFieldView)
+		viewModel.validateInputs()
+				
+		guard viewModel.allInputsAreValid else { return }
 		
-		viewModel.presentErrorMessagesForInvalidInputs(invalidInputsErrorMessages: invalidInputsErrorMessages)
-		
-		let allInputsAreValid = invalidInputsErrorMessages.isEmpty
-		guard allInputsAreValid else { return }
-		
-		viewModel.disableUserInteraction(); /* & */ viewModel.showLoadingSpinner();
+		viewModel.isLoading = true
 		
 		// Create user.
 		let user = viewModel.createUser(firstName: viewModel.firstName,
@@ -100,7 +91,7 @@ class SignupViewController: UIViewController {
 	// MARK: Completion Handlers
 	
 	private func handleUserSignupCompletion(completion: Subscribers.Completion<Error>) {
-		viewModel.enableUserInteraction(); /* & */ viewModel.hideLoadingSpinner();
+		viewModel.isLoading = false
 		
 		switch completion {
 		case .failure(let error):

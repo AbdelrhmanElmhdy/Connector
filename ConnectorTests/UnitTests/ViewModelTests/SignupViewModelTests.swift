@@ -24,12 +24,12 @@ class SignupViewModelTests: XCTestCase {
   
   func testInvalidShortPassword() {
       // Given
-      let sut = createSUT()
+			let sut = SignupViewModel.self
       let validatableFieldMock = ValidatableFieldMock()
       validatableFieldMock.value = "Ab34567"
       
       // When
-      let (isValid, errorMessage) = sut.passwordMinimumLengthValidator(validatableFieldMock)
+		let (isValid, errorMessage) = sut.minimumLengthValidator(8)(validatableFieldMock)
       
       // Then
       XCTAssertFalse(isValid)
@@ -38,7 +38,7 @@ class SignupViewModelTests: XCTestCase {
   
   func testWeakPassword() {
       // Given
-      let sut = createSUT()
+			let sut = SignupViewModel.self
       let validatableFieldMock = ValidatableFieldMock()
       validatableFieldMock.value = "12345678"
       
@@ -52,7 +52,7 @@ class SignupViewModelTests: XCTestCase {
   
   func testWeakNoLowerCasePassword() {
       // Given
-      let sut = createSUT()
+      let sut = SignupViewModel.self
       let validatableFieldMock = ValidatableFieldMock()
       validatableFieldMock.value = "A2345678"
       
@@ -66,7 +66,7 @@ class SignupViewModelTests: XCTestCase {
   
   func testWeakNoUpperCasePassword() {
       // Given
-      let sut = createSUT()
+      let sut = SignupViewModel.self
       let validatableFieldMock = ValidatableFieldMock()
       validatableFieldMock.value = "a2345678"
       
@@ -80,7 +80,7 @@ class SignupViewModelTests: XCTestCase {
   
   func testValidStrongPassword() {
       // Given
-      let sut = createSUT()
+      let sut = SignupViewModel.self
       let validatableFieldMock = ValidatableFieldMock()
       validatableFieldMock.value = "Ab345678"
       

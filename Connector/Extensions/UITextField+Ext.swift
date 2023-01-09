@@ -20,15 +20,18 @@ extension UITextField {
 																				for object: Root,
 																				storeIn subscriptions: inout Set<AnyCancellable>) {
 		
+		// Make the keyPath property subscribe to the textField's text publisher.
 		self.textPublisher
 			.removeDuplicates()
 			.sink(receiveValue: { object[keyPath: keyPath] = $0 ?? "" })
 			.store(in: &subscriptions)
 		
+		// Make the textField's text property subscribe to the publisher's updates.
 		publisher
 			.receive(on: DispatchQueue.main)
 			.removeDuplicates()
 			.sink (receiveValue: { self.text = $0 })
 			.store(in: &subscriptions)
 	}
+	
 }

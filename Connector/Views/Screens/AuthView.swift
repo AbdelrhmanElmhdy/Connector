@@ -161,12 +161,10 @@ class AuthView: KeyboardAvoidingView {
 	
 	// MARK: Convenience
 	
-	func createAuthTextField(name: String, icon: UIImage?, validators: [Validatable.Validator] = []) -> TextFieldView {
+	func createAuthTextField(name: String, icon: UIImage?) -> TextFieldView {
 		
 		let icon = icon?.withTintColor(.accentForLightGrayForDark).withRenderingMode(.alwaysOriginal)
-		let textFieldView = TextFieldView(name: name,
-																			icon: icon,
-																			validators: [viewModel.nonEmptyFieldValidator] + validators)
+		let textFieldView = TextFieldView(name: name, icon: icon)
 		
 		textFieldView.backgroundColor = .tertiarySystemGroupedBackground
 		textFieldView.cornerRadius = 8
@@ -177,14 +175,14 @@ class AuthView: KeyboardAvoidingView {
 	
 	func createNameTextField(name: String) -> TextFieldView {
 		let icon = UIImage.userIcon
-		return createAuthTextField(name: name, icon: icon, validators: [])
+		return createAuthTextField(name: name, icon: icon)
 	}
 	
 	func createUsernameTextField() -> TextFieldView {
 		let name = String.ui.username
 		let icon = UIImage.userIcon
 		
-		let usernameTextFieldView = createAuthTextField(name: name, icon: icon, validators: [])
+		let usernameTextFieldView = createAuthTextField(name: name, icon: icon)
 		usernameTextFieldView.textField.textContentType = .username
 		
 		return usernameTextFieldView
@@ -193,19 +191,18 @@ class AuthView: KeyboardAvoidingView {
 	func createEmailTextField() -> TextFieldView {
 		let name = String.ui.email
 		let icon = UIImage.emailIcon
-		let validators = [viewModel.emailValidator]
 		
-		let emailTextFieldView = createAuthTextField(name: name, icon: icon, validators: validators)
+		let emailTextFieldView = createAuthTextField(name: name, icon: icon)
 		emailTextFieldView.textField.textContentType = .emailAddress
 		emailTextFieldView.textField.keyboardType = .emailAddress
 		
 		return emailTextFieldView
 	}
 	
-	func createPasswordTextField(name: String, validators: [Validatable.Validator] = []) -> TextFieldView {
+	func createPasswordTextField(name: String) -> TextFieldView {
 		let icon = UIImage.passwordIcon
 		
-		let passwordTextFieldView = createAuthTextField(name: name, icon: icon, validators: validators)
+		let passwordTextFieldView = createAuthTextField(name: name, icon: icon)
 		passwordTextFieldView.textField.textContentType = .password
 		
 		// Disable secure text entry when the app is being tested, because the password auto fill confuses the XCUI tester.

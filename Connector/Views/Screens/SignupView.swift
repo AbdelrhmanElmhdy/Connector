@@ -17,18 +17,11 @@ class SignupView: AuthView {
 	lazy var lastNameTextFieldView = createNameTextField(name: .ui.lastNameTextFieldPlaceholder)
 	lazy var emailTextFieldView = createEmailTextField()
 	lazy var usernameTextFieldView = createUsernameTextField()
-	lazy var passwordTextFieldView = createPasswordTextField(name: .ui.password,
-																													 validators: [
-																														signupViewModel.passwordMinimumLengthValidator,
-																														signupViewModel.passwordComplexityValidator
-																													 ])
+	lazy var passwordTextFieldView = createPasswordTextField(name: .ui.password)
 	
-	lazy var confirmPasswordTextFieldView: TextFieldView = {
-		let textField = createPasswordTextField(name: .ui.confirmPasswordTextFieldPlaceholder,
-																						validators: [signupViewModel.passwordConfirmationMatchingValidator])
-		textField.nameAsNoun = .ui.confirmPasswordTextFieldNounName
-		return textField
-	}()
+	lazy var confirmPasswordTextFieldView: TextFieldView = createPasswordTextField(
+		name: .ui.confirmPasswordTextFieldPlaceholder
+	)
 	
 	override var textFieldViews: [TextFieldView] {
 		return [firstNameTextFieldView, lastNameTextFieldView, emailTextFieldView, usernameTextFieldView, passwordTextFieldView, confirmPasswordTextFieldView]
